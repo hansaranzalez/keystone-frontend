@@ -1,0 +1,23 @@
+{
+    "welcome": "Bienvenido a Project Keystone",
+    "subtitle": "Plataforma CRM para Bienes Raíces",
+    "nav": {
+      "inbox": "Bandeja de entrada",
+      "contacts": "Contactos",
+      "templates": "Plantillas",
+      "settings": "Configuración"
+    },
+    "inbox": {
+      "unified": "Bandeja unificada",
+      "compose": "Redactar mensaje",
+      "search": "Buscar conversaciones...",
+      "noMessages": "No se encontraron mensajes"
+    },
+    "actions": {
+      "send": "Enviar",
+      "reply": "Responder",
+      "save": "Guardar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  }

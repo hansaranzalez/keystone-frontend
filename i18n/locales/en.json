@@ -1,0 +1,23 @@
+{
+    "welcome": "Welcome to Project Keystone",
+    "subtitle": "Real Estate CRM Platform",
+    "nav": {
+      "inbox": "Inbox",
+      "contacts": "Contacts",
+      "templates": "Templates",
+      "settings": "Settings"
+    },
+    "inbox": {
+      "unified": "Unified Inbox",
+      "compose": "Compose Message",
+      "search": "Search conversations...",
+      "noMessages": "No messages found"
+    },
+    "actions": {
+      "send": "Send",
+      "reply": "Reply",
+      "save": "Save",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    }
+  }
