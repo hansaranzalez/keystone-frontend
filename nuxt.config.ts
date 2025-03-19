@@ -13,18 +13,11 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/fonts',
-    '@nuxt/image',
-    '@nuxt/ui',
-    '@nuxt/icon',
-    '@nuxtjs/i18n'
-  ],
+  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/image', '@nuxt/ui', '@nuxt/icon', '@nuxtjs/i18n', '@vueuse/nuxt'],
   i18n: {
     lazy: true,
     langDir: 'locales',
-    defaultLocale: 'en',
+    defaultLocale: 'es',
     locales: [
       {
         code: 'en',
@@ -38,5 +31,12 @@ export default defineNuxtConfig({
       }
       // Add more languages as needed
     ]
+  },
+  plugins: ["~/plugins/pinia.client.ts", "~/plugins/services.client.ts"],
+  runtimeConfig: {
+    apiKey: process.env.NUXT_API_KEY,
+    public: {
+      apiUrl: process.env.NUXT_ENV === 'development' ? process.env.NUXT_DEVELOPMENT_API_URL : process.env.NUXT_PRODUCTION_API_URL // Public (accessible on client)
+    }
   },
 })

@@ -4,19 +4,17 @@
       side="left"
       @update:open="$emit('update:modelValue', $event)"
     >
-      <template #header>
+      <template #content>
         <div class="flex justify-between items-center">
-          <h2 class="text-lg font-medium">Menu</h2>
+          <h2 class="text-sm font-medium px-3">Menu</h2>
           <UButton 
-            color="gray" 
+            color="info" 
             variant="ghost" 
-            icon="i-lucide-x" 
+            icon="mdi-close" 
             aria-label="Close menu" 
             @click="$emit('update:modelValue', false)"
           />
         </div>
-      </template>
-      <template #content>
         <div class="flex flex-col h-full overflow-y-auto">
         <!-- User Profile Info -->
         <div class="p-4 mb-4 border-b border-slate-200 dark:border-slate-700">
