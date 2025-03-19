@@ -16,7 +16,7 @@ export default defineAppConfig({
       // Buttons - from UI Kit guidelines
       button: {
         default: {
-          size: 'md',
+          size: 'xl',
           color: 'primary',
           variant: 'solid'
         },
@@ -52,8 +52,11 @@ export default defineAppConfig({
       // Form inputs
       input: {
         default: {
-          size: 'md',
-          color: 'neutral'
+          size: 'xl',
+          color: 'neutral',
+        },
+        slots: {
+          root: 'relative inline-flex items-center w-full'
         }
       },
       

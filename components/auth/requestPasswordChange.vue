@@ -1,40 +1,93 @@
 <template>
-    <div class="min-h-screen flex flex-col space-y-5 items-center justify-center bg-gray-900">
-        <h1 class="text-2xl font-normal text-center mb-6">
-            {{ $t('passwordChange.title') }}
-        </h1>
-        <UCard class="w-full max-w-md p-6">
-            <UCardBody>
-                <div class="space-y-6">
-                    <!-- Password Change Request Form -->
-                    <UForm :schema="schema" :state="state" class="space-y-6" @submit="onSubmit">
-                        <UFormGroup :label="$t('passwordChange.formLabels.email')" name="email" class="block">
-                            <UInput size="xl" v-model="state.email" type="email" placeholder="Enter your email" class="mt-2" />
-                        </UFormGroup>
-
-                        <UButton type="submit" color="gray" :loading="loading" block size="xl">
-                            {{ $t('passwordChange.request') }}
-                        </UButton>
-                    </UForm>
-
-                    <!-- Success Message -->
-                    <p v-if="successMessage" class="text-green-500 text-center mt-6">
-                        {{ successMessage }}
-                    </p>
-
-                    <!-- Error Message -->
-                    <p v-if="errorMessage" class="text-red-500 text-center mt-6">
-                        {{ errorMessage }}
-                    </p>
-                </div>
-            </UCardBody>
-        </UCard>
-        <UCard class="w-full max-w-md px-6" :ui="{ base: 'border-none' }">
-            <UCardFooter>
-                <UButton @click="setSelectedForm(AuthForms.LOGIN)" icon="material-symbols-arrow-back-ios-new" :label="$t('passwordChange.goBackToLogin')" size="xl" variant="link" color="primary" />
-            </UCardFooter>
-        </UCard>
+  <div
+    class="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gray-950"
+  >
+    <!-- Logo/Branding Area -->
+    <div class="mb-8 text-center">
+      <h1 class="text-2xl font-medium text-blue-500">KEYSTONE</h1>
     </div>
+
+    <!-- Password Change Request Card -->
+    <UCard
+      class="w-full max-w-md bg-gray-900 border border-gray-800"
+      :ui="{
+        root: 'rounded-lg overflow-hidden',
+        body: 'p-6 sm:p-8',
+        header: 'p-4',
+        footer: 'p-4',
+      }"
+    >
+      <UCardBody>
+        <!-- Title -->
+        <h2 class="text-xl font-medium text-center mb-6 text-white">
+          {{ $t('passwordChange.title') }}
+        </h2>
+
+        <!-- Password Change Request Form -->
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-4"
+          @submit="onSubmit"
+        >
+          <!-- Email Field -->
+          <UFormField
+            :label="$t('passwordChange.formLabels.email')"
+            name="email"
+          >
+            <UInput
+              v-model="state.email"
+              type="email"
+              size="xl"
+              placeholder="Enter your email"
+              autocomplete="email"
+            >
+              <template #leading>
+                <UIcon
+                  name="i-heroicons-envelope"
+                  class="text-gray-400 size-5"
+                />
+              </template>
+            </UInput>
+          </UFormField>
+
+          <!-- Submit Button -->
+          <UButton
+            type="submit"
+            color="primary"
+            size="lg"
+            block
+            variant="soft"
+            class="mt-6"
+            :loading="loading"
+          >
+            {{ $t('passwordChange.request') }}
+          </UButton>
+          
+          <!-- Success Message -->
+          <p v-if="successMessage" class="mt-4 text-sm text-center text-green-500">
+            {{ successMessage }}
+          </p>
+
+          <!-- Error Message -->
+          <p v-if="errorMessage" class="mt-4 text-sm text-center text-red-500">
+            {{ errorMessage }}
+          </p>
+        </UForm>
+      </UCardBody>
+      <UCardFooter class="flex justify-center p-4 border-t border-gray-800">
+        <UButton 
+          @click="setSelectedForm(AuthForms.LOGIN)" 
+          icon="i-heroicons-arrow-left" 
+          size="sm" 
+          variant="link" 
+          color="secondary"
+        >
+          {{ $t('passwordChange.goBackToLogin') }}
+        </UButton>
+      </UCardFooter>
+    </UCard>
+  </div>
 </template>
 
 <script setup lang="ts">

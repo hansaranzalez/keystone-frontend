@@ -1,67 +1,91 @@
 <template>
   <div
-    class="min-h-screen flex flex-col space-y-5 items-center justify-center bg-gray-900"
+    class="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-gray-950"
   >
-    <h1 class="text-2xl font-normal text-center mb-6">
-      {{ $t("activatePassword.title") }}
-    </h1>
-    <UCard class="w-full max-w-md p-6">
+    <!-- Logo/Branding Area -->
+    <div class="mb-8 text-center">
+      <h1 class="text-2xl font-medium text-blue-500">KEYSTONE</h1>
+    </div>
+
+    <!-- Activation Card -->
+    <UCard
+      class="w-full max-w-md bg-gray-900 border border-gray-800"
+      :ui="{
+        root: 'rounded-lg overflow-hidden',
+        body: 'p-6 sm:p-8',
+        header: 'p-4',
+        footer: 'p-4',
+      }"
+    >
       <UCardBody>
-        <div class="space-y-6">
-          <!-- Activation Form -->
-          <UForm
-            :schema="schema"
-            :state="state"
-            class="space-y-6"
-            @submit="onSubmit"
+        <!-- Title -->
+        <h2 class="text-xl font-medium text-center mb-6 text-white">
+          {{ $t("activatePassword.title") }}
+        </h2>
+
+        <!-- Activation Form -->
+        <UForm
+          :schema="schema"
+          :state="state"
+          class="space-y-4"
+          @submit="onSubmit"
+        >
+          <UFormField
+            :label="$t('activatePassword.formLabels.activationCode')"
+            name="activationCode"
           >
-            <UFormGroup
-              :label="$t('activatePassword.formLabels.activationCode')"
-              name="activationCode"
-              class="block"
-            >
-              <UInput
-                size="xl"
-                v-model="state.activationCode"
-                type="text"
-                placeholder="Enter your 6-digit code"
-                maxlength="6"
-                class="mt-2"
-              />
-            </UFormGroup>
-
-            <!-- Success Message -->
-            <p v-if="successMessage" class="text-green-500 text-center mt-6">
-              {{ successMessage }}
-            </p>
-
-            <!-- Error Message -->
-            <p v-if="errorMessage" class="text-red-500 text-center mt-6">
-              {{ errorMessage }}
-            </p>
-
-            <UButton
-              type="submit"
-              color="gray"
-              :loading="loading"
-              block
+            <UInput
+              v-model="state.activationCode"
+              type="text"
               size="xl"
+              placeholder="Enter your 6-digit code"
+              maxlength="6"
             >
-              {{ $t("activatePassword.submit") }}
-            </UButton>
-            <UButton
-              type="button"
-              variant="link"
-              color="gray"
-              :disabled="loading"
-              block
-              size="xl"
-              @click="navigateToLogin"
-            >
-              {{ $t("cancel") }}
-            </UButton>
-          </UForm>
-        </div>
+              <template #leading>
+                <UIcon
+                  name="i-heroicons-key"
+                  class="text-gray-400 size-5"
+                />
+              </template>
+            </UInput>
+          </UFormField>
+
+          <!-- Success Message -->
+          <p v-if="successMessage" class="mt-4 text-sm text-center text-green-500">
+            {{ successMessage }}
+          </p>
+
+          <!-- Error Message -->
+          <p v-if="errorMessage" class="mt-4 text-sm text-center text-red-500">
+            {{ errorMessage }}
+          </p>
+
+          <!-- Submit Button -->
+          <UButton
+            type="submit"
+            color="primary"
+            size="lg"
+            block
+            variant="soft"
+            class="mt-6"
+            :loading="loading"
+          >
+            {{ $t("activatePassword.submit") }}
+          </UButton>
+          
+          <!-- Cancel Button -->
+          <UButton
+            type="button"
+            variant="link"
+            color="secondary"
+            size="sm"
+            class="w-full mt-2"
+            :disabled="loading"
+            @click="navigateToLogin"
+          >
+            {{ $t("cancel") }}
+          </UButton>
+        </UForm>
       </UCardBody>
     </UCard>
   </div>

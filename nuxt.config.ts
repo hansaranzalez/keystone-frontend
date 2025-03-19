@@ -15,22 +15,8 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/image', '@nuxt/ui', '@nuxt/icon', '@nuxtjs/i18n', '@vueuse/nuxt'],
   i18n: {
-    lazy: true,
-    langDir: 'locales',
+    vueI18n: '~/i18n/index.ts',
     defaultLocale: 'es',
-    locales: [
-      {
-        code: 'en',
-        name: 'English',
-        file: 'en.json'
-      },
-      {
-        code: 'es',
-        name: 'Español',
-        file: 'es.json'
-      }
-      // Add more languages as needed
-    ]
   },
   plugins: ["~/plugins/pinia.client.ts", "~/plugins/services.client.ts"],
   runtimeConfig: {

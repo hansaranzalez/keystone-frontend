@@ -17,12 +17,12 @@
             
             <!-- Logo - centered on mobile, next to hamburger on desktop -->
             <div class="md:ml-2 md:static md:left-auto md:transform-none absolute left-1/2 transform -translate-x-1/2 md:hidden">
-              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">KEYSTONE</span>
+              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('appName') }}</span>
             </div>
             
             <!-- Desktop logo -->
             <div class="hidden md:block">
-              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">KEYSTONE</span>
+              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('appName') }}</span>
             </div>
           </div>
   
@@ -107,7 +107,7 @@
                 <div class="p-0">
                   <!-- Header -->
                   <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                    <h3 class="text-sm font-medium">Notifications</h3>
+                    <h3 class="text-sm font-medium">{{ $t('notifications.title') }}</h3>
                     <UButton 
                       v-if="unreadNotificationsCount > 0" 
                       variant="ghost" 
@@ -115,7 +115,7 @@
                       size="xs"
                       @click="markAllAsRead"
                     >
-                      Mark all as read
+                      {{ $t('notifications.markAllAsRead') }}
                     </UButton>
                   </div>
                   
@@ -132,13 +132,13 @@
                     </div>
                     
                     <div v-if="notificationItems.length === 0" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400 text-sm">
-                      No notifications
+                      {{ $t('notifications.empty') }}
                     </div>
                   </div>
                   
                   <!-- Footer -->
                   <div class="text-center p-3 border-t border-slate-200 dark:border-slate-700">
-                    <UButton variant="ghost" size="sm" color="primary" to="/notifications">View all notifications</UButton>
+                    <UButton variant="ghost" size="sm" color="primary" to="/notifications">{{ $t('notifications.viewAll') }}</UButton>
                   </div>
                 </div>
               </template>
@@ -147,12 +147,15 @@
         </div>
       </div>
     </header>
-    <CommonMainMenu v-model="isMobileMenuOpen" :current-user="currentUser" />
+    <UiMainMenu v-model="isMobileMenuOpen" :current-user="currentUser" />
   </template>
   
   <script setup>
   import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
   
+  const { t } = useI18n();
+
   // Current user data
   const currentUser = {
     name: 'Benjamin',
@@ -165,17 +168,17 @@ defineEmits(['toggle-menu']);
   // User menu items
   const userMenuItems = [
     {
-      label: 'Profile',
+      label: t('user.profile'),
       icon: 'i-lucide-user',
       to: '/profile'
     },
     {
-      label: 'Settings',
+      label: t('nav.settings'),
       icon: 'i-lucide-settings',
       to: '/settings'
     },
     {
-      label: 'Sign out',
+      label: t('user.signOut'),
       icon: 'i-lucide-log-out',
       click: () => signOut()
     }

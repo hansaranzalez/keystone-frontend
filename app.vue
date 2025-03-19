@@ -20,9 +20,10 @@
       />
     </section>
     <section v-else>
-      <CommonHeader />
-
-      <NuxtPage />
+      <UiHeader />
+      <div class="pt-16 min-h-screen bg-gray-100 dark:bg-gray-900">
+        <NuxtPage />
+      </div>
     </section>
     <UNotifications />
     <UiSplash :is-visible="isSplashVisible" />

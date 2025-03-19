@@ -6,7 +6,7 @@
     >
       <template #content>
         <div class="flex justify-between items-center">
-          <h2 class="text-sm font-medium px-3">Menu</h2>
+          <h2 class="text-sm font-medium px-3">{{ $t('nav.menu') }}</h2>
           <UButton 
             color="info" 
             variant="ghost" 
@@ -75,8 +75,8 @@
         <div class="p-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
           <div class="flex justify-between items-center">
             <div class="text-xs text-slate-500 dark:text-slate-400">
-              <div>Keystone CRM</div>
-              <div>Version 1.0</div>
+              <div>{{ $t('welcome') }}</div>
+              <div>{{ $t('version') }} 1.0</div>
             </div>
             
             <!-- Theme Toggle -->
@@ -97,6 +97,7 @@
   
   <script setup>
   import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
   
   const props = defineProps({
     modelValue: {
@@ -128,18 +129,20 @@
     document.documentElement.classList.toggle('dark');
   };
   
+  const { t } = useI18n();
+  
   // Menu items structure
   const menuItems = [
     {
       items: [
         {
-          label: 'Dashboard',
+          label: t('nav.dashboard'),
           icon: 'i-lucide-layout-dashboard',
           to: '/dashboard',
           active: true
         },
         {
-          label: 'Inbox',
+          label: t('nav.inbox'),
           icon: 'i-lucide-inbox',
           to: '/inbox',
           count: 12
@@ -147,15 +150,15 @@
       ]
     },
     {
-      label: 'Contacts',
+      label: t('nav.contacts'),
       items: [
         {
-          label: 'Clients',
+          label: t('nav.clients'),
           icon: 'i-lucide-users',
           to: '/clients'
         },
         {
-          label: 'Leads',
+          label: t('nav.leads'),
           icon: 'i-lucide-user-plus',
           to: '/leads',
           count: 3
@@ -163,35 +166,35 @@
       ]
     },
     {
-      label: 'Properties',
+      label: t('nav.properties'),
       items: [
         {
-          label: 'Listings',
+          label: t('nav.listings'),
           icon: 'i-lucide-home',
           to: '/listings'
         },
         {
-          label: 'Showings',
+          label: t('nav.showings'),
           icon: 'i-lucide-calendar',
           to: '/showings'
         }
       ]
     },
     {
-      label: 'Tools',
+      label: t('nav.tools'),
       items: [
         {
-          label: 'Templates',
+          label: t('nav.templates'),
           icon: 'i-lucide-file-text',
           to: '/templates'
         },
         {
-          label: 'Analytics',
+          label: t('nav.analytics'),
           icon: 'i-lucide-bar-chart',
           to: '/analytics'
         },
         {
-          label: 'Settings',
+          label: t('nav.settings'),
           icon: 'i-lucide-settings',
           to: '/settings'
         }
