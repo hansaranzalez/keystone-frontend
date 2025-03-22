@@ -10,6 +10,11 @@ export default defineNuxtConfig({
   // Set SPA mode - no server-side rendering
   ssr: false,
   
+  // Optional: Configure static generation settings
+  experimental: {
+    payloadExtraction: true,
+  },
+  
   app: {
     head: {
       title: 'Keystone',
@@ -22,7 +27,7 @@ export default defineNuxtConfig({
   
   // Nitro server configuration
   nitro: {
-    preset: 'node-server',
+    preset: 'static',
     compressPublicAssets: true,
     
     // The main SPA configuration - match ALL routes to index.html
