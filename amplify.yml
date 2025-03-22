@@ -1,0 +1,18 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+        - mkdir -p .output/public
+        - echo '{"version":1,"type":"static","paths":{"/*":{"path":"/*"}}}' > .output/public/deploy-manifest.json
+  artifacts:
+    baseDirectory: .output/public
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
