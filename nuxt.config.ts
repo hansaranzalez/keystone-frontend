@@ -53,5 +53,5 @@ export default defineNuxtConfig({
     public: {
       apiUrl: process.env.NUXT_ENV === 'development' ? process.env.NUXT_DEVELOPMENT_API_URL : process.env.NUXT_PRODUCTION_API_URL // Public (accessible on client)
     }
-  },
+  }
 })
