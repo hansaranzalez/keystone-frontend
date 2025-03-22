@@ -6,7 +6,36 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: false },
+  
+  // Set SPA mode - no server-side rendering
   ssr: false,
+  
+  app: {
+    head: {
+      title: 'Keystone',
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+    },
+    // No page transitions - can cause issues with reloads
+    pageTransition: false
+  },
+  
+  // Nitro server configuration
+  nitro: {
+    preset: 'node-server',
+    compressPublicAssets: true,
+    
+    // The main SPA configuration - match ALL routes to index.html
+    routeRules: {
+      '/**': { static: true }
+    },
+    
+    esbuild: {
+      options: {
+        target: 'es2019'
+      }
+    }
+  },
   css: ['~/assets/styles/main.css'],
   vite: {
     plugins: [

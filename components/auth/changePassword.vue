@@ -7,9 +7,131 @@
       <h1 class="text-2xl font-medium text-blue-500">KEYSTONE</h1>
     </div>
 
-    <!-- Change Password Card -->
+    <!-- Mobile version - no card (visible on small screens only) -->
+    <div class="w-full max-w-md block sm:hidden">
+      <!-- Title -->
+      <h2 class="text-xl font-medium text-center mb-6 text-white">
+        {{ $t('changePassword.title') }}
+      </h2>
+
+      <!-- Change Password Form for Mobile -->
+      <UForm
+        :schema="schema"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <!-- New Password Field -->
+        <UFormField
+          :label="$t('changePassword.formLabels.newPassword')"
+          name="newPassword"
+        >
+          <UInput
+            v-model="state.newPassword"
+            size="xl"
+            autocomplete="new-password"
+            placeholder="Enter your new password"
+            :type="showPassword ? 'text' : 'password'"
+          >
+            <template #leading>
+              <UIcon
+                name="i-heroicons-lock-closed"
+                class="text-gray-400 size-5"
+              />
+            </template>
+            <template #trailing>
+              <UButton
+                color="neutral"
+                variant="link"
+                size="sm"
+                :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                :aria-pressed="showPassword"
+                aria-controls="newPassword"
+                @click="togglePasswordVisibility"
+              />
+            </template>
+          </UInput>
+          <template #hint>
+            <span class="text-xs text-gray-500">
+              {{ $t('changePassword.formLabels.passwordHint') }}
+            </span>
+          </template>
+        </UFormField>
+
+        <!-- Confirm Password Field -->
+        <UFormField
+          :label="$t('changePassword.formLabels.confirmPassword')"
+          name="confirmPassword"
+        >
+          <UInput
+            v-model="state.confirmPassword"
+            size="xl"
+            autocomplete="new-password"
+            placeholder="Confirm your new password"
+            :type="showConfirmPassword ? 'text' : 'password'"
+          >
+            <template #leading>
+              <UIcon
+                name="i-heroicons-lock-closed"
+                class="text-gray-400 size-5"
+              />
+            </template>
+            <template #trailing>
+              <UButton
+                color="neutral"
+                variant="link"
+                size="sm"
+                :icon="showConfirmPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
+                :aria-pressed="showConfirmPassword"
+                aria-controls="confirmPassword"
+                @click="toggleConfirmPasswordVisibility"
+              />
+            </template>
+          </UInput>
+        </UFormField>
+
+        <!-- Submit Button -->
+        <UButton
+          type="submit"
+          color="primary"
+          size="lg"
+          block
+          variant="soft"
+          class="mt-6"
+          :loading="loading"
+        >
+          {{ $t('changePassword.submit') }}
+        </UButton>
+
+        <!-- Success Message -->
+        <p v-if="successMessage" class="mt-4 text-sm text-center text-green-500">
+          {{ successMessage }}
+        </p>
+
+        <!-- Error Message -->
+        <p v-if="errorMessage" class="mt-4 text-sm text-center text-red-500">
+          {{ errorMessage }}
+        </p>
+      </UForm>
+
+      <!-- Go back to login link -->
+      <div class="flex justify-center py-4 text-sm">
+        <UButton
+          variant="link"
+          color="secondary"
+          size="sm"
+          @click="setSelectedForm(AuthForms.LOGIN)"
+        >
+          {{ $t('changePassword.goBackToLogin') }}
+        </UButton>
+      </div>
+    </div>
+
+    <!-- Desktop version - with card (visible on medium screens and up) -->
     <UCard
-      class="w-full max-w-md bg-gray-900 border border-gray-800"
+      class="hidden sm:block w-full max-w-md bg-slate-900 border border-slate-800"
       :ui="{
         root: 'rounded-lg overflow-hidden',
         body: 'p-6 sm:p-8',
@@ -127,10 +249,12 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { object, string, ref as yupRef, type InferType } from "yup";
+import { AuthForms, useAuthStore } from "~/store/authStore";
 import type { FormSubmitEvent } from "#ui/types";
 import { useAuthService } from "~/composables/useServices";
 
 const { t } = useI18n();
+const { setSelectedForm } = useAuthStore();
 
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
@@ -147,11 +271,11 @@ const schema = object({
 
 type Schema = InferType<typeof schema>;
 
-// Form state
+// Form state with proper typing
 const state = reactive({
-  newPassword: undefined,
-  confirmPassword: undefined,
-});
+  newPassword: "",
+  confirmPassword: "",
+}) as { newPassword: string; confirmPassword: string };
 
 const loading = ref(false);
 const successMessage = ref("");

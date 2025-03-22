@@ -75,8 +75,8 @@
         <div class="p-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
           <div class="flex justify-between items-center">
             <div class="text-xs text-slate-500 dark:text-slate-400">
-              <div>{{ $t('welcome') }}</div>
-              <div>{{ $t('version') }} 1.0</div>
+              <div>{{ $t('version.app') }} 1.0</div>
+              <div>{{ $t('version.api') }} {{ apiVersion }}</div>
             </div>
             
             <!-- Theme Toggle -->
@@ -96,33 +96,70 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '~/store/authStore';
+import { useRoute } from 'vue-router';
+import { useVersionService } from '~/services/version.service';
   
   const props = defineProps({
     modelValue: {
       type: Boolean,
       default: false
-    },
-    currentUser: {
-      type: Object,
-      default: () => ({
-        name: 'Benjamin',
-        email: 'benjamin@example.com',
-        avatar: ''
-      })
     }
+  });
+  
+  // Get authenticated user data from auth store
+  const authStore = useAuthStore();
+  const user = computed(() => authStore.userGetter);
+  
+  // Computed user data for display
+  const currentUser = computed(() => {
+    // Get profile image URL from either the new structure or the legacy field
+    const profileImageUrl = user.value?.profile_image?.url || user.value?.profile_image_url || '';
+    
+    return {
+      name: user.value?.name || t('user.guest'),
+      avatar: profileImageUrl,
+      email: user.value?.email || ''
+    };
   });
   
   const emit = defineEmits(['update:modelValue']);
   
   // Theme toggle
   const isDarkMode = ref(false);
+  const route = useRoute();
+  
+  // API version state
+  const apiVersion = ref('Loading...');
   
   onMounted(() => {
     // Check the current theme
     isDarkMode.value = document.documentElement.classList.contains('dark');
+    
+    // Fetch API version
+    loadApiVersion();
   });
+  
+  // Load API version information
+  const loadApiVersion = async () => {
+    try {
+      console.log('MainMenu: Attempting to load API version...');
+      const versionService = useVersionService();
+      console.log('MainMenu: Version service loaded:', !!versionService);
+      
+      // Force version refresh
+      const version = await versionService.getApiVersion();
+      console.log('MainMenu: API Version received:', version);
+      
+      // Update the displayed version
+      apiVersion.value = version || 'Unknown';
+    } catch (error) {
+      console.error('MainMenu: Error loading API version:', error);
+      apiVersion.value = 'Unknown';
+    }
+  };
   
   const toggleDarkMode = () => {
     isDarkMode.value = !isDarkMode.value;
@@ -131,76 +168,44 @@ import { useI18n } from 'vue-i18n';
   
   const { t } = useI18n();
   
-  // Menu items structure
-  const menuItems = [
+  // Function to check if a route is active, handling exact and nested routes
+  const isRouteActive = (path) => {
+    if (path === '/') {
+      return route.path === '/';
+    }
+    return route.path.startsWith(path);
+  };
+  
+  // Menu items structure as a computed property to be reactive to route changes
+  const menuItems = computed(() => [
     {
       items: [
         {
-          label: t('nav.dashboard'),
-          icon: 'i-lucide-layout-dashboard',
-          to: '/dashboard',
-          active: true
-        },
-        {
-          label: t('nav.inbox'),
-          icon: 'i-lucide-inbox',
-          to: '/inbox',
-          count: 12
-        }
-      ]
-    },
-    {
-      label: t('nav.contacts'),
-      items: [
-        {
-          label: t('nav.clients'),
-          icon: 'i-lucide-users',
-          to: '/clients'
-        },
-        {
-          label: t('nav.leads'),
-          icon: 'i-lucide-user-plus',
-          to: '/leads',
-          count: 3
-        }
-      ]
-    },
-    {
-      label: t('nav.properties'),
-      items: [
-        {
-          label: t('nav.listings'),
+          label: t('appName'),
           icon: 'i-lucide-home',
-          to: '/listings'
+          to: '/',
+          active: isRouteActive('/')
         },
         {
-          label: t('nav.showings'),
-          icon: 'i-lucide-calendar',
-          to: '/showings'
+          label: t('user.profile'),
+          icon: 'i-lucide-user',
+          to: '/account',
+          active: isRouteActive('/account')
         }
       ]
     },
     {
-      label: t('nav.tools'),
+      label: t('user.account'),
       items: [
         {
-          label: t('nav.templates'),
-          icon: 'i-lucide-file-text',
-          to: '/templates'
-        },
-        {
-          label: t('nav.analytics'),
-          icon: 'i-lucide-bar-chart',
-          to: '/analytics'
-        },
-        {
-          label: t('nav.settings'),
-          icon: 'i-lucide-settings',
-          to: '/settings'
+          label: t('user.signOut'),
+          icon: 'i-lucide-log-out',
+          to: '/logout',
+          active: isRouteActive('/logout')
         }
       ]
     }
-  ];
+  ]);
   
   // Handle menu item click
   const onMenuItemClick = (item) => {

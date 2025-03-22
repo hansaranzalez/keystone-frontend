@@ -7,9 +7,80 @@
       <h1 class="text-2xl font-medium text-blue-500">KEYSTONE</h1>
     </div>
 
-    <!-- Activation Card -->
+    <!-- Mobile version - no card (visible on small screens only) -->
+    <div class="w-full max-w-md block sm:hidden">
+      <!-- Title -->
+      <h2 class="text-xl font-medium text-center mb-6 text-white">
+        {{ $t("activatePassword.title") }}
+      </h2>
+
+      <!-- Activation Form for Mobile -->
+      <UForm
+        :schema="schema"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField
+          :label="$t('activatePassword.formLabels.activationCode')"
+          name="activationCode"
+        >
+          <UInput
+            v-model="state.activationCode"
+            type="text"
+            size="xl"
+            placeholder="Enter your 6-digit code"
+            maxlength="6"
+          >
+            <template #leading>
+              <UIcon
+                name="i-heroicons-key"
+                class="text-gray-400 size-5"
+              />
+            </template>
+          </UInput>
+        </UFormField>
+
+        <!-- Submit Button -->
+        <UButton
+          type="submit"
+          color="primary"
+          size="lg"
+          block
+          variant="soft"
+          class="mt-6"
+          :loading="loading"
+        >
+          {{ $t('activatePassword.verifyCode') }}
+        </UButton>
+
+        <!-- Success Message -->
+        <p v-if="successMessage" class="mt-4 text-sm text-center text-green-500">
+          {{ successMessage }}
+        </p>
+
+        <!-- Error Message -->
+        <p v-if="errorMessage" class="mt-4 text-sm text-center text-red-500">
+          {{ errorMessage }}
+        </p>
+      </UForm>
+
+      <!-- Go back to login link -->
+      <div class="flex justify-center py-4 text-sm">
+        <UButton
+          variant="link"
+          color="secondary"
+          size="sm"
+          @click="navigateToLogin"
+        >
+          {{ $t('activatePassword.goBackToLogin') }}
+        </UButton>
+      </div>
+    </div>
+
+    <!-- Desktop version - with card (visible on medium screens and up) -->
     <UCard
-      class="w-full max-w-md bg-gray-900 border border-gray-800"
+      class="hidden sm:block w-full max-w-md bg-slate-900 border border-slate-800"
       :ui="{
         root: 'rounded-lg overflow-hidden',
         body: 'p-6 sm:p-8',
@@ -112,10 +183,10 @@ const schema = object({
 
 type Schema = InferType<typeof schema>;
 
-// Form state
+// Form state with proper typing
 const state = reactive({
-  activationCode: undefined,
-});
+  activationCode: "",
+}) as { activationCode: string };
 
 const loading = ref(false);
 const successMessage = ref("");
@@ -123,7 +194,7 @@ const errorMessage = ref("");
 
 // Reset form
 function resetForm() {
-  state.activationCode = undefined;
+  state.activationCode = "";
   successMessage.value = "";
   errorMessage.value = "";
 }
@@ -147,8 +218,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   try {
     if (!catchedEmailGetter.value) return;
     const response = await useAuthService().verifyPasswordResetCode(
-      catchedEmailGetter.value,
-      state.activationCode
+      state.activationCode,
+      t
     );
     successMessage.value = t("activatePassword.successMessage");
     useAuthStore().setSelectedForm(AuthForms.RESET_PASSWORD);

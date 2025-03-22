@@ -1,4 +1,6 @@
 // types/auth.type.ts
+import { ImageAsset } from './ImageAsset';
+
 export enum Role {
     USER = 'USER',
     ADMIN = 'ADMIN',
@@ -16,7 +18,8 @@ export class AuthUser {
         public name: string = '',
         public email: string = '',
         public role: Role = Role.USER,
-        public profile_image_url: string | null = null,
+        public profile_image: ImageAsset | null = null,
+        public profile_image_url: string | null = null, // Keep for backward compatibility
         public is_active: Status = Status.ACTIVE,
         public is_verified: boolean = false,
         public last_login: Date | null = null,
@@ -29,12 +32,19 @@ export class AuthUser {
 
     static Build(data?: Record<string, any>): AuthUser {
         if (data) {
+            // Create profile image if data contains it
+            const profileImage = data.profile_image ? ImageAsset.Build(data.profile_image) : null;
+            
+            // For backwards compatibility, extract URL from profile_image or use profile_image_url if provided
+            const profileImageUrl = profileImage?.url || data.profile_image_url || null;
+            
             return new AuthUser(
                 data.id,
                 data.name,
                 data.email,
                 data.role || Role.USER,
-                data.profile_image_url,
+                profileImage,
+                profileImageUrl,
                 data.is_active || Status.ACTIVE,
                 data.is_verified || false,
                 data.last_login ? new Date(data.last_login) : null,
@@ -54,7 +64,8 @@ export class AuthUser {
             name: this.name,
             email: this.email,
             role: this.role,
-            profile_image_url: this.profile_image_url,
+            profile_image: this.profile_image ? this.profile_image.toJSON() : null,
+            profile_image_url: this.profile_image_url || (this.profile_image ? this.profile_image.url : null),
             is_active: this.is_active,
             is_verified: this.is_verified,
             last_login: this.last_login,

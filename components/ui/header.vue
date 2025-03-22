@@ -70,8 +70,8 @@
                       v-for="(item, index) in userMenuItems" 
                       :key="index"
                       block
-                      color="gray" 
-                      variant="ghost" 
+                      :color="item.active ? 'primary' : 'gray'" 
+                      :variant="item.active ? 'soft' : 'ghost'" 
                       :to="item.to"
                       class="justify-start px-4 py-2 text-left"
                       @click="item.click ? item.click() : null"
@@ -84,6 +84,9 @@
               </template>
             </UPopover>
   
+            <!-- Language switcher -->
+            <UiLanguageSwitcher />
+
             <!-- Notification bell with popover -->
             <UPopover :ui="{ width: 'w-80' }" mode="click">
               <UButton
@@ -151,38 +154,53 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
+import { useAuthStore } from '~/store/authStore';
   
   const { t } = useI18n();
+  const authStore = useAuthStore();
+  const route = useRoute();
 
-  // Current user data
-  const currentUser = {
-    name: 'Benjamin',
-    avatar: '', // URL to user avatar, will use initials fallback if empty
-    email: 'benjamin@example.com'
-  };
+  // Get authenticated user data from auth store
+  const user = computed(() => authStore.userGetter);
+  
+  // Computed user data for display
+  const currentUser = computed(() => {
+    // Get profile image URL from either the new structure or the legacy field
+    const profileImageUrl = user.value?.profile_image?.url || user.value?.profile_image_url || '';
+    
+    return {
+      name: user.value?.name || t('user.guest'),
+      avatar: profileImageUrl, // URL to user avatar, will use initials fallback if empty
+      email: user.value?.email || ''
+    };
+  });
 
 defineEmits(['toggle-menu']);
   
-  // User menu items
-  const userMenuItems = [
+  // Check if a route is active
+  const isRouteActive = (path) => {
+    if (path === '/') return route.path === '/';
+    return route.path.startsWith(path);
+  };
+
+  // User menu items as a computed property to react to route changes
+  const userMenuItems = computed(() => [
     {
       label: t('user.profile'),
       icon: 'i-lucide-user',
-      to: '/profile'
+      to: '/account',
+      active: isRouteActive('/account')
     },
-    {
-      label: t('nav.settings'),
-      icon: 'i-lucide-settings',
-      to: '/settings'
-    },
+
     {
       label: t('user.signOut'),
       icon: 'i-lucide-log-out',
       click: () => signOut()
     }
-  ];
+  ]);
 
   // Mobile menu state
 const isMobileMenuOpen = ref(false);
@@ -192,10 +210,11 @@ const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
   
-  // Sign out function (placeholder)
+  // Sign out function
   const signOut = () => {
-    // Handle sign out logic
-    console.log('Signing out...');
+    // Use auth store to log out and redirect to login page
+    authStore.logout();
+    navigateTo('/');
   };
   
   // Notification data

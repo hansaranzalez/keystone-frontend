@@ -35,7 +35,8 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   getters: {
-    isAuthenticated: (state): boolean => !!state.token,
+    // Check both state and localStorage to ensure authentication persists across reloads
+    isAuthenticated: (state): boolean => !!state.token || !!localStorage.getItem("authToken"),
     userGetter: (state): AuthUser | null => state.user,
     selectedFormGetter: (state): AuthForms => state.selectedForm,
     catchedEmailGetter: (state): string | null => state.catchedEmail,
@@ -72,14 +73,18 @@ export const useAuthStore = defineStore("auth", {
     // Token management
     setToken(token: string) {
       this.token = token;
-      sessionStorage.setItem("authToken", token);
+      // Use localStorage for persistence across page reloads
+      localStorage.setItem("authToken", token);
     },
 
     loadToken() {
-      const token = sessionStorage.getItem("authToken");
+      // Load token from localStorage for persistence across page reloads
+      const token = localStorage.getItem("authToken");
       if (token) {
         this.token = token;
+        return true;
       }
+      return false;
     },
 
     setRefreshToken(token: string) {
@@ -123,9 +128,14 @@ export const useAuthStore = defineStore("auth", {
       const cookies = useCookies();
       this.token = null;
       this.user = null;
+      
+      // Clear cookies
       cookies.remove("refreshToken");
       cookies.remove("authToken");
-      sessionStorage.removeItem("authToken");
+      
+      // Clear localStorage to ensure token is removed
+      localStorage.removeItem("authToken");
+      
       this.$reset();
     },
 

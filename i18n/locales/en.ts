@@ -2,6 +2,11 @@ export default {
   appName: "KEYSTONE",
   welcome: "Welcome to Project Keystone",
   subtitle: "Real Estate CRM Platform",
+  languages: {
+    english: "English",
+    spanish: "Spanish",
+    changeLanguage: "Change language"
+  },
   nav: {
     menu: "Menu",
     dashboard: "Dashboard",
@@ -17,11 +22,15 @@ export default {
     analytics: "Analytics",
     settings: "Settings"
   },
-  version: "Version",
+  version: {
+    app: "App Version",
+    api: "API Version"
+  },
   user: {
     signOut: "Sign out",
     account: "My Account",
-    profile: "Profile"
+    profile: "Profile",
+    guest: "Guest"
   },
 
   notifications: {
@@ -48,6 +57,8 @@ export default {
     add: "Add",
     all: "All",
     cancel: "Oops, nevermind",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
     save: "Save and done",
     delete: "Delete",
     next: "Let's go to the next",
@@ -67,15 +78,20 @@ export default {
     connected: "Connected",
     notConnected: "Not Connected",
     loading: "Loading...",
-    error: "Error"
+    error: "Error",
+    comingSoon: "Coming Soon"
   },
   login: {
     title: "Login",
     signIn: "Sign In",
     forgotPassword: "Forgot your password?",
     continueWithGoogle: "Continue with Google",
+    continueWithFacebook: "Continue with Facebook",
     loginWithGoogle: "Login with Google",
     loginWithFacebook: "Login with Facebook",
+    facebookLoginComingSoon: "Facebook login functionality will be available soon",
+    socialAuthInitiated: "Social authentication initiated",
+    socialAuthError: "Social authentication failed. Please try again.",
     successTitle: "✅ Login successful",
     successMessage: "Welcome back!",
     errorTitle: "❌ Login failed",
@@ -88,7 +104,9 @@ export default {
       emailRequired: "Don't forget your email!",
       incorrectEmailFormat: "Invalid email format",
       passwordRequired: "We need your password!",
-      loginFailed: "Login failed. Please check your credentials."
+      loginFailed: "Login failed. Please check your credentials.",
+      emailAuthExists: "This account uses email authentication",
+      useEmailToLogin: "Please login with your email and password instead of social login"
     }
   },
   registration: {
@@ -96,6 +114,8 @@ export default {
     signUp: "Sign Up",
     haveAccount: "Already have an account?",
     createAccount: "Don't have an account?",
+    successTitle: "✅ Registration successful",
+    errorTitle: "❌ Registration failed",
     registrationSuccess: "Your account has been created successfully",
     registrationWithGoogle: "Registration with Google",
     registrationWithFacebook: "Registration with Facebook",
@@ -103,7 +123,14 @@ export default {
       name: "Name",
       email: "Email",
       password: "Password",
-      confirmPassword: "Confirm your password"
+      confirmPassword: "Confirm your password",
+      passwordHint: "Password must be at least 8 characters"
+    },
+    formPlaceholders: {
+      name: "Your full name",
+      email: "email{at}example.com",
+      password: "••••••••",
+      confirmPassword: "••••••••"
     },
     validationMessages: {
       nameRequired: "We need your name!",
@@ -113,14 +140,27 @@ export default {
       passwordRequired: "We need your password!",
       passwordMatch: "Passwords must match",
       confirmPasswordRequired: "Confirm your password"
+    },
+    errors: {
+      registrationFailed: "Registration failed",
+      googleAuthExists: "This email is already registered with Google",
+      useGoogleToLogin: "Please use Google login for this account",
+      emailAuthExists: "This email is already registered",
+      useEmailToLogin: "Please use your email and password to login"
     }
   },
   passwordChange: {
     title: "Change Password",
     request: "Request Password Change",
     goBackToLogin: "Go back to login",
+    successTitle: "✅ Success",
+    errorTitle: "❌ Error",
     successMessage: "We have sent you an email with instructions to change your password.",
     errorMessage: "Something went wrong, please try again",
+    incorrectCurrentPassword: "Current password is incorrect",
+    googleAuthError: "Cannot change password for accounts that use Google authentication exclusively",
+    passwordTooShort: "New password must be at least 8 characters long",
+    socialAccountError: "Password change is not available for social media accounts. Please use social login.",
     formLabels: {
       email: "Email"
     },
@@ -132,6 +172,8 @@ export default {
   changePassword: {
     title: "Change Password",
     submit: "Submit",
+    successTitle: "✅ Password Changed",
+    errorTitle: "❌ Password Change Failed",
     successMessage: "Password changed successfully!",
     errorMessage: "Something went wrong, please try again",
     formLabels: {
@@ -143,7 +185,8 @@ export default {
       passwordRequired: "We need your password!",
       passwordMatch: "Passwords must match",
       confirmPasswordRequired: "Confirm your password",
-      missingToken: "Missing token"
+      missingToken: "Missing token",
+      invalidResetCode: "The verification code is invalid. Please check and try again."
     }
   },
   activatePassword: {
@@ -151,13 +194,16 @@ export default {
     submit: "Submit",
     successMessage: "Password activated successfully!",
     errorMessage: "Something went wrong, please try again",
+    invalidCode: "The verification code is invalid. Please check and try again.",
     formLabels: {
       activationCode: "Activation Code"
     },
     validationMessages: {
       codeLength: "Activation code must be 6 digits",
       codeRequired: "We need your activation code!"
-    }
+    },
+    reset: "Reset",
+    goToLogin: "Go to login"
   },
   passwordChangeSuccess: {
     title: "Password Changed",
@@ -166,13 +212,15 @@ export default {
   },
   passwordResetRequestSuccess: {
     title: "Password Reset Request Sent",
-    message: "We have sent you an email with instructions to reset your password.",
+    message: "If your email exists in our system, you will receive instructions to reset your password shortly.",
     backToLogin: "Back to login"
   },
   profile: {
     title: "Profile Settings",
     updatePhoto: "Update Photo",
     saveChanges: "Save Changes",
+    basicInfo: "Basic Information",
+    security: "Security Settings",
     formLabels: {
       name: "Name",
       email: "Email"
@@ -192,10 +240,27 @@ export default {
       current: "Current Password",
       new: "New Password",
       confirm: "Confirm New Password",
-      lastChanged: "Last Changed"
+      lastChanged: "Last Changed",
+      update: "Update Password",
+      currentPlaceholder: "Enter your current password",
+      newPlaceholder: "Enter your new password",
+      guidanceIntro: "Your password should be strong and secure:",
+      guidanceLength: "At least 8 characters long",
+      guidanceMix: "Include both uppercase and lowercase letters, numbers, and special characters",
+      guidanceUnique: "Different from previously used passwords",
+      newHelp: "Create a strong, unique password",
+      confirmHelp: "Type your new password again to confirm",
+      strength: "Password Strength",
+      strengthLabels: {
+        weak: "Weak",
+        fair: "Fair",
+        good: "Good",
+        strong: "Strong"
+      }
     },
     accountStatus: {
       title: "Account Status",
+      status: "Current Status",
       lastLogin: "Last Login",
       active: "Active",
       inactive: "Inactive",
@@ -207,13 +272,21 @@ export default {
       incorrectEmailFormat: "Invalid email format",
       passwordMin: "Password must be at least 8 characters",
       passwordMatch: "Passwords must match",
-      currentPasswordRequired: "Current password is required"
+      passwordUppercase: "Password must include at least one uppercase letter",
+      passwordLowercase: "Password must include at least one lowercase letter",
+      passwordNumber: "Password must include at least one number",
+      passwordSpecial: "Password must include at least one special character",
+      currentPasswordRequired: "Current password is required",
+      newPasswordRequired: "New password is required",
+      confirmPasswordRequired: "Password confirmation is required"
     },
     notifications: {
       updateSuccess: "Profile updated successfully",
       updateFailed: "Failed to update profile",
       photoUpdateSuccess: "Profile photo updated successfully",
-      photoUpdateFailed: "Failed to update profile photo"
+      photoUpdateFailed: "Failed to update profile photo",
+      passwordChangeSuccess: "Password changed successfully",
+      passwordChangeFailed: "Failed to change password"
     },
     deleteAccount: {
       title: "Delete Account",

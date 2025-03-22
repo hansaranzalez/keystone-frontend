@@ -33,6 +33,7 @@
 import { storeToRefs } from "pinia";
 import { useAuthStore, AuthForms } from "./store/authStore";
 import { useUiStore } from "./store/ui.store";
+
 const { isAuthenticated, selectedFormGetter } = storeToRefs(useAuthStore());
 const { isSplashVisible } = storeToRefs(useUiStore());
 </script>

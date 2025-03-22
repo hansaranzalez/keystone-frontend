@@ -18,7 +18,16 @@ export const useHttp = () => {
   http.interceptors.request.use((config) => {
     if (import.meta.client) {
       const store = getStore();
-      const token = store.token;
+      
+      // First check the store for token (memory)
+      let token = store.token;
+      
+      // If not in store, try to get from localStorage
+      if (!token) {
+        token = localStorage.getItem('authToken');
+      }
+      
+      // Set Authorization header if we have a token from either source
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

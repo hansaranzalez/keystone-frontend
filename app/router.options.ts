@@ -18,9 +18,19 @@ export default {
             component: () => import("~/pages/google-callback.vue"),
         },
         {
-            name: "profile",
+            name: "account",
             path: "/account",
             component: () => import("~/pages/account.vue"),
+        },
+        // Fallback route to handle direct URL access and page reloads
+        {
+            name: "reset-password",
+            path: "/reset-password",
+            component: () => import("~/pages/reset-password.vue"),
         }
     ],
+    scrollBehavior(to, from, savedPosition) {
+        // Scroll to top on navigation
+        return savedPosition || { top: 0 };
+    },
 } satisfies RouterConfig;
