@@ -8,7 +8,7 @@ frontend:
       commands:
         - npm run build
         - mkdir -p .output/public
-        - echo '{"version":1,"type":"static","paths":{"/*":{"path":"/*"}}}' > .output/public/deploy-manifest.json
+        - echo '{"version":1,"hosting":{"type":"static","routes":[{"path":"/*","fallback":"index.html"}]}}' > .output/public/deploy-manifest.json
   artifacts:
     baseDirectory: .output/public
     files:
