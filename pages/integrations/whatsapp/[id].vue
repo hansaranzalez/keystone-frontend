@@ -382,14 +382,35 @@ async function confirmAction() {
 
 <style scoped>
 .loading-spinner {
-  @apply size-8 border-4 border-gray-200 border-t-primary rounded-full animate-spin;
+  width: 2rem;
+  height: 2rem;
+  border-width: 4px;
+  border-color: #e5e7eb;
+  border-top-color: var(--color-primary);
+  border-radius: 9999px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .btn {
-  @apply px-4 py-2 rounded font-medium transition-colors inline-flex items-center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  transition-property: color, background-color, border-color;
+  transition-duration: 150ms;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-primary {
-  @apply bg-primary text-white hover:bg-primary-dark;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark, var(--color-primary));
 }
 </style>
