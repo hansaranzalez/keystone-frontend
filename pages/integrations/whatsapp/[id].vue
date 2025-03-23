@@ -382,7 +382,7 @@ async function confirmAction() {
 
 <style scoped>
 .loading-spinner {
-  @apply w-8 h-8 border-4 border-gray-200 border-t-primary rounded-full animate-spin;
+  @apply size-8 border-4 border-gray-200 border-t-primary rounded-full animate-spin;
 }
 
 .btn {
