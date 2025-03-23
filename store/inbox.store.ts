@@ -1,5 +1,6 @@
 // store/inbox.store.ts
 import { defineStore } from "pinia"
+import { useI18n } from "vue-i18n"
 import { 
   fetchConversations, 
   fetchConversation, 
@@ -147,7 +148,8 @@ export const useInboxStore = defineStore("inbox", {
           this.conversations = result.data
         }
       } catch (error) {
-        this.setError('Error loading conversations')
+        const { t } = useI18n()
+        this.setError(t('inbox.error.fetchConversations'))
         console.error('Error in loadConversations:', error)
       } finally {
         this.setLoading(false)
@@ -177,7 +179,8 @@ export const useInboxStore = defineStore("inbox", {
           await this.markAsRead(conversationId)
         }
       } catch (error) {
-        this.setError('Error loading conversation details')
+        const { t } = useI18n()
+        this.setError(t('inbox.error.fetchConversation'))
         console.error('Error in loadConversation:', error)
       } finally {
         this.setLoading(false)
@@ -223,7 +226,8 @@ export const useInboxStore = defineStore("inbox", {
         }
         return false
       } catch (error) {
-        this.setError('Error sending message')
+        const { t } = useI18n()
+        this.setError(t('inbox.error.sendMessage'))
         console.error('Error in sendNewMessage:', error)
         return false
       } finally {

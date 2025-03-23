@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1400" viewBox="0 0 1000 1400">
+  <!-- Background -->
+  <rect width="1000" height="1400" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="500" y="60" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#1E293B">Zolana Logo Concepts</text>
+  <text x="500" y="100" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#64748B">Unified Communication Platform for Real Estate</text>
+  
+  <!-- Concept 1: Connected Hub -->
+  <g transform="translate(250, 200)">
+    <!-- Logo -->
+    <circle cx="0" cy="0" r="60" fill="#3B82F6" opacity="0.1"/>
+    <circle cx="0" cy="0" r="50" fill="#3B82F6" opacity="0.2"/>
+    <circle cx="0" cy="0" r="40" fill="#3B82F6" opacity="0.4"/>
+    <circle cx="0" cy="0" r="30" fill="#3B82F6"/>
+    
+    <!-- Connection lines -->
+    <line x1="0" y1="-30" x2="0" y2="-70" stroke="#3B82F6" stroke-width="3"/>
+    <line x1="26" y1="-15" x2="60" y2="-35" stroke="#10B981" stroke-width="3"/>
+    <line x1="26" y1="15" x2="60" y2="35" stroke="#8B5CF6" stroke-width="3"/>
+    <line x1="0" y1="30" x2="0" y2="70" stroke="#F59E0B" stroke-width="3"/>
+    <line x1="-26" y1="15" x2="-60" y2="35" stroke="#EF4444" stroke-width="3"/>
+    <line x1="-26" y1="-15" x2="-60" y2="-35" stroke="#EC4899" stroke-width="3"/>
+    
+    <!-- Z in the center -->
+    <text x="0" y="8" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="white">Z</text>
+    
+    <!-- Company name -->
+    <text x="0" y="100" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="130" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 1: Connected Hub</text>
+  </g>
+  
+  <!-- Concept 2: Z-House -->
+  <g transform="translate(750, 200)">
+    <!-- Logo -->
+    <path d="M-50,-40 L50,-40 L50,-20 L0,30 L-50,-20 Z" fill="#3B82F6"/>
+    <path d="M-40,-30 L-40,20 L40,20 L40,-30 L-40,-30" fill="none" stroke="#0D9488" stroke-width="5"/>
+    
+    <!-- Company name -->
+    <text x="0" y="60" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="90" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 2: Z-House</text>
+  </g>
+  
+  <!-- Concept 3: Message Fusion -->
+  <g transform="translate(250, 400)">
+    <!-- Message bubbles -->
+    <path d="M-30,-30 Q-50,-30 -50,-10 L-50,10 Q-50,30 -30,30 L-10,30 L0,50 L10,30 L30,30 Q50,30 50,10 L50,-10 Q50,-30 30,-30 Z" fill="#10B981" opacity="0.8"/>
+    <path d="M-50,0 Q-70,0 -70,20 L-70,40 Q-70,60 -50,60 L-30,60 L-20,80 L-10,60 L10,60 Q30,60 30,40 L30,20 Q30,0 10,0 Z" fill="#3B82F6" opacity="0.8"/>
+    <path d="M0,-60 Q-20,-60 -20,-40 L-20,-20 Q-20,0 0,0 L20,0 L30,20 L40,0 L60,0 Q80,0 80,-20 L80,-40 Q80,-60 60,-60 Z" fill="#8B5CF6" opacity="0.8"/>
+    
+    <!-- Z in negative space -->
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="60" font-weight="bold" text-anchor="middle" fill="#1E293B">Z</text>
+    
+    <!-- Company name -->
+    <text x="0" y="100" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="130" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 3: Message Fusion</text>
+  </g>
+  
+  <!-- Concept 4: Z-Connect -->
+  <g transform="translate(750, 400)">
+    <!-- Flowing Z line -->
+    <path d="M-40,-30 L40,-30 C50,-30 50,-20 40,-10 L-20,30 C-30,40 -20,40 -10,40 L40,40" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+      <animate attributeName="stroke" values="#3B82F6;#10B981;#8B5CF6;#F59E0B;#3B82F6" dur="10s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 4: Z-Connect</text>
+  </g>
+  
+  <!-- Concept 5: Keystone Z -->
+  <g transform="translate(250, 650)">
+    <!-- Keystone shape -->
+    <path d="M0,-55 L45,-30 L45,30 L0,55 L-45,30 L-45,-30 Z" fill="#1E40AF"/>
+    <path d="M0,-30 L25,-15 L0,35 L-25,-15 Z" fill="white"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 5: Keystone Z</text>
+  </g>
+  
+  <!-- Concept 6: Z-Gateway -->
+  <g transform="translate(750, 650)">
+    <!-- Gateway arch with Z -->
+    <path d="M-50,-50 L-50,50 L50,50 L50,-50" fill="none" stroke="#3B82F6" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M-30,-30 L30,-30 L-30,30 L30,30" fill="none" stroke="#0D9488" stroke-width="6" stroke-linejoin="round"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 6: Z-Gateway</text>
+  </g>
+  
+  <!-- Concept 7: Modern Minimal Z -->
+  <g transform="translate(250, 900)">
+    <!-- Minimalist Z -->
+    <rect x="-40" y="-40" width="80" height="15" fill="#3B82F6"/>
+    <rect x="-40" y="25" width="80" height="15" fill="#3B82F6"/>
+    <rect x="-40" y="-40" width="15" height="80" fill="#3B82F6" transform="rotate(45, -33, -33)"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 7: Modern Minimal Z</text>
+  </g>
+  
+  <!-- Concept 8: Z Conversation Threads -->
+  <g transform="translate(750, 900)">
+    <!-- Threads forming Z -->
+    <line x1="-40" y1="-30" x2="40" y2="-30" stroke="#3B82F6" stroke-width="6" stroke-linecap="round"/>
+    <line x1="-40" y1="30" x2="40" y2="30" stroke="#3B82F6" stroke-width="6" stroke-linecap="round"/>
+    <line x1="40" y1="-30" x2="-40" y2="30" stroke="#3B82F6" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- Connection dots -->
+    <circle cx="-40" cy="-30" r="8" fill="#10B981"/>
+    <circle cx="40" cy="-30" r="8" fill="#8B5CF6"/>
+    <circle cx="-40" cy="30" r="8" fill="#F59E0B"/>
+    <circle cx="40" cy="30" r="8" fill="#EF4444"/>
+    <circle cx="0" cy="0" r="8" fill="#EC4899"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 8: Z Conversation Threads</text>
+  </g>
+  
+  <!-- Concept 9: Dynamic Z Shield -->
+  <g transform="translate(250, 1150)">
+    <!-- Shield with Z -->
+    <path d="M0,-55 C40,-55 60,-35 60,5 C60,35 30,45 0,55 C-30,45 -60,35 -60,5 C-60,-35 -40,-55 0,-55 Z" fill="url(#gradient1)"/>
+    <path d="M-25,-15 L25,-15 L-25,15 L25,15" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 9: Dynamic Z Shield</text>
+  </g>
+  
+  <!-- Concept 10: Z Speech Hub -->
+  <g transform="translate(750, 1150)">
+    <!-- Central hub -->
+    <circle cx="0" cy="0" r="30" fill="#3B82F6"/>
+    <text x="0" y="10" font-family="Arial, sans-serif" font-size="30" font-weight="bold" text-anchor="middle" fill="white">Z</text>
+    
+    <!-- Speech bubbles around -->
+    <path d="M-20,-40 Q-40,-40 -40,-20 L-40,-10 Q-40,0 -20,0 L-10,0 L0,10 L10,0 L20,0 Q40,0 40,-20 L40,-40 Q40,-60 20,-60 Z" fill="#10B981" opacity="0.7" transform="translate(-20, -20)"/>
+    <path d="M-20,-40 Q-40,-40 -40,-20 L-40,-10 Q-40,0 -20,0 L-10,0 L0,10 L10,0 L20,0 Q40,0 40,-20 L40,-40 Q40,-60 20,-60 Z" fill="#8B5CF6" opacity="0.7" transform="translate(50, -5) rotate(45)"/>
+    <path d="M-20,-40 Q-40,-40 -40,-20 L-40,-10 Q-40,0 -20,0 L-10,0 L0,10 L10,0 L20,0 Q40,0 40,-20 L40,-40 Q40,-60 20,-60 Z" fill="#F59E0B" opacity="0.7" transform="translate(30, 40) rotate(90)"/>
+    <path d="M-20,-40 Q-40,-40 -40,-20 L-40,-10 Q-40,0 -20,0 L-10,0 L0,10 L10,0 L20,0 Q40,0 40,-20 L40,-40 Q40,-60 20,-60 Z" fill="#EF4444" opacity="0.7" transform="translate(-30, 40) rotate(-45)"/>
+    
+    <!-- Company name -->
+    <text x="0" y="80" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1E293B">zolana</text>
+    
+    <!-- Concept name -->
+    <text x="0" y="110" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#64748B">Concept 10: Z Speech Hub</text>
+  </g>
+  
+  <!-- URL -->
+  <text x="500" y="1300" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#3B82F6">zolana.io</text>
+  <text x="500" y="1330" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#64748B">Unified Communication Platform for Real Estate Professionals</text>
+  
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#0D9488"/>
+    </linearGradient>
+  </defs>
+</svg>

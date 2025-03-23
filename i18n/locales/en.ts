@@ -1,6 +1,6 @@
 export default {
-  appName: "KEYSTONE",
-  welcome: "Welcome to Project Keystone",
+  appName: "ZOLARA",
+  welcome: "Welcome to Zolara",
   subtitle: "Real Estate CRM Platform",
   languages: {
     english: "English",
@@ -20,11 +20,91 @@ export default {
     tools: "Tools",
     templates: "Templates",
     analytics: "Analytics",
+    integrations: "Integrations",
     settings: "Settings"
   },
   version: {
     app: "App Version",
     api: "API Version"
+  },
+  integrations: {
+    title: "Integrations",
+    description: "Connect your channels to centralize communications",
+    available: "Available Integrations",
+    connected: "Connected Accounts",
+    manage: "Manage",
+    add: "Add New",
+    comingSoon: "More integrations coming soon",
+    backToIntegrations: "Back to Integrations",
+    whatsapp: {
+      title: "WhatsApp Business",
+      description: "Connect your WhatsApp Business account to send and receive messages",
+      connect: "Connect WhatsApp",
+      connecting: "Connecting to WhatsApp...",
+      connected: "WhatsApp Connected",
+      disconnected: "WhatsApp Disconnected",
+      accounts: "WhatsApp Accounts",
+      noAccounts: "No WhatsApp accounts connected",
+      addAccount: "Add WhatsApp Account",
+      addAccountDescription: "Connect your WhatsApp Business account to start sending and receiving messages",
+      activeAccounts: "Active Accounts",
+      inactiveAccounts: "Inactive Accounts",
+      inactive: "Inactive",
+      backToAccounts: "Back to Accounts",
+      form: {
+        name: "Account Name",
+        namePlaceholder: "Enter a name for this WhatsApp account",
+        phoneNumber: "Phone Number",
+        phonePlaceholder: "+1 (123) 456-7890",
+        phoneHelp: "The phone number associated with your WhatsApp Business account",
+        phoneNumberId: "Phone Number ID",
+        phoneNumberIdPlaceholder: "Enter your WhatsApp Phone Number ID",
+        phoneNumberIdHelp: "The Phone Number ID from the Meta Developer Portal",
+        businessAccountId: "Business Account ID",
+        businessAccountIdPlaceholder: "Enter your WhatsApp Business Account ID",
+        businessAccountIdHelp: "The Business Account ID from the Meta Developer Portal",
+        accessToken: "Access Token",
+        accessTokenPlaceholder: "Enter your permanent access token",
+        accessTokenHelp: "The permanent access token generated from the Meta Developer Portal",
+        webhookSecret: "Webhook Secret (Optional)",
+        webhookSecretPlaceholder: "Enter your webhook verification token",
+        webhookSecretHelp: "The verification token used to validate webhook requests",
+        businessName: "Business Name (Optional)",
+        businessNamePlaceholder: "Enter your business name",
+        connect: "Connect & Verify",
+        update: "Update Account",
+        deactivate: "Deactivate Account",
+        reactivate: "Reactivate Account",
+        delete: "Delete Account",
+        verify: "Verify Connection"
+      },
+      status: {
+        PENDING: "Pending",
+        CONNECTED: "Connected",
+        ERROR: "Connection Error",
+        DISCONNECTED: "Disconnected"
+      },
+      alerts: {
+        connectionVerified: "WhatsApp connection verified successfully",
+        connectionFailed: "Failed to verify WhatsApp connection",
+        accountCreated: "WhatsApp account created successfully",
+        accountUpdated: "WhatsApp account updated successfully",
+        accountDeactivated: "WhatsApp account deactivated",
+        accountReactivated: "WhatsApp account reactivated",
+        invalidCredentials: "Invalid credentials. Please check your details."
+      },
+      errors: {
+        nameRequired: "Account name is required",
+        phoneRequired: "Phone number is required",
+        phoneNumberIdRequired: "Phone Number ID is required",
+        businessAccountIdRequired: "Business Account ID is required",
+        accessTokenRequired: "Access Token is required",
+        invalidPhoneNumber: "Please enter a valid phone number",
+        invalidToken: "Invalid access token format",
+        connectionFailed: "Connection failed. Please check your credentials."
+      },
+      helpText: "Where can I find this information?"
+    }
   },
   user: {
     signOut: "Sign out",

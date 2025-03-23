@@ -195,6 +195,12 @@ import { useVersionService } from '~/services/version.service';
           count: useInboxStore().unreadCount || undefined
         },
         {
+          label: t('integrations.title'),
+          icon: 'i-lucide-plug',
+          to: '/integrations',
+          active: isRouteActive('/integrations')
+        },
+        {
           label: t('user.profile'),
           icon: 'i-lucide-user',
           to: '/account',

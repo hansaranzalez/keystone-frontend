@@ -32,7 +32,32 @@ export default {
             name: "inbox",
             path: "/inbox",
             component: () => import("~/pages/inbox/index.vue"),
-        }
+        },
+        {
+            name: "integrations",
+            path: "/integrations",
+            component: () => import("~/pages/integrations/index.vue"),
+        },
+        {
+            name: "whatsapp-accounts",
+            path: "/integrations/whatsapp",
+            component: () => import("~/pages/integrations/whatsapp/index.vue"),
+        },
+        {
+            name: "whatsapp-account-detail",
+            path: "/integrations/whatsapp/:id",
+            component: () => import("~/pages/integrations/whatsapp/[id].vue"),
+        },
+        {
+            name: "whatsapp-account-new",
+            path: "/integrations/whatsapp/new",
+            component: () => import("~/pages/integrations/whatsapp/new.vue"),
+        },
+        {
+            name: "zol-admin",
+            path: "/zol-admin",
+            component: () => import("~/pages/zol-admin.vue"),
+        },
     ],
     scrollBehavior(to, from, savedPosition) {
         // Scroll to top on navigation

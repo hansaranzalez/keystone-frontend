@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   
   app: {
     head: {
-      title: 'Keystone',
+      title: 'Zolara',
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
     },
@@ -47,10 +47,13 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
-  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/image', '@nuxt/ui', '@nuxt/icon', '@nuxtjs/i18n', '@vueuse/nuxt'],
+  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/image', '@nuxt/ui', '@nuxt/icon', '@nuxtjs/i18n', '@vueuse/nuxt', 'nuxt-svgo'],
   i18n: {
     vueI18n: '~/i18n/index.ts',
     defaultLocale: 'es',
+  },
+  svgo: {
+    autoImportPath: './assets/svg/',
   },
   plugins: ["~/plugins/pinia.client.ts", "~/plugins/services.client.ts"],
   runtimeConfig: {

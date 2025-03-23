@@ -1,6 +1,6 @@
 export default {
-  appName: "KEYSTONE",
-  welcome: "Bienvenido a Project Keystone",
+  appName: "ZOLARA",
+  welcome: "Bienvenido a Zolara",
   subtitle: "Plataforma CRM para Bienes Raíces",
   languages: {
     english: "Inglés",
@@ -20,11 +20,91 @@ export default {
     tools: "Herramientas",
     templates: "Plantillas",
     analytics: "Análisis",
+    integrations: "Integraciones",
     settings: "Configuración"
   },
   version: {
     app: "Versión App",
     api: "Versión API"
+  },
+  integrations: {
+    title: "Integraciones",
+    description: "Conecta tus canales para centralizar comunicaciones",
+    available: "Integraciones Disponibles",
+    connected: "Cuentas Conectadas",
+    manage: "Gestionar",
+    add: "Agregar Nuevo",
+    comingSoon: "Próximamente más integraciones",
+    backToIntegrations: "Volver a Integraciones",
+    whatsapp: {
+      title: "WhatsApp Business",
+      description: "Conecta tu cuenta de WhatsApp Business para enviar y recibir mensajes",
+      connect: "Conectar WhatsApp",
+      connecting: "Conectando a WhatsApp...",
+      connected: "WhatsApp Conectado",
+      disconnected: "WhatsApp Desconectado",
+      accounts: "Cuentas de WhatsApp",
+      noAccounts: "No hay cuentas de WhatsApp conectadas",
+      addAccount: "Agregar Cuenta de WhatsApp",
+      addAccountDescription: "Conecta tu cuenta de WhatsApp Business para comenzar a enviar y recibir mensajes",
+      activeAccounts: "Cuentas Activas",
+      inactiveAccounts: "Cuentas Inactivas",
+      inactive: "Inactivo",
+      backToAccounts: "Volver a Cuentas",
+      form: {
+        name: "Nombre de la Cuenta",
+        namePlaceholder: "Ingresa un nombre para esta cuenta de WhatsApp",
+        phoneNumber: "Número de Teléfono",
+        phonePlaceholder: "+1 (123) 456-7890",
+        phoneHelp: "El número de teléfono asociado con tu cuenta de WhatsApp Business",
+        phoneNumberId: "ID de Número de Teléfono",
+        phoneNumberIdPlaceholder: "Ingresa tu ID de Número de Teléfono de WhatsApp",
+        phoneNumberIdHelp: "El ID de Número de Teléfono del Portal de Desarrolladores de Meta",
+        businessAccountId: "ID de Cuenta de Negocio",
+        businessAccountIdPlaceholder: "Ingresa tu ID de Cuenta de Negocio de WhatsApp",
+        businessAccountIdHelp: "El ID de Cuenta de Negocio del Portal de Desarrolladores de Meta",
+        accessToken: "Token de Acceso",
+        accessTokenPlaceholder: "Ingresa tu token de acceso permanente",
+        accessTokenHelp: "El token de acceso permanente generado desde el Portal de Desarrolladores de Meta",
+        webhookSecret: "Secreto de Webhook (Opcional)",
+        webhookSecretPlaceholder: "Ingresa tu token de verificación de webhook",
+        webhookSecretHelp: "El token de verificación utilizado para validar solicitudes de webhook",
+        businessName: "Nombre del Negocio (Opcional)",
+        businessNamePlaceholder: "Ingresa el nombre de tu negocio",
+        connect: "Conectar y Verificar",
+        update: "Actualizar Cuenta",
+        deactivate: "Desactivar Cuenta",
+        reactivate: "Reactivar Cuenta",
+        delete: "Eliminar Cuenta",
+        verify: "Verificar Conexión"
+      },
+      status: {
+        PENDING: "Pendiente",
+        CONNECTED: "Conectado",
+        ERROR: "Error de Conexión",
+        DISCONNECTED: "Desconectado"
+      },
+      alerts: {
+        connectionVerified: "Conexión de WhatsApp verificada exitosamente",
+        connectionFailed: "No se pudo verificar la conexión de WhatsApp",
+        accountCreated: "Cuenta de WhatsApp creada exitosamente",
+        accountUpdated: "Cuenta de WhatsApp actualizada exitosamente",
+        accountDeactivated: "Cuenta de WhatsApp desactivada",
+        accountReactivated: "Cuenta de WhatsApp reactivada",
+        invalidCredentials: "Credenciales inválidas. Por favor verifica tus datos."
+      },
+      errors: {
+        nameRequired: "El nombre de la cuenta es requerido",
+        phoneRequired: "El número de teléfono es requerido",
+        phoneNumberIdRequired: "El ID del número de teléfono es requerido",
+        businessAccountIdRequired: "El ID de la cuenta de negocio es requerido",
+        accessTokenRequired: "El token de acceso es requerido",
+        invalidPhoneNumber: "Por favor ingresa un número de teléfono válido",
+        invalidToken: "Formato de token de acceso inválido",
+        connectionFailed: "La conexión falló. Por favor verifica tus credenciales."
+      },
+      helpText: "¿Dónde puedo encontrar esta información?"
+    }
   },
   user: {
     signOut: "Cerrar sesión",

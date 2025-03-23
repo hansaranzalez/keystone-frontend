@@ -4,7 +4,7 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">KEYSTONE</h1>
+      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
