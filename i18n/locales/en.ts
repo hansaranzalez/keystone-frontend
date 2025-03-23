@@ -40,10 +40,95 @@ export default {
     viewAll: "View all notifications"
   },
   inbox: {
+    title: "Inbox",
     unified: "Unified Inbox",
     compose: "Compose Message",
     search: "Search conversations...",
-    noMessages: "No messages found"
+    noMessages: "No messages found",
+    conversations: "Conversations",
+    newMessage: "New Message",
+    newMessageTitle: "New Conversation",
+    newMessageDescription: "Start a new conversation with a contact",
+    searchPlaceholder: "Search conversations...",
+    noConversations: "No conversations",
+    noSearchResults: "No conversations match your search",
+    noUnreadMessages: "You have no unread messages",
+    noMessagesInChannel: "No messages in this channel",
+    startNewConversation: "Start a new conversation",
+    noConversationSelected: "No conversation selected",
+    selectConversation: "Select a conversation from the list",
+    startConversation: "Send a message to start the conversation",
+    conversation: "Conversation",
+    yesterday: "Yesterday",
+    you: "You",
+    activeNow: "Active now",
+    typeMessage: "Type a message...",
+    sendingVia: "Sending via",
+    call: "Call",
+    viewContact: "View Contact",
+    messageSent: "Message Sent",
+    messageSentDescription: "Your message has been sent successfully",
+    channels: {
+      whatsapp: "WhatsApp",
+      email: "Email",
+      instagram: "Instagram"
+    },
+    filters: {
+      all: "All",
+      unread: "Unread",
+      whatsapp: "WhatsApp",
+      email: "Email",
+      instagram: "Instagram"
+    },
+    dates: {
+      today: "Today",
+      yesterday: "Yesterday"
+    },
+    actions: {
+      archive: "Archive",
+      markUnread: "Mark as unread",
+      block: "Block"
+    },
+    contact: {
+      keyInfo: "Key Information",
+      source: "Source",
+      status: "Status",
+      lastContact: "Last Contact",
+      customFields: "Custom Fields",
+      budget: "Budget",
+      area: "Area of Interest",
+      propertyType: "Property Type",
+      noNotes: "No notes added yet",
+      addNotePlaceholder: "Add a note about this contact...",
+      addNote: "Add Note",
+      complete: "Complete",
+      noFollowUps: "No follow-ups scheduled",
+      scheduleFollowUp: "Schedule Follow-up",
+      newFollowUp: "New Follow-up",
+      title: "Title",
+      date: "Date",
+      description: "Description",
+      today: "Today",
+      websiteLead: "Website Lead",
+      activeLead: "Active Lead",
+      oakDistrict: "Oak District",
+      singleFamilyHome: "Single Family Home",
+      tabs: {
+        info: "Info",
+        notes: "Notes",
+        followUps: "Follow-ups"
+      }
+    },
+    error: {
+      fetchConversations: "Error fetching conversations",
+      fetchConversation: "Error fetching conversation details",
+      conversationNotFound: "Conversation not found",
+      sendMessage: "Error sending message",
+      markAsRead: "Error marking conversation as read"
+    },
+    success: {
+      messageSent: "Message sent successfully"
+    }
   },
   actions: {
     send: "Send",

@@ -99,6 +99,7 @@
   import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '~/store/authStore';
+import { useInboxStore } from '~/store/inbox.store';
 import { useRoute } from 'vue-router';
 import { useVersionService } from '~/services/version.service';
   
@@ -185,6 +186,13 @@ import { useVersionService } from '~/services/version.service';
           icon: 'i-lucide-home',
           to: '/',
           active: isRouteActive('/')
+        },
+        {
+          label: t('inbox.title'),
+          icon: 'i-lucide-inbox',
+          to: '/inbox',
+          active: isRouteActive('/inbox'),
+          count: useInboxStore().unreadCount || undefined
         },
         {
           label: t('user.profile'),

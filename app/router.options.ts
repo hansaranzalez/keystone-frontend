@@ -27,6 +27,11 @@ export default {
             name: "reset-password",
             path: "/reset-password",
             component: () => import("~/pages/reset-password.vue"),
+        },
+        {
+            name: "inbox",
+            path: "/inbox",
+            component: () => import("~/pages/inbox/index.vue"),
         }
     ],
     scrollBehavior(to, from, savedPosition) {

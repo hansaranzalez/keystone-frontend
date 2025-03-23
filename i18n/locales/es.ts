@@ -38,6 +38,97 @@ export default {
     empty: "No hay notificaciones",
     viewAll: "Ver todas las notificaciones"
   },
+  inbox: {
+    title: "Bandeja de Entrada",
+    unified: "Bandeja Unificada",
+    compose: "Redactar Mensaje",
+    search: "Buscar conversaciones...",
+    noMessages: "No se encontraron mensajes",
+    conversations: "Conversaciones",
+    newMessage: "Nuevo Mensaje",
+    newMessageTitle: "Nueva Conversación",
+    newMessageDescription: "Iniciar una nueva conversación con un contacto",
+    searchPlaceholder: "Buscar conversaciones...",
+    noConversations: "No hay conversaciones",
+    noSearchResults: "Ninguna conversación coincide con tu búsqueda",
+    noUnreadMessages: "No tienes mensajes sin leer",
+    noMessagesInChannel: "No hay mensajes en este canal",
+    startNewConversation: "Iniciar una nueva conversación",
+    noConversationSelected: "Ninguna conversación seleccionada",
+    selectConversation: "Selecciona una conversación de la lista",
+    startConversation: "Envía un mensaje para iniciar la conversación",
+    conversation: "Conversación",
+    yesterday: "Ayer",
+    you: "Tú",
+    activeNow: "Activo ahora",
+    typeMessage: "Escribe un mensaje...",
+    sendingVia: "Enviando por",
+    call: "Llamar",
+    viewContact: "Ver Contacto",
+    messageSent: "Mensaje Enviado",
+    messageSentDescription: "Tu mensaje ha sido enviado con éxito",
+    channels: {
+      whatsapp: "WhatsApp",
+      email: "Correo Electrónico",
+      instagram: "Instagram"
+    },
+    filters: {
+      all: "Todos",
+      unread: "No leídos",
+      whatsapp: "WhatsApp",
+      email: "Correo Electrónico",
+      instagram: "Instagram"
+    },
+    dates: {
+      today: "Hoy",
+      yesterday: "Ayer"
+    },
+    actions: {
+      archive: "Archivar",
+      markUnread: "Marcar como no leído",
+      block: "Bloquear"
+    },
+    contact: {
+      keyInfo: "Información Clave",
+      source: "Fuente",
+      status: "Estado",
+      lastContact: "Último Contacto",
+      customFields: "Campos Personalizados",
+      budget: "Presupuesto",
+      area: "Área de Interés",
+      propertyType: "Tipo de Propiedad",
+      noNotes: "Aún no hay notas añadidas",
+      addNotePlaceholder: "Añadir una nota sobre este contacto...",
+      addNote: "Añadir Nota",
+      complete: "Completado",
+      noFollowUps: "No hay seguimientos programados",
+      scheduleFollowUp: "Programar Seguimiento",
+      newFollowUp: "Nuevo Seguimiento",
+      title: "Título",
+      date: "Fecha",
+      description: "Descripción",
+      today: "Hoy",
+      websiteLead: "Lead del Sitio Web",
+      activeLead: "Lead Activo",
+      oakDistrict: "Distrito Roble",
+      singleFamilyHome: "Casa Unifamiliar",
+      tabs: {
+        info: "Info",
+        notes: "Notas",
+        followUps: "Seguimientos"
+      }
+    },
+    error: {
+      fetchConversations: "Error al obtener conversaciones",
+      fetchConversation: "Error al obtener detalles de la conversación",
+      conversationNotFound: "Conversación no encontrada",
+      sendMessage: "Error al enviar el mensaje",
+      markAsRead: "Error al marcar la conversación como leída"
+    },
+    success: {
+      messageSent: "Mensaje enviado con éxito"
+    }
+  },
   common: {
     or: "O",
     add: "Agregar",
