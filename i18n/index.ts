@@ -8,6 +8,7 @@ export default defineI18nConfig(() => ({
     messages: {
       en,
       es
-    }
+    },
+    escapeParameter: true
   }))
   

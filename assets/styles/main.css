@@ -98,6 +98,10 @@
     /* Primary colors - match to UI Kit */
     --ui-primary: var(--color-primary-600);  /* #2563EB in light mode */
     --ui-secondary: var(--color-secondary-600);  /* #0D9488 in light mode */
+    --ui-warning: var(--color-warning-500);  /* #F59E0B in light mode */
+    --ui-error: var(--color-error-500);  /* #EF4444 in light mode */
+    --ui-success: var(--color-success-500);  /* #10B981 in light mode */
+    --ui-info: var(--color-info-500);  /* #3B82F6 in light mode */
   }
   
   /* Dark mode variables */
@@ -125,4 +129,8 @@
     /* Primary colors - match to UI Kit */
     --ui-primary: var(--color-primary-500);  /* #3B82F6 in dark mode */
     --ui-secondary: var(--color-secondary-500);  /* #14B8A6 in dark mode */
+    --ui-warning: var(--color-warning-500);  /* #F59E0B in dark mode */
+    --ui-error: var(--color-error-500);  /* #EF4444 in dark mode */
+    --ui-success: var(--color-success-500);  /* #10B981 in dark mode */
+    --ui-info: var(--color-info-500);  /* #3B82F6 in dark mode */
   }

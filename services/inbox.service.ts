@@ -1,7 +1,28 @@
 // services/inbox.service.ts
 import { useNuxtApp } from '#app'
-import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
+
+// Define error message keys to avoid using useI18n() in service functions
+const ERROR_KEYS = {
+  fetchConversations: 'inbox.error.fetchConversations',
+  fetchConversation: 'inbox.error.fetchConversation',
+  sendMessage: 'inbox.error.sendMessage',
+  messageSent: 'inbox.success.messageSent',
+  markAsRead: 'inbox.error.markAsRead'
+} as const;
+
+// Type for the keys of ERROR_KEYS
+type ErrorKeyType = keyof typeof ERROR_KEYS;
+
+// Helper function to get message keys without needing useI18n()
+function getErrorKey(key: ErrorKeyType | string): string {
+  // First check if it's one of our known keys
+  if (key in ERROR_KEYS) {
+    return ERROR_KEYS[key as ErrorKeyType];
+  }
+  // Fallback to the key itself
+  return key;
+}
 
 // Types
 export interface Contact {
@@ -61,9 +82,25 @@ const getStore = () => {
   }
 }
 
-const getHttp = () => {
+// Define HTTP client interface to ensure TypeScript recognizes methods like get, post, put, etc.
+interface HttpClient {
+  get: (url: string, config?: any) => Promise<any>;
+  post: (url: string, data?: any, config?: any) => Promise<any>;
+  put: (url: string, data?: any, config?: any) => Promise<any>;
+  delete: (url: string, config?: any) => Promise<any>;
+  patch: (url: string, data?: any, config?: any) => Promise<any>;
+}
+
+const getHttp = (): HttpClient | null => {
   try {
-    return useNuxtApp().$http
+    // Make sure we're on the client side and the app is ready
+    if (process.client && typeof window !== 'undefined') {
+      const nuxtApp = useNuxtApp()
+      if (nuxtApp && nuxtApp.$http) {
+        return nuxtApp.$http as HttpClient
+      }
+    }
+    return null
   } catch (error) {
     console.error('Error getting HTTP client:', error)
     return null
@@ -72,7 +109,14 @@ const getHttp = () => {
 
 const getEndpoints = () => {
   try {
-    return useNuxtApp().$endpoints
+    // Make sure we're on the client side and the app is ready
+    if (process.client && typeof window !== 'undefined') {
+      const nuxtApp = useNuxtApp()
+      if (nuxtApp && nuxtApp.$endpoints) {
+        return nuxtApp.$endpoints
+      }
+    }
+    return null
   } catch (error) {
     console.error('Error getting endpoints:', error)
     return null
@@ -97,358 +141,54 @@ const getI18nMessageFromKey = (key: string, t?: (key: string) => string): string
   return messages[key] || key
 }
 
-// Mock data for testing - will be replaced with API calls in production
-const mockConversations: Conversation[] = [
-  {
-    id: '1',
-    contact: {
-      id: '101',
-      name: 'Sara Martínez',
-      phone: '(555) 123-4567',
-      email: 'sara@ejemplo.com',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      notes: [
-        'Interesada en casas de 3 habitaciones en el distrito Roble',
-        'Presupuesto: $450-500K'
-      ]
-    },
-    messages: [
-      {
-        id: '1001',
-        content: '¿Está todavía disponible la propiedad de Calle Roble?',
-        timestamp: new Date('2025-03-15T14:15:00'),
-        senderId: '101',
-        channel: 'whatsapp',
-        status: 'read'
-      },
-      {
-        id: '1002',
-        content: '¡Sí, está disponible! ¿Te gustaría programar una visita?',
-        timestamp: new Date('2025-03-15T14:20:00'),
-        senderId: 'agent',
-        channel: 'whatsapp',
-        status: 'read'
-      },
-      {
-        id: '1003',
-        content: 'Estoy viendo la propiedad ahora mismo, ¡es hermosa! ¿Cuánto es el depósito inicial?',
-        timestamp: new Date('2025-03-16T14:30:00'),
-        senderId: '101',
-        channel: 'whatsapp',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'img1',
-            type: 'image',
-            url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-            name: 'Casa_Roble_Frente.jpg',
-            fileType: 'jpg',
-            size: 1200000
-          },
-          {
-            id: 'img2',
-            type: 'image',
-            url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea',
-            name: 'Casa_Roble_Cocina.jpg',
-            fileType: 'jpg',
-            size: 950000
-          }
-        ]
-      },
-      {
-        id: '1004',
-        content: 'El depósito inicial es del 10% del valor de la propiedad. Aquí tienes los detalles financieros.',
-        timestamp: new Date('2025-03-16T14:45:00'),
-        senderId: 'agent',
-        channel: 'whatsapp',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'doc1',
-            type: 'document',
-            url: '/documents/financial_details.pdf',
-            name: 'Detalles_Financieros.pdf',
-            fileType: 'pdf',
-            size: 2500000,
-            previewText: 'Resumen financiero para la propiedad de Calle Roble'
-          }
-        ]
-      }
-    ],
-    lastMessage: {
-      content: 'El depósito inicial es del 10% del valor de la propiedad. Aquí tienes los detalles financieros.',
-      timestamp: new Date('2025-03-16T14:45:00'),
-      isUnread: true,
-      channel: 'whatsapp'
-    }
-  },
-  {
-    id: '2',
-    contact: {
-      id: '102',
-      name: 'Juan Pérez',
-      phone: '(555) 987-6543',
-      email: 'juan@ejemplo.com',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
-    },
-    messages: [
-      {
-        id: '2001',
-        content: 'Estaré disponible el próximo martes por la tarde para las visitas.',
-        timestamp: new Date('2025-03-16T10:45:00'),
-        senderId: '102',
-        channel: 'email',
-        status: 'read'
-      },
-      {
-        id: '2002',
-        content: 'Perfecto, he programado la visita para el martes a las 15:00. Aquí tiene el recorrido virtual de la propiedad.',
-        timestamp: new Date('2025-03-16T11:30:00'),
-        senderId: 'agent',
-        channel: 'email',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'vid1',
-            type: 'video',
-            url: 'https://example.com/videos/property_tour.mp4',
-            name: 'Recorrido_Virtual_Propiedad.mp4',
-            fileType: 'mp4',
-            size: 15000000,
-            duration: 180,
-            thumbnail: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c'
-          }
-        ]
-      },
-      {
-        id: '2003',
-        content: 'Gracias por el recorrido virtual. También me gustaría saber acerca de las opciones de financiamiento.',
-        timestamp: new Date('2025-03-17T09:15:00'),
-        senderId: '102',
-        channel: 'email',
-        status: 'read'
-      }
-    ],
-    lastMessage: {
-      content: 'Gracias por el recorrido virtual. También me gustaría saber acerca de las opciones de financiamiento.',
-      timestamp: new Date('2025-03-17T09:15:00'),
-      isUnread: false,
-      channel: 'email'
-    }
-  },
-  {
-    id: '3',
-    contact: {
-      id: '103',
-      name: 'María García',
-      phone: '(555) 333-2222',
-      email: 'maria@ejemplo.com',
-      avatar: 'https://randomuser.me/api/portraits/women/68.jpg'
-    },
-    messages: [
-      {
-        id: '3001',
-        content: '¿Cuáles son los costos de cierre de la propiedad de Calle Roble?',
-        timestamp: new Date('2025-03-15T09:30:00'),
-        senderId: '103',
-        channel: 'whatsapp',
-        status: 'read'
-      },
-      {
-        id: '3002',
-        content: 'Los costos de cierre son aproximadamente el 2-5% del precio de venta. Le envío un desglose detallado.',
-        timestamp: new Date('2025-03-15T10:15:00'),
-        senderId: 'agent',
-        channel: 'whatsapp',
-        status: 'read',
-        attachments: [
-          {
-            id: 'doc2',
-            type: 'document',
-            url: '/documents/closing_costs.pdf',
-            name: 'Costos_Cierre_Desglose.pdf',
-            fileType: 'pdf',
-            size: 1800000
-          }
-        ]
-      },
-      {
-        id: '3003',
-        content: 'Gracias. ¿Podemos hablar por teléfono? Tengo algunas preguntas adicionales.',
-        timestamp: new Date('2025-03-15T14:25:00'),
-        senderId: '103',
-        channel: 'whatsapp',
-        status: 'read'
-      },
-      {
-        id: '3004',
-        content: 'Acabo de enviarle un mensaje de voz con los detalles adicionales que solicitó.',
-        timestamp: new Date('2025-03-21T16:40:00'),
-        senderId: 'agent',
-        channel: 'whatsapp',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'aud1',
-            type: 'audio',
-            url: '/audio/property_details.mp3',
-            name: 'Detalles_Adicionales.mp3',
-            fileType: 'mp3',
-            size: 3500000,
-            duration: 95
-          }
-        ]
-      }
-    ],
-    lastMessage: {
-      content: 'Acabo de enviarle un mensaje de voz con los detalles adicionales que solicitó.',
-      timestamp: new Date('2025-03-21T16:40:00'),
-      isUnread: true,
-      channel: 'whatsapp'
-    }
-  },
-  {
-    id: '4',
-    contact: {
-      id: '104',
-      name: 'Carlos Rodríguez',
-      phone: '(555) 444-7777',
-      email: 'carlos@ejemplo.com',
-      avatar: 'https://randomuser.me/api/portraits/men/75.jpg'
-    },
-    messages: [
-      {
-        id: '4001',
-        content: 'Hola, me interesa la propiedad de Avenida Pino. ¿Podría enviarme más información?',
-        timestamp: new Date('2025-03-20T13:10:00'),
-        senderId: '104',
-        channel: 'instagram',
-        status: 'read'
-      },
-      {
-        id: '4002',
-        content: '¡Claro! Aquí tienes algunas fotos adicionales y los detalles de la propiedad.',
-        timestamp: new Date('2025-03-20T13:45:00'),
-        senderId: 'agent',
-        channel: 'instagram',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'img3',
-            type: 'image',
-            url: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde',
-            name: 'Propiedad_Pino_Exterior.jpg',
-            fileType: 'jpg',
-            size: 1350000
-          },
-          {
-            id: 'img4',
-            type: 'image',
-            url: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea',
-            name: 'Propiedad_Pino_Interior.jpg',
-            fileType: 'jpg',
-            size: 1280000
-          },
-          {
-            id: 'loc1',
-            type: 'location',
-            url: 'https://maps.example.com/location/123456',
-            name: 'Ubicación Avenida Pino 123',
-            coordinates: {
-              latitude: 40.416775,
-              longitude: -3.703790
-            }
-          }
-        ]
-      },
-      {
-        id: '4003',
-        content: 'Gracias por la información. La ubicación es perfecta para nosotros. ¿Está disponible este fin de semana para una visita?',
-        timestamp: new Date('2025-03-21T10:20:00'),
-        senderId: '104',
-        channel: 'instagram',
-        status: 'read'
-      }
-    ],
-    lastMessage: {
-      content: 'Gracias por la información. La ubicación es perfecta para nosotros. ¿Está disponible este fin de semana para una visita?',
-      timestamp: new Date('2025-03-21T10:20:00'),
-      isUnread: true,
-      channel: 'instagram'
-    }
-  },
-  {
-    id: '5',
-    contact: {
-      id: '105',
-      name: 'Ana Torres',
-      phone: '(555) 222-8888',
-      email: 'ana@ejemplo.com',
-      avatar: 'https://randomuser.me/api/portraits/women/22.jpg'
-    },
-    messages: [
-      {
-        id: '5001',
-        content: 'Estoy buscando una propiedad para inversión en la zona este de la ciudad. ¿Tienen algo disponible?',
-        timestamp: new Date('2025-03-18T11:05:00'),
-        senderId: '105',
-        channel: 'whatsapp',
-        status: 'read'
-      },
-      {
-        id: '5002',
-        content: 'Tenemos varias opciones que podrían interesarle. Acabo de grabar un video mostrando tres propiedades para inversión.',
-        timestamp: new Date('2025-03-18T11:45:00'),
-        senderId: 'agent',
-        channel: 'whatsapp',
-        status: 'delivered',
-        attachments: [
-          {
-            id: 'vid2',
-            type: 'video',
-            url: 'https://example.com/videos/investment_properties.mp4',
-            name: 'Propiedades_Inversión.mp4',
-            fileType: 'mp4',
-            size: 22000000,
-            duration: 240,
-            thumbnail: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750'
-          }
-        ]
-      }
-    ],
-    lastMessage: {
-      content: 'Tenemos varias opciones que podrían interesarle. Acabo de grabar un video mostrando tres propiedades para inversión.',
-      timestamp: new Date('2025-03-18T11:45:00'),
-      isUnread: false,
-      channel: 'whatsapp'
-    }
-  }
-]
+// Mock data completely removed - now we're using only the API
+// Empty array for type checking purposes only
+const mockConversations: Conversation[] = []
 
 /**
  * Fetch all conversations for the current user
  * @returns Promise with conversations data or error
  */
-function fetchConversations() {
-  const http = getHttp()
-  const endpoints = getEndpoints()
+async function fetchConversations(limit = 20, offset = 0, status = 'ACTIVE') {
   const { t } = useI18n()
   
-  if (!http || !endpoints) {
-    console.error('Cannot fetch conversations: Missing dependencies')
-    return { error: getI18nMessageFromKey('inbox.error.fetchConversations', t) }
-  }
-  
   try {
-    // In production, this would call the API:
-    // const response = await http.get(endpoints.inbox.conversations)
-    // return { data: response.data }
+    // Get dependencies directly from nuxtApp to ensure they're available
+    const nuxtApp = useNuxtApp()
+    // Apply HttpClient interface to ensure TypeScript recognizes the methods
+    const http = nuxtApp.$http as HttpClient
+    const endpoints = nuxtApp.$endpoints
     
-    // For now, return mock data
-    return { data: mockConversations }
+    if (!http || !endpoints || !endpoints.inbox) {
+      console.error('Cannot fetch conversations: Missing dependencies', { http: !!http, endpoints: !!endpoints })
+      return { error: getErrorKey('fetchConversations') }
+    }
+    
+    // Call the real API endpoint with query parameters
+    const response = await http.get(endpoints.inbox.conversations, {
+      params: { limit, offset, status }
+    })
+    
+    // Check response structure and format data to match our application model
+    if (response.data && response.data.status === 'success' && response.data.data) {
+      // API response may have different structures
+      const apiConversations = response.data.data.conversations || response.data.data || [];
+      
+      // Transform each conversation and log structure for debugging
+      console.log('API conversations structure:', JSON.stringify(apiConversations[0], null, 2));
+      
+      // Transform the backend data format to match our frontend model
+      const conversations = Array.isArray(apiConversations) 
+        ? apiConversations.map(conv => convertApiConversationToAppModel(conv))
+        : [];
+        
+      return { data: conversations, total: response.data.data.total || conversations.length }
+    } else {
+      throw new Error('Invalid response format from API')
+    }
   } catch (error) {
     console.error('Error fetching conversations:', error)
-    return { error: getI18nMessageFromKey('inbox.error.fetchConversations', t) }
+    return { error: getErrorKey('fetchConversations') }
   }
 }
 
@@ -457,93 +197,61 @@ function fetchConversations() {
  * @param conversationId ID of the conversation to fetch
  * @returns Promise with conversation data or error
  */
-function fetchConversation(conversationId: string) {
-  const http = getHttp()
-  const endpoints = getEndpoints()
-  const { t } = useI18n()
-  
-  if (!http || !endpoints) {
-    console.error('Cannot fetch conversation: Missing dependencies')
-    return { error: getI18nMessageFromKey('inbox.error.fetchConversation', t) }
-  }
-  
+async function fetchConversation(conversationId: string) {
   try {
-    // In production, this would call the API:
-    // const response = await http.get(`${endpoints.inbox.conversations}/${conversationId}`)
-    // return { data: response.data }
+    // Get dependencies directly from nuxtApp to ensure they're available
+    const nuxtApp = useNuxtApp()
+    // Apply HttpClient interface to ensure TypeScript recognizes the methods
+    const http = nuxtApp.$http as HttpClient
+    const endpoints = nuxtApp.$endpoints
     
-    // For now, find in mock data
-    const conversation = mockConversations.find(c => c.id === conversationId)
-    
-    if (!conversation) {
-      return { error: getI18nMessageFromKey('inbox.error.conversationNotFound', t) }
+    if (!http || !endpoints || !endpoints.inbox) {
+      console.error('Cannot fetch conversation: Missing dependencies', { http: !!http, endpoints: !!endpoints })
+      return { error: getErrorKey('fetchConversation') }
     }
     
-    return { data: conversation }
+    // First get the conversation details
+    const conversationResponse = await http.get(endpoints.inbox.conversation(conversationId))
+    
+    // Then get the messages for this conversation
+    const messagesResponse = await http.get(endpoints.inbox.messages(conversationId), {
+      params: { limit: 50, offset: 0 }
+    })
+    
+    // Check response structure and add debugging
+    console.log('Conversation response:', JSON.stringify(conversationResponse.data, null, 2));
+    console.log('Messages response:', JSON.stringify(messagesResponse.data?.data?.messages?.[0], null, 2));
+    
+    if (conversationResponse.data) {
+      // Get the conversation and contact data - handle different possible response structures
+      const apiConversation = conversationResponse.data.data?.conversation || 
+                             conversationResponse.data.data || 
+                             conversationResponse.data;
+      
+      // Get the messages - handle different possible response structures
+      const apiMessages = messagesResponse.data?.data?.messages || 
+                         messagesResponse.data?.data || 
+                         messagesResponse.data?.messages || 
+                         [];
+      
+      // Log what we're passing to the conversion function
+      console.log('Using apiConversation:', apiConversation);
+      console.log('Using apiMessages type:', typeof apiMessages, 'isArray:', Array.isArray(apiMessages));
+      
+      // Transform to our app model
+      const conversation = convertApiConversationToAppModel(apiConversation, apiMessages);
+      
+      return { data: conversation }
+    } else {
+      throw new Error('Invalid response format from API')
+    }
   } catch (error) {
     console.error('Error fetching conversation:', error)
-    return { error: getI18nMessageFromKey('inbox.error.fetchConversation', t) }
+    return { error: getErrorKey('fetchConversation') }
   }
 }
 
-// Helper functions
-function createTestAttachment(type: string): Attachment | null {
-  switch (type) {
-    case 'image':
-      return {
-        id: `img-${Date.now()}`,
-        type: 'image',
-        url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-        name: 'Foto_Propiedad.jpg',
-        fileType: 'jpg',
-        size: 1500000
-      }
-    case 'video':
-      return {
-        id: `vid-${Date.now()}`,
-        type: 'video',
-        url: 'https://example.com/videos/property_tour.mp4',
-        name: 'Tour_Virtual.mp4',
-        fileType: 'mp4',
-        size: 18000000,
-        duration: 150,
-        thumbnail: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c'
-      }
-    case 'audio':
-      return {
-        id: `aud-${Date.now()}`,
-        type: 'audio',
-        url: '/audio/property_details.mp3',
-        name: 'Mensaje_De_Voz.mp3',
-        fileType: 'mp3',
-        size: 2800000,
-        duration: 75
-      }
-    case 'document':
-      return {
-        id: `doc-${Date.now()}`,
-        type: 'document',
-        url: '/documents/financial_details.pdf',
-        name: 'Documento_Propiedad.pdf',
-        fileType: 'pdf',
-        size: 3200000,
-        previewText: 'Información importante sobre la propiedad...'
-      }
-    case 'location':
-      return {
-        id: `loc-${Date.now()}`,
-        type: 'location',
-        url: 'https://maps.example.com/location/123456',
-        name: 'Ubicación de la Propiedad',
-        coordinates: {
-          latitude: 40.416775,
-          longitude: -3.703790
-        }
-      }
-    default:
-      return null
-  }
-}
+// Helper functions section removed - no longer needed with real API data
 
 /**
  * Send a new message in a conversation
@@ -552,57 +260,53 @@ function createTestAttachment(type: string): Attachment | null {
  * @param channel Channel to send the message through
  * @returns Promise with new message data or error
  */
-function sendMessage(
+async function sendMessage(
   conversationId: string, 
   content: string, 
-  channel: 'whatsapp' | 'email' | 'instagram'
+  channel: 'whatsapp' | 'email' | 'instagram' = 'whatsapp' // Default to WhatsApp
 ) {
-  const http = getHttp()
-  const endpoints = getEndpoints()
-  const { t } = useI18n()
-  
-  if (!http || !endpoints) {
-    console.error('Cannot send message: Missing dependencies')
-    return { error: getI18nMessageFromKey('inbox.error.sendMessage', t) }
-  }
-  
   try {
-    // In production, this would call the API:
-    // const response = await http.post(`${endpoints.inbox.conversations}/${conversationId}/messages`, {
-    //   content,
-    //   channel
-    // })
-    // return { data: response.data, message: getI18nMessageFromKey('inbox.success.messageSent', t) }
+    // Get dependencies directly from nuxtApp to ensure they're available
+    const nuxtApp = useNuxtApp()
+    // Apply HttpClient interface to ensure TypeScript recognizes the methods
+    const http = nuxtApp.$http as HttpClient
+    const endpoints = nuxtApp.$endpoints
     
-    // For now, create a mock message
-    // Randomly add an attachment sometimes
-    const shouldAddAttachment = Math.random() > 0.7
-    let attachments = undefined
-    
-    if (shouldAddAttachment) {
-      const attachmentTypes = ['image', 'video', 'audio', 'document', 'location']
-      const randomType = attachmentTypes[Math.floor(Math.random() * attachmentTypes.length)]
-      const attachment = createTestAttachment(randomType)
-      
-      if (attachment) {
-        attachments = [attachment]
-      }
+    if (!http || !endpoints || !endpoints.inbox) {
+      console.error('Cannot send message: Missing dependencies', { http: !!http, endpoints: !!endpoints })
+      return { error: getErrorKey('sendMessage') }
     }
     
-    const newMessage: Message = {
-      id: `msg-${Date.now()}`,
+    // Call the real API to send a message
+    const response = await http.post(endpoints.inbox.sendMessage(conversationId), {
       content,
-      timestamp: new Date(),
-      senderId: 'agent', // Current user ID
-      channel,
-      status: 'sent',
-      attachments
-    }
+      type: 'text' // As per API docs
+    })
     
-    return { data: newMessage, message: getI18nMessageFromKey('inbox.success.messageSent', t) }
+    if (response.data?.status === 'success') {
+      // Create a new message object based on the API response
+      const apiMessageId = response.data.data.id
+      const whatsappMessageId = response.data.data.whatsapp_message_id
+      
+      const newMessage: Message = {
+        id: apiMessageId,
+        content,
+        timestamp: new Date(),
+        senderId: 'agent', // Current user ID
+        channel,
+        status: response.data.data.status === 'SENT' ? 'sent' : 'sent', // Use 'sent' as fallback since 'pending' isn't in our type
+      }
+      
+      return { 
+        data: newMessage, 
+        message: getErrorKey('messageSent') 
+      }
+    } else {
+      throw new Error(response.data?.message || 'Failed to send message')
+    }
   } catch (error) {
     console.error('Error sending message:', error)
-    return { error: getI18nMessageFromKey('inbox.error.sendMessage', t) }
+    return { error: getErrorKey('sendMessage') }
   }
 }
 
@@ -611,26 +315,31 @@ function sendMessage(
  * @param conversationId ID of the conversation to mark as read
  * @returns Promise with success status or error
  */
-function markConversationAsRead(conversationId: string) {
-  const http = getHttp()
-  const endpoints = getEndpoints()
-  const { t } = useI18n()
-  
-  if (!http || !endpoints) {
-    console.error('Cannot mark conversation as read: Missing dependencies')
-    return { error: getI18nMessageFromKey('inbox.error.markAsRead', t) }
-  }
-  
+async function markConversationAsRead(conversationId: string) {
   try {
-    // In production, this would call the API:
-    // const response = await http.put(`${endpoints.inbox.conversations}/${conversationId}/read`)
-    // return { success: true }
+    // Get dependencies directly from nuxtApp to ensure they're available
+    const nuxtApp = useNuxtApp()
+    // Apply HttpClient interface to ensure TypeScript recognizes the methods
+    const http = nuxtApp.$http as HttpClient
+    const endpoints = nuxtApp.$endpoints
     
-    // For now, just return success
-    return { success: true }
+    if (!http || !endpoints || !endpoints.whatsapp) {
+      console.error('Cannot mark conversation as read: Missing dependencies', { http: !!http, endpoints: !!endpoints })
+      return { error: getErrorKey('markAsRead') }
+    }
+    
+    // For now use the WhatsApp endpoint until a unified endpoint is available
+    // TODO: Add a dedicated endpoint for marking inbox messages as read
+    const response = await http.put(endpoints.whatsapp.markAsRead(conversationId))
+    
+    if (response.data?.status === 'success') {
+      return { success: true }
+    } else {
+      throw new Error(response.data?.message || 'Failed to mark conversation as read')
+    }
   } catch (error) {
     console.error('Error marking conversation as read:', error)
-    return { error: getI18nMessageFromKey('inbox.error.markAsRead', t) }
+    return { error: getErrorKey('markAsRead') }
   }
 }
 
@@ -645,13 +354,170 @@ function initInbox() {
   // For example, setting up WebSocket connections for real-time messaging
 }
 
+// Helper function to convert API response to our app model
+function convertApiConversationToAppModel(apiConversation: any, apiMessages: any = []): Conversation {
+  // Extract contact information
+  const contact: Contact = {
+    id: apiConversation.contact_id || apiConversation.contact?.id,
+    name: apiConversation.contact ? 
+          `${apiConversation.contact.first_name || ''} ${apiConversation.contact.last_name || ''}`.trim() : 
+          'Unknown Contact',
+    phone: apiConversation.contact?.phone || apiConversation.contact?.whatsapp,
+    email: apiConversation.contact?.email,
+    avatar: apiConversation.contact?.profile_image_url
+  }
+  
+  // Ensure apiMessages is always an array
+  let messagesArray = [];
+  
+  // Handle different possible shapes of apiMessages
+  if (Array.isArray(apiMessages)) {
+    messagesArray = apiMessages;
+  } else if (apiMessages?.messages && Array.isArray(apiMessages.messages)) {
+    messagesArray = apiMessages.messages;
+  } else if (apiMessages && typeof apiMessages === 'object') {
+    // Log the actual structure for debugging
+    console.log('Unexpected apiMessages structure:', apiMessages);
+    // Try to convert to array if it's an object with numbered keys
+    const keys = Object.keys(apiMessages).filter(key => !isNaN(Number(key)));
+    if (keys.length > 0) {
+      messagesArray = keys.map(key => apiMessages[key]);
+    }
+  }
+  
+  // Convert API messages to our message format
+  const messages: Message[] = messagesArray.map((apiMessage: any) => {
+    // Skip invalid messages
+    if (!apiMessage || typeof apiMessage !== 'object') {
+      console.warn('Invalid message object in API response:', apiMessage);
+      return null;
+    }
+    // Determine if message is from user or contact
+    const isFromContact = apiMessage.message_type === 'INCOMING'
+    
+    // Determine channel type
+    let channel: 'whatsapp' | 'email' | 'instagram' = 'whatsapp'
+    if (apiMessage.source === 'EMAIL') channel = 'email'
+    if (apiMessage.source === 'INSTAGRAM') channel = 'instagram'
+    
+    // Determine message status
+    let status: 'sent' | 'delivered' | 'read' | 'failed' = 'sent'
+    if (apiMessage.delivered_at) status = 'delivered'
+    if (apiMessage.read_at) status = 'read'
+    if (apiMessage.error) status = 'failed'
+    
+    // Create attachments if they exist in metadata
+    const attachments: Attachment[] = []
+    if (apiMessage.metadata) {
+      // Process media attachments based on metadata structure
+      if (apiMessage.metadata.media_url) {
+        attachments.push({
+          id: `att-${apiMessage.id}`,
+          type: 'image', // Default to image, but could be determined from MIME type
+          url: apiMessage.metadata.media_url,
+          name: apiMessage.metadata.filename || 'Attachment',
+          fileType: apiMessage.metadata.mime_type?.split('/')[1] || 'jpg',
+          size: apiMessage.metadata.size
+        })
+      }
+      
+      // Handle document attachments
+      if (apiMessage.metadata.document_url) {
+        attachments.push({
+          id: `doc-${apiMessage.id}`,
+          type: 'document',
+          url: apiMessage.metadata.document_url,
+          name: apiMessage.metadata.filename || 'Document',
+          fileType: apiMessage.metadata.mime_type?.split('/')[1] || 'pdf',
+          size: apiMessage.metadata.size,
+          previewText: apiMessage.metadata.caption
+        })
+      }
+      
+      // Handle location data
+      if (apiMessage.metadata.latitude && apiMessage.metadata.longitude) {
+        attachments.push({
+          id: `loc-${apiMessage.id}`,
+          type: 'location',
+          url: `https://maps.google.com/?q=${apiMessage.metadata.latitude},${apiMessage.metadata.longitude}`,
+          name: apiMessage.metadata.location_name || 'Location',
+          coordinates: {
+            latitude: apiMessage.metadata.latitude,
+            longitude: apiMessage.metadata.longitude
+          }
+        })
+      }
+    }
+    
+    try {
+      return {
+        id: apiMessage.id || `temp-${Date.now()}`, // Fallback ID if missing
+        content: apiMessage.content || '',
+        timestamp: new Date(apiMessage.sent_at || Date.now()),
+        senderId: isFromContact ? contact.id : 'agent',
+        channel,
+        status,
+        attachments: attachments.length > 0 ? attachments : undefined
+      }
+    } catch (error) {
+      console.error('Error processing message:', error, apiMessage);
+      return null;
+    }
+  }).filter(Boolean) as Message[]
+  
+  // Determine last message info
+  let lastMessage = {
+    content: 'No messages',
+    timestamp: new Date(apiConversation.last_message_at || apiConversation.created_at),
+    isUnread: false,
+    channel: 'whatsapp' as 'whatsapp' | 'email' | 'instagram'
+  }
+  
+  if (messages.length > 0) {
+    // Sort messages by timestamp, newest first
+    const sortedMessages = [...messages].sort((a, b) => 
+      b.timestamp.getTime() - a.timestamp.getTime()
+    )
+    
+    const newestMessage = sortedMessages[0]
+    lastMessage = {
+      content: newestMessage.content,
+      timestamp: newestMessage.timestamp,
+      isUnread: newestMessage.senderId !== 'agent' && newestMessage.status !== 'read',
+      channel: newestMessage.channel
+    }
+  }
+  
+  return {
+    id: apiConversation.id,
+    contact,
+    messages: messages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()), // Sort by timestamp, oldest first
+    lastMessage
+  }
+}
+
 // Export all functions for use in other modules
 export {
   fetchConversations,
   fetchConversation,
   sendMessage,
   markConversationAsRead,
-  initInbox
+  initInbox,
+  convertApiConversationToAppModel
+}
+
+// Add debug logging for the fetchConversations function
+const originalFetchConversations = fetchConversations;
+// @ts-ignore - Replace with enhanced version for debugging
+fetchConversations = async (...args: any[]) => {
+  try {
+    const result = await originalFetchConversations(...args);
+    console.log('API response from fetchConversations:', result);
+    return result;
+  } catch (error) {
+    console.error('Error in fetchConversations:', error);
+    throw error;
+  }
 }
 
 // Types are already exported at the top of the file

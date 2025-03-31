@@ -35,35 +35,64 @@ export const useWhatsAppStore = defineStore("whatsapp", {
   getters: {
     // Get active WhatsApp accounts (those with status CONNECTED)
     activeAccounts(state): WhatsAppAccount[] {
-      return state.accounts.filter(
-        account => account.status === WhatsAppConnectionStatus.CONNECTED && account.isActive
-      );
+      console.log('Checking for active accounts among:', state.accounts);
+      console.log('WhatsAppConnectionStatus.CONNECTED =', WhatsAppConnectionStatus.CONNECTED);
+      
+      const filtered = state.accounts.filter(account => {
+        console.log(`Account ${account.id} status: ${account.status}, isActive: ${account.isActive}`);
+        return account.status === WhatsAppConnectionStatus.CONNECTED && account.isActive;
+      });
+      
+      console.log('Active accounts:', filtered);
+      return filtered;
     },
 
     // Get pending WhatsApp accounts
     pendingAccounts(state): WhatsAppAccount[] {
-      return state.accounts.filter(
-        account => account.status === WhatsAppConnectionStatus.PENDING && account.isActive
-      );
+      console.log('Checking for pending accounts, PENDING =', WhatsAppConnectionStatus.PENDING);
+      const filtered = state.accounts.filter(account => {
+        console.log(`Account ${account.id} status: ${account.status}, isActive: ${account.isActive}`);
+        return account.status === WhatsAppConnectionStatus.PENDING && account.isActive;
+      });
+      
+      console.log('Pending accounts:', filtered);
+      return filtered;
     },
 
     // Get account with error status
     errorAccounts(state): WhatsAppAccount[] {
-      return state.accounts.filter(
-        account => account.status === WhatsAppConnectionStatus.ERROR && account.isActive
-      );
+      console.log('Checking for error accounts, ERROR =', WhatsAppConnectionStatus.ERROR);
+      const filtered = state.accounts.filter(account => {
+        console.log(`Account ${account.id} status: ${account.status}, isActive: ${account.isActive}`);
+        return account.status === WhatsAppConnectionStatus.ERROR && account.isActive;
+      });
+      
+      console.log('Error accounts:', filtered);
+      return filtered;
     },
 
     // Get disconnected accounts
     disconnectedAccounts(state): WhatsAppAccount[] {
-      return state.accounts.filter(
-        account => account.status === WhatsAppConnectionStatus.DISCONNECTED && account.isActive
-      );
+      console.log('Checking for disconnected accounts, DISCONNECTED =', WhatsAppConnectionStatus.DISCONNECTED);
+      const filtered = state.accounts.filter(account => {
+        console.log(`Account ${account.id} status: ${account.status}, isActive: ${account.isActive}`);
+        return account.status === WhatsAppConnectionStatus.DISCONNECTED && account.isActive;
+      });
+      
+      console.log('Disconnected accounts:', filtered);
+      return filtered;
     },
 
     // Get inactive accounts
     inactiveAccounts(state): WhatsAppAccount[] {
-      return state.accounts.filter(account => !account.isActive);
+      console.log('Checking for inactive accounts');
+      const filtered = state.accounts.filter(account => {
+        console.log(`Account ${account.id} status: ${account.status}, isActive: ${account.isActive}`);
+        return !account.isActive;
+      });
+      
+      console.log('Inactive accounts:', filtered);
+      return filtered;
     },
 
     // Get account by id
@@ -113,8 +142,18 @@ export const useWhatsAppStore = defineStore("whatsapp", {
       this.setError(null);
 
       try {
+        console.log('WhatsApp store: Fetching accounts');
         const accounts = await fetchWhatsAppAccounts();
+        console.log('WhatsApp store: Accounts received', accounts);
+        
+        // Debug check for expected properties
+        if (accounts.length > 0) {
+          console.log('First account properties:', Object.keys(accounts[0]));
+          console.log('First account sample:', accounts[0]);
+        }
+        
         this.accounts = accounts;
+        console.log('WhatsApp store: Accounts set in store', this.accounts);
       } catch (error) {
         console.error("Error in loadAccounts:", error);
         this.setError(t('integrations.whatsapp.alerts.fetchError'));
@@ -155,7 +194,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async createAccount(accountData: WhatsAppAccountFormData) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -168,12 +206,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           this.activeAccount = response.account;
           return response.account;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.connectionFailed'));
+          this.setError(response.message || 'integrations.whatsapp.alerts.connectionFailed');
           return null;
         }
       } catch (error) {
         console.error("Error in createAccount:", error);
-        this.setError(t('integrations.whatsapp.alerts.connectionFailed'));
+        this.setError('integrations.whatsapp.alerts.connectionFailed');
         return null;
       } finally {
         this.setLoading(false);
@@ -181,7 +219,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async updateAccount(accountId: string, accountData: Partial<WhatsAppAccountFormData>) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -202,12 +239,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           
           return response.account;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.updateFailed'));
+          this.setError(response.message || 'Failed to update WhatsApp account');
           return null;
         }
       } catch (error) {
         console.error(`Error in updateAccount(${accountId}):`, error);
-        this.setError(t('integrations.whatsapp.alerts.updateFailed'));
+        this.setError('Failed to update WhatsApp account');
         return null;
       } finally {
         this.setLoading(false);
@@ -215,7 +252,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async verifyConnection(accountId: string) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -236,12 +272,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           
           return response.account;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.connectionFailed'));
+          this.setError(response.message || 'integrations.whatsapp.alerts.connectionFailed');
           return null;
         }
       } catch (error) {
         console.error(`Error in verifyConnection(${accountId}):`, error);
-        this.setError(t('integrations.whatsapp.alerts.connectionFailed'));
+        this.setError('integrations.whatsapp.alerts.connectionFailed');
         return null;
       } finally {
         this.setLoading(false);
@@ -249,7 +285,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async activateAccount(accountId: string) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -270,12 +305,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           
           return response.account;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.activationFailed'));
+          this.setError(response.message || 'Failed to activate WhatsApp account');
           return null;
         }
       } catch (error) {
         console.error(`Error in activateAccount(${accountId}):`, error);
-        this.setError(t('integrations.whatsapp.alerts.activationFailed'));
+        this.setError('Failed to activate WhatsApp account');
         return null;
       } finally {
         this.setLoading(false);
@@ -283,7 +318,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async deactivateAccount(accountId: string) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -304,12 +338,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           
           return response.account;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.deactivationFailed'));
+          this.setError(response.message || 'Failed to deactivate WhatsApp account');
           return null;
         }
       } catch (error) {
         console.error(`Error in deactivateAccount(${accountId}):`, error);
-        this.setError(t('integrations.whatsapp.alerts.deactivationFailed'));
+        this.setError('Failed to deactivate WhatsApp account');
         return null;
       } finally {
         this.setLoading(false);
@@ -317,7 +351,6 @@ export const useWhatsAppStore = defineStore("whatsapp", {
     },
 
     async deleteAccount(accountId: string) {
-      const { t } = useI18n();
       this.setLoading(true);
       this.setError(null);
 
@@ -335,12 +368,12 @@ export const useWhatsAppStore = defineStore("whatsapp", {
           
           return true;
         } else {
-          this.setError(response.message || t('integrations.whatsapp.alerts.deleteFailed'));
+          this.setError(response.message || 'Failed to delete WhatsApp account');
           return false;
         }
       } catch (error) {
         console.error(`Error in deleteAccount(${accountId}):`, error);
-        this.setError(t('integrations.whatsapp.alerts.deleteFailed'));
+        this.setError('Failed to delete WhatsApp account');
         return false;
       } finally {
         this.setLoading(false);

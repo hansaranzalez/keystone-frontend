@@ -54,9 +54,9 @@ export default {
             component: () => import("~/pages/integrations/whatsapp/new.vue"),
         },
         {
-            name: "zol-admin",
-            path: "/zol-admin",
-            component: () => import("~/pages/zol-admin.vue"),
+            name: "whatsapp-inbox",
+            path: "/integrations/whatsapp/inbox",
+            component: () => import("~/pages/integrations/whatsapp/inbox.vue"),
         },
     ],
     scrollBehavior(to, from, savedPosition) {

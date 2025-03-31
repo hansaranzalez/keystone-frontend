@@ -36,8 +36,13 @@ export default {
     add: "Add New",
     comingSoon: "More integrations coming soon",
     backToIntegrations: "Back to Integrations",
+    actions: "Actions",
     whatsapp: {
+      deactivateAccount: "Deactivate Account",
+      deactivateAccountConfirmation: "Are you sure you want to deactivate the account {name}?",
+      deactivateAccountFail: "Failed to deactivate account",
       title: "WhatsApp Business",
+      business: "Business Account",
       description: "Connect your WhatsApp Business account to send and receive messages",
       connect: "Connect WhatsApp",
       connecting: "Connecting to WhatsApp...",
@@ -45,16 +50,39 @@ export default {
       disconnected: "WhatsApp Disconnected",
       accounts: "WhatsApp Accounts",
       noAccounts: "No WhatsApp accounts connected",
+      errorAccounts: "Error loading WhatsApp accounts",
       addAccount: "Add WhatsApp Account",
       addAccountDescription: "Connect your WhatsApp Business account to start sending and receiving messages",
       activeAccounts: "Active Accounts",
       inactiveAccounts: "Inactive Accounts",
       inactive: "Inactive",
       backToAccounts: "Back to Accounts",
+      accountDetails: "Account Details",
+      editAccount: "Edit Account",
+      connectionStatus: "Connection Status",
+      lastVerification: "Last Verified",
+      waitingForVerification: "Waiting for verification",
+      connectionError: "Connection Error",
+      verificationRequired: "Verification Required",
+      successfulConnection: "Successful Connection",
+      verify: "Verify",
+      verifyConnection: "Verify Connection",
+      verifyConnectionConfirmation: "Are you sure you want to verify this connection?",
+      verifyNow: "Verify Now",
+      retryConnection: "Retry Connection",
+      connectionSuccessMessage: "Your WhatsApp account is successfully connected and ready to use.",
+      needsVerificationMessage: "Your WhatsApp account is connected but requires verification to ensure it's working properly.",
+      connectionErrorMessage: "There was a problem with your WhatsApp connection. Please check your credentials and try again.",
+      confirmDeactivate: "Are you sure you want to deactivate this account?",
+      confirmDelete: "Are you sure you want to delete this account?",
       form: {
+        id: "Account ID",
         name: "Account Name",
         namePlaceholder: "Enter a name for this WhatsApp account",
         phoneNumber: "Phone Number",
+        phone: "Phone Number",
+        createdAt: "Created",
+        lastConnection: "Last Connection",
         phonePlaceholder: "+1 (123) 456-7890",
         phoneHelp: "The phone number associated with your WhatsApp Business account",
         phoneNumberId: "Phone Number ID",
@@ -78,11 +106,22 @@ export default {
         delete: "Delete Account",
         verify: "Verify Connection"
       },
+      activate: "Activate",
+      deactivate: "Deactivate",
+      retry: "Retry",
+      connectionActive: "Connection Active",
+      connectionActiveDescription: "Your WhatsApp account is connected and ready to use",
+      unknownError: "Unknown error occurred with WhatsApp connection",
       status: {
         PENDING: "Pending",
         CONNECTED: "Connected",
         ERROR: "Connection Error",
-        DISCONNECTED: "Disconnected"
+        DISCONNECTED: "Disconnected",
+        connected: "Connected",
+        pending: "Pending",
+        error: "Connection Error",
+        disconnected: "Disconnected",
+        unknown: "Unknown Status"
       },
       alerts: {
         connectionVerified: "WhatsApp connection verified successfully",
@@ -91,7 +130,14 @@ export default {
         accountUpdated: "WhatsApp account updated successfully",
         accountDeactivated: "WhatsApp account deactivated",
         accountReactivated: "WhatsApp account reactivated",
-        invalidCredentials: "Invalid credentials. Please check your details."
+        accountDeleted: "WhatsApp account deleted successfully",
+        invalidCredentials: "Invalid credentials. Please check your details.",
+        fetchError: "Failed to fetch WhatsApp accounts",
+        fetchAccountError: "Failed to fetch WhatsApp account details",
+        updateFailed: "Failed to update WhatsApp account",
+        activationFailed: "Failed to activate WhatsApp account",
+        deactivationFailed: "Failed to deactivate WhatsApp account",
+        deleteFailed: "Failed to delete WhatsApp account"
       },
       errors: {
         nameRequired: "Account name is required",
@@ -103,8 +149,56 @@ export default {
         invalidToken: "Invalid access token format",
         connectionFailed: "Connection failed. Please check your credentials."
       },
-      helpText: "Where can I find this information?"
-    }
+      helpText: "Where can I find this information?",
+      templates: {
+        select: "Select Template",
+        noTemplates: "No templates available",
+        loading: "Loading templates...",
+        sendTemplate: "Send Template",
+        customizeMessage: "Customize Message"
+      },
+      conversation: {
+        archiveConversation: "Archive Conversation",
+        blockConversation: "Block Conversation",
+        refreshConversation: "Refresh Conversation"
+      },
+      attachment: {
+        image: "Image",
+        document: "Document",
+        audio: "Audio",
+        video: "Video"
+      },
+      quickActions: {
+        location: "Send Location"
+      },
+      inbox: {
+        title: "WhatsApp Inbox",
+        noConversations: "No conversations",
+        searchPlaceholder: "Search conversations...",
+        allConversations: "All Conversations",
+        unreadOnly: "Unread Only",
+        selectAccount: "Select account",
+        noAccountSelected: "No account selected",
+        noAccountMessage: "Please select a WhatsApp account to view conversations",
+        errorLoading: "Error loading conversations",
+        retry: "Retry",
+        emptyState: "No conversations found",
+        emptyStateDescription: "When you receive WhatsApp messages, they will appear here"
+      }
+    },
+    verify: "Verify",
+    verifyConnection: "Verify Connection",
+    verifyConnectionConfirmation: "Are you sure you want to verify this connection?",
+    activateAccount: "Activate Account",
+    activateAccountConfirmation: "Are you sure you want to activate the account {name}?",
+    deactivateAccount: "Deactivate Account",
+    deactivateAccountConfirmation: "Are you sure you want to deactivate the account {name}?",
+    deleteAccount: "Delete Account",
+    deleteAccountConfirmation: "Are you sure you want to delete the account {name}? This action cannot be undone.",
+    activate: "Activate",
+    pendingAccounts: "Pending Accounts",
+    errorAccounts: "Error Accounts",
+    inactiveAccounts: "Inactive Accounts"
   },
   user: {
     signOut: "Sign out",
@@ -142,12 +236,13 @@ export default {
     yesterday: "Yesterday",
     you: "You",
     activeNow: "Active now",
+    viewContact: "View Contact",
     typeMessage: "Type a message...",
     sendingVia: "Sending via",
     call: "Call",
-    viewContact: "View Contact",
     messageSent: "Message Sent",
     messageSentDescription: "Your message has been sent successfully",
+    attachment: "Attachment",
     channels: {
       whatsapp: "WhatsApp",
       email: "Email",
@@ -204,7 +299,8 @@ export default {
       fetchConversation: "Error fetching conversation details",
       conversationNotFound: "Conversation not found",
       sendMessage: "Error sending message",
-      markAsRead: "Error marking conversation as read"
+      markAsRead: "Error marking conversation as read",
+      noActiveAccount: "No active account to send messages from"
     },
     success: {
       messageSent: "Message sent successfully"
@@ -215,12 +311,15 @@ export default {
     reply: "Reply",
     save: "Save",
     delete: "Delete",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    view: "View"
   },
   common: {
     or: "OR",
     add: "Add",
+    close: "Close",
     all: "All",
+    notSpecified: "Not specified",
     cancel: "Oops, nevermind",
     showPassword: "Show password",
     hidePassword: "Hide password",
@@ -229,6 +328,9 @@ export default {
     next: "Let's go to the next",
     edit: "Let's tweak it",
     success: "Awesome!",
+    error: "Error",
+    unauthorized: "Unauthorized",
+    comingSoon: "Coming Soon",
     remove: "Remove",
     goodJob: "Nice work!",
     somethingWentWrong: "Oops, something went wrong",
@@ -242,9 +344,7 @@ export default {
     never: "Never",
     connected: "Connected",
     notConnected: "Not Connected",
-    loading: "Loading...",
-    error: "Error",
-    comingSoon: "Coming Soon"
+    loading: "Loading..."
   },
   login: {
     title: "Login",

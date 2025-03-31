@@ -22,7 +22,7 @@
     <!-- Error state -->
     <div v-else-if="whatsAppStore.error" class="py-8 flex justify-center">
       <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">
-        {{ whatsAppStore.error }}
+        {{ whatsAppStore.error && whatsAppStore.error.includes('.') ? $t(whatsAppStore.error) : whatsAppStore.error }}
         <UButton 
           @click="refreshAccounts" 
           variant="link" 
@@ -110,22 +110,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Confirmation Modal -->
-    <UModal v-model="showModal">
-      <div class="p-4">
-        <h3 class="text-lg font-medium mb-2 text-slate-900 dark:text-white">{{ modalTitle }}</h3>
-        <p class="text-slate-600 dark:text-slate-400 mb-4">{{ modalMessage }}</p>
-        <div class="flex justify-end gap-2">
-          <UButton color="neutral" variant="ghost" @click="showModal = false">
-            {{ $t('cancel') }}
-          </UButton>
-          <UButton :color="modalActionColor" @click="confirmAction">
-            {{ modalActionText }}
-          </UButton>
-        </div>
-      </div>
-    </UModal>
   </div>
 </template>
 
@@ -137,6 +121,7 @@ import { useWhatsAppStore } from '~/store/whatsapp.store';
 import { WhatsAppConnectionStatus } from '~/services/whatsapp.service';
 import type { WhatsAppAccount } from '~/services/whatsapp.service';
 import WhatsAppAccountCard from '~/components/integrations/whatsapp/WhatsAppAccountCard.vue';
+import IntegrationsWhatsappModal from '~/components/ui/modal.vue';
 
 // Initialize router
 const router = useRouter();
@@ -153,7 +138,17 @@ const modalTitle = ref('');
 const modalMessage = ref('');
 const modalActionText = ref('');
 const modalActionColor = ref<'primary' | 'success' | 'warning' | 'error' | 'info'>('primary');
+const overlay = useOverlay()
 const pendingAction = ref<() => Promise<void>>(() => Promise.resolve());
+  const modal = overlay.create(IntegrationsWhatsappModal, {
+  props: {
+    modalTitle,
+    modalMessage,
+    modalActionText,
+    modalActionColor,
+    confirmAction,
+  }
+})
 
 // Selected account for actions
 const selectedAccount = ref<WhatsAppAccount | null>(null);
@@ -174,73 +169,74 @@ function viewAccount(account: WhatsAppAccount) {
 }
 
 // Confirmation handlers
-function confirmVerify(account: WhatsAppAccount) {
+async function confirmVerify(account: WhatsAppAccount) {
   selectedAccount.value = account;
   modalTitle.value = t('integrations.whatsapp.verifyConnection');
   modalMessage.value = t('integrations.whatsapp.verifyConnectionConfirmation', { name: account.name });
   modalActionText.value = t('integrations.whatsapp.verify');
   modalActionColor.value = 'primary';
   pendingAction.value = verifyAccount;
-  showModal.value = true;
+  await modal.open()
 }
 
-function confirmActivate(account: WhatsAppAccount) {
+async function confirmActivate(account: WhatsAppAccount) {
   selectedAccount.value = account;
   modalTitle.value = t('integrations.whatsapp.activateAccount');
   modalMessage.value = t('integrations.whatsapp.activateAccountConfirmation', { name: account.name });
   modalActionText.value = t('integrations.whatsapp.activate');
   modalActionColor.value = 'primary';
   pendingAction.value = activateAccount;
-  showModal.value = true;
+  await modal.open()
 }
 
-function confirmDeactivate(account: WhatsAppAccount) {
+async function confirmDeactivate(account: WhatsAppAccount) {
+  console.log(t('integrations.whatsapp.deactivate'))
   selectedAccount.value = account;
   modalTitle.value = t('integrations.whatsapp.deactivateAccount');
   modalMessage.value = t('integrations.whatsapp.deactivateAccountConfirmation', { name: account.name });
   modalActionText.value = t('integrations.whatsapp.deactivate');
   modalActionColor.value = 'warning';
   pendingAction.value = deactivateAccount;
-  showModal.value = true;
+  await modal.open()
 }
 
-function confirmDelete(account: WhatsAppAccount) {
+async function confirmDelete(account: WhatsAppAccount) {
   selectedAccount.value = account;
   modalTitle.value = t('integrations.whatsapp.deleteAccount');
   modalMessage.value = t('integrations.whatsapp.deleteAccountConfirmation', { name: account.name });
   modalActionText.value = t('integrations.whatsapp.delete');
   modalActionColor.value = 'error';
   pendingAction.value = deleteAccount;
-  showModal.value = true;
+  await modal.open()
 }
 
 // Action handlers
 async function verifyAccount() {
   if (!selectedAccount.value) return;
   await whatsAppStore.verifyConnection(selectedAccount.value.id);
-  showModal.value = false;
   await refreshAccounts();
+  await modal.close()
 }
 
 async function activateAccount() {
   if (!selectedAccount.value) return;
   await whatsAppStore.activateAccount(selectedAccount.value.id);
-  showModal.value = false;
   await refreshAccounts();
+  await modal.close()
 }
 
 async function deactivateAccount() {
   if (!selectedAccount.value) return;
   await whatsAppStore.deactivateAccount(selectedAccount.value.id);
-  showModal.value = false;
   await refreshAccounts();
+  await modal.close()
 }
 
 async function deleteAccount() {
   if (!selectedAccount.value) return;
   await whatsAppStore.deleteAccount(selectedAccount.value.id);
-  showModal.value = false;
   await refreshAccounts();
+  await modal.close()
 }
 
 // Execute the pending action

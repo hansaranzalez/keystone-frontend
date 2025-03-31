@@ -11,7 +11,7 @@
       >
         <ConversationList 
           :conversations="conversations"
-          :selectedId="selectedConversationId"
+          :selectedId="selectedConversationId || undefined"
           :loading="loading"
           @select="handleSelectConversation"
           @new-message="handleNewMessage"
@@ -24,7 +24,7 @@
         <ConversationDetail 
           v-if="selectedConversation"
           :conversation="selectedConversation"
-          :key="selectedConversationId"
+          :key="selectedConversationId || undefined"
           @back="handleBackToList"
           @send-message="handleSendMessage"
         />
@@ -54,11 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 import ConversationList from './ConversationList.vue'
 import ConversationDetail from './ConversationDetail.vue'
+import { useInboxStore } from '~/store/inbox.store'
 import type { Conversation } from '~/services/inbox.service'
 
 // Initialize i18n
@@ -68,161 +70,52 @@ const { t } = useI18n()
 const { width } = useWindowSize()
 const isMobileView = computed(() => width.value < 1024)
 
-// State
-const loading = ref(false)
-const conversations = ref<Conversation[]>([])
+// Get store references
+const inboxStore = useInboxStore()
+const { conversations, loading, error, selectedConversation } = storeToRefs(inboxStore)
 const selectedConversationId = ref<string | null>(null)
-const selectedConversation = ref<Conversation | null>(null)
 
-// Load conversations (mock data for now)
+// Load conversations from API when component mounts
 onMounted(async () => {
-  loading.value = true
-  try {
-    // This would be replaced with a call to a real service
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    conversations.value = [
-      {
-        id: '1',
-        contact: {
-          id: '101',
-          name: 'Sarah Smith',
-          phone: '(555) 123-4567',
-          email: 'sarah@example.com'
-        },
-        messages: [
-          {
-            id: '1001',
-            content: 'Is the Oak Street property still available?',
-            timestamp: new Date('2025-03-15T14:15:00'),
-            senderId: '101',
-            channel: 'whatsapp'
-          },
-          {
-            id: '1002',
-            content: 'Yes, it\'s available! Would you like to schedule a viewing?',
-            timestamp: new Date('2025-03-15T14:20:00'),
-            senderId: 'agent',
-            channel: 'whatsapp'
-          },
-          {
-            id: '1003',
-            content: 'Looking at the property right now, it\'s beautiful! How much is the earnest money deposit?',
-            timestamp: new Date('2025-03-16T14:30:00'),
-            senderId: '101',
-            channel: 'whatsapp'
-          }
-        ],
-        lastMessage: {
-          content: 'Looking at the property right now, it\'s beautiful! How much is the earnest money deposit?',
-          timestamp: new Date('2025-03-16T14:30:00'),
-          isUnread: true,
-          channel: 'whatsapp'
-        }
-      },
-      {
-        id: '2',
-        contact: {
-          id: '102',
-          name: 'John Peterson',
-          phone: '(555) 987-6543',
-          email: 'john@example.com'
-        },
-        messages: [
-          {
-            id: '2001',
-            content: 'I\'ll be available next Tuesday afternoon for viewings.',
-            timestamp: new Date('2025-03-16T10:45:00'),
-            senderId: '102',
-            channel: 'email'
-          }
-        ],
-        lastMessage: {
-          content: 'I\'ll be available next Tuesday afternoon for viewings.',
-          timestamp: new Date('2025-03-16T10:45:00'),
-          isUnread: false,
-          channel: 'email'
-        }
-      }
-    ]
-  } catch (error) {
-    console.error('Error loading conversations:', error)
-  } finally {
-    loading.value = false
+  if (conversations.value.length === 0) {
+    // Only load if not already loaded
+    await inboxStore.loadConversations()
+  }
+  
+  if (error.value) {
+    console.error('Error loading conversations:', error.value)
+  }
+})
+
+// Watch for changes to the selectedConversationId and load the conversation data
+watch(selectedConversationId, async (newId) => {
+  if (newId) {
+    await inboxStore.loadConversation(newId)
+  } else {
+    inboxStore.clearActiveConversation()
   }
 })
 
 // Event handlers
 const handleSelectConversation = async (id: string) => {
-  // Set the selected ID immediately
+  // Set the selected ID immediately which will trigger the watch function to load the conversation
   selectedConversationId.value = id
-  
-  try {
-    // Find the conversation in our local data
-    const selected = conversations.value.find(c => c.id === id)
-    if (selected) {
-      // Set the selected conversation (this triggers the UI update)
-      // Using a new object instead of deep clone to avoid potential reactivity issues
-      selectedConversation.value = {
-        ...selected,
-        messages: [...selected.messages], // shallow copy of messages array
-        contact: { ...selected.contact }, // shallow copy of contact object
-        lastMessage: { ...selected.lastMessage } // shallow copy of lastMessage object
-      }
-      
-      // Mark as read
-      const index = conversations.value.findIndex(c => c.id === id)
-      if (index >= 0) {
-        conversations.value[index].lastMessage.isUnread = false
-      }
-      console.log('Conversation loaded successfully:', selectedConversation.value)
-    } else {
-      console.error(`Conversation with ID ${id} not found`)
-      selectedConversation.value = null
-    }
-  } catch (error) {
-    console.error('Error loading conversation:', error)
-    selectedConversation.value = null
-  }
 }
 
 const handleBackToList = () => {
   // On mobile, return to the list view when back button is clicked
   if (isMobileView.value) {
     selectedConversationId.value = null
-    selectedConversation.value = null
   }
   // On desktop, we don't need to handle back button clicks
 }
 
-const handleSendMessage = (conversationId: string, content: string, channel: 'whatsapp' | 'email' | 'instagram') => {
-  // Find the conversation
-  const index = conversations.value.findIndex(c => c.id === conversationId)
-  if (index === -1) return
+const handleSendMessage = async (conversationId: string, content: string, channel: 'whatsapp' | 'email' | 'instagram') => {
+  // Use the store action to send the message
+  const result = await inboxStore.sendNewMessage(conversationId, content, channel)
   
-  // Create new message
-  const newMessage = {
-    id: `msg-${Date.now()}`,
-    content,
-    timestamp: new Date(),
-    senderId: 'agent', // Current user ID
-    channel
-  }
-  
-  // Add message to conversation
-  conversations.value[index].messages.push(newMessage)
-  
-  // Update last message
-  conversations.value[index].lastMessage = {
-    content,
-    timestamp: new Date(),
-    isUnread: false,
-    channel
-  }
-  
-  // Update the selected conversation if it's the one we're sending a message to
-  if (selectedConversation.value && selectedConversation.value.id === conversationId) {
-    selectedConversation.value.messages.push(newMessage)
-    selectedConversation.value.lastMessage = conversations.value[index].lastMessage
+  if (result === false) {
+    console.error('Failed to send message')
   }
 }
 

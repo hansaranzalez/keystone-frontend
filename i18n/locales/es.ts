@@ -2,6 +2,11 @@ export default {
   appName: "ZOLARA",
   welcome: "Bienvenido a Zolara",
   subtitle: "Plataforma CRM para Bienes Raíces",
+  error: "Error",
+  success: "Éxito",
+  retry: "Reintentar",
+  view: "Ver",
+  delete: "Eliminar",
   languages: {
     english: "Inglés",
     spanish: "Español",
@@ -36,8 +41,10 @@ export default {
     add: "Agregar Nuevo",
     comingSoon: "Próximamente más integraciones",
     backToIntegrations: "Volver a Integraciones",
+    actions: "Acciones",
     whatsapp: {
       title: "WhatsApp Business",
+      business: "Cuenta de Negocio",
       description: "Conecta tu cuenta de WhatsApp Business para enviar y recibir mensajes",
       connect: "Conectar WhatsApp",
       connecting: "Conectando a WhatsApp...",
@@ -45,16 +52,42 @@ export default {
       disconnected: "WhatsApp Desconectado",
       accounts: "Cuentas de WhatsApp",
       noAccounts: "No hay cuentas de WhatsApp conectadas",
+      errorAccounts: "Error al cargar las cuentas de WhatsApp",
       addAccount: "Agregar Cuenta de WhatsApp",
       addAccountDescription: "Conecta tu cuenta de WhatsApp Business para comenzar a enviar y recibir mensajes",
       activeAccounts: "Cuentas Activas",
       inactiveAccounts: "Cuentas Inactivas",
       inactive: "Inactivo",
       backToAccounts: "Volver a Cuentas",
+      accountDetails: "Detalles de la Cuenta",
+      editAccount: "Editar Cuenta",
+      connectionStatus: "Estado de Conexión",
+      lastVerification: "Última Verificación",
+      waitingForVerification: "Esperando verificación",
+      connectionError: "Error de Conexión",
+      accountNotFound: "Cuenta no encontrada",
+      verificationRequired: "Verificación Requerida",
+      successfulConnection: "Conexión Exitosa",
+      verify: "Verificar",
+      verifyConnection: "Verificar Conexión",
+      verifyConnectionConfirmation: "¿Estás seguro de que deseas verificar esta conexión?",
+      verifyNow: "Verificar Ahora",
+      retryConnection: "Reintentar Conexión",
+      connectionSuccessMessage: "Tu cuenta de WhatsApp está conectada exitosamente y lista para usar.",
+      needsVerificationMessage: "Tu cuenta de WhatsApp está conectada pero requiere verificación para asegurar que funcione correctamente.",
+      connectionErrorMessage: "Hubo un problema con tu conexión de WhatsApp. Por favor verifica tus credenciales e intenta nuevamente.",
+      confirmDeactivate: "¿Estás seguro de que deseas desactivar esta cuenta?",
+      confirmDelete: "¿Estás seguro de que deseas eliminar esta cuenta?",
+      deactivateAccountConfirmation: "¿Estás seguro de que deseas desactivar la cuenta {name}?",
+      deactivateAccountFail: "Error al desactivar la cuenta",
       form: {
+        id: "ID de la Cuenta",
         name: "Nombre de la Cuenta",
         namePlaceholder: "Ingresa un nombre para esta cuenta de WhatsApp",
         phoneNumber: "Número de Teléfono",
+        phone: "Número de Teléfono",
+        createdAt: "Fecha de Creación",
+        lastConnection: "Última Conexión",
         phonePlaceholder: "+1 (123) 456-7890",
         phoneHelp: "El número de teléfono asociado con tu cuenta de WhatsApp Business",
         phoneNumberId: "ID de Número de Teléfono",
@@ -68,8 +101,8 @@ export default {
         accessTokenHelp: "El token de acceso permanente generado desde el Portal de Desarrolladores de Meta",
         webhookSecret: "Secreto de Webhook (Opcional)",
         webhookSecretPlaceholder: "Ingresa tu token de verificación de webhook",
-        webhookSecretHelp: "El token de verificación utilizado para validar solicitudes de webhook",
-        businessName: "Nombre del Negocio (Opcional)",
+        webhookSecretHelp: "El token de verificación utilizado para validar las solicitudes webhook",
+        businessName: "Nombre de Negocio (Opcional)",
         businessNamePlaceholder: "Ingresa el nombre de tu negocio",
         connect: "Conectar y Verificar",
         update: "Actualizar Cuenta",
@@ -78,11 +111,22 @@ export default {
         delete: "Eliminar Cuenta",
         verify: "Verificar Conexión"
       },
+      activate: "Activar",
+      deactivate: "Desactivar",
+      retry: "Reintentar",
+      connectionActive: "Conexión Activa",
+      connectionActiveDescription: "Tu cuenta de WhatsApp está conectada y lista para usar",
+      unknownError: "Se produjo un error desconocido con la conexión de WhatsApp",
       status: {
         PENDING: "Pendiente",
         CONNECTED: "Conectado",
         ERROR: "Error de Conexión",
-        DISCONNECTED: "Desconectado"
+        DISCONNECTED: "Desconectado",
+        connected: "Conectado",
+        pending: "Pendiente",
+        error: "Error de Conexión",
+        disconnected: "Desconectado",
+        unknown: "Estado Desconocido"
       },
       alerts: {
         connectionVerified: "Conexión de WhatsApp verificada exitosamente",
@@ -90,8 +134,16 @@ export default {
         accountCreated: "Cuenta de WhatsApp creada exitosamente",
         accountUpdated: "Cuenta de WhatsApp actualizada exitosamente",
         accountDeactivated: "Cuenta de WhatsApp desactivada",
+        accountActivated: "Cuenta de WhatsApp activada exitosamente",
         accountReactivated: "Cuenta de WhatsApp reactivada",
-        invalidCredentials: "Credenciales inválidas. Por favor verifica tus datos."
+        accountDeleted: "Cuenta de WhatsApp eliminada exitosamente",
+        invalidCredentials: "Credenciales inválidas. Por favor verifica tus datos.",
+        fetchError: "Error al obtener las cuentas de WhatsApp",
+        fetchAccountError: "Error al obtener los detalles de la cuenta de WhatsApp",
+        updateFailed: "Error al actualizar la cuenta de WhatsApp",
+        activationFailed: "Error al activar la cuenta de WhatsApp",
+        deactivationFailed: "Error al desactivar la cuenta de WhatsApp",
+        deleteFailed: "Error al eliminar la cuenta de WhatsApp"
       },
       errors: {
         nameRequired: "El nombre de la cuenta es requerido",
@@ -103,8 +155,56 @@ export default {
         invalidToken: "Formato de token de acceso inválido",
         connectionFailed: "La conexión falló. Por favor verifica tus credenciales."
       },
-      helpText: "¿Dónde puedo encontrar esta información?"
-    }
+      helpText: "¿Dónde puedo encontrar esta información?",
+      templates: {
+        select: "Seleccionar Plantilla",
+        noTemplates: "No hay plantillas disponibles",
+        loading: "Cargando plantillas...",
+        sendTemplate: "Enviar Plantilla",
+        customizeMessage: "Personalizar Mensaje"
+      },
+      conversation: {
+        archiveConversation: "Archivar Conversación",
+        blockConversation: "Bloquear Conversación",
+        refreshConversation: "Actualizar Conversación"
+      },
+      attachment: {
+        image: "Imagen",
+        document: "Documento",
+        audio: "Audio",
+        video: "Video"
+      },
+      quickActions: {
+        location: "Enviar Ubicación"
+      },
+      inbox: {
+        title: "Bandeja de WhatsApp",
+        noConversations: "No hay conversaciones",
+        searchPlaceholder: "Buscar conversaciones...",
+        allConversations: "Todas las Conversaciones",
+        unreadOnly: "Solo No Leídas",
+        selectAccount: "Seleccionar cuenta",
+        noAccountSelected: "Ninguna cuenta seleccionada",
+        noAccountMessage: "Por favor selecciona una cuenta de WhatsApp para ver las conversaciones",
+        errorLoading: "Error al cargar conversaciones",
+        retry: "Reintentar",
+        emptyState: "No se encontraron conversaciones",
+        emptyStateDescription: "Cuando recibas mensajes de WhatsApp, aparecerán aquí"
+      },
+      deactivateAccount: "Desactivar Cuenta"
+    },
+    verify: "Verificar",
+    verifyConnection: "Verificar Conexión",
+    verifyConnectionConfirmation: "¿Estás seguro de que deseas verificar esta conexión?",
+    activateAccount: "Activar Cuenta",
+    activateAccountConfirmation: "¿Estás seguro de que deseas activar la cuenta {name}?",
+    deactivateAccount: "Desactivar Cuenta",
+    deleteAccount: "Eliminar Cuenta",
+    deleteAccountConfirmation: "¿Estás seguro de que deseas eliminar la cuenta {name}? Esta acción no se puede deshacer.",
+    activate: "Activar",
+    pendingAccounts: "Cuentas Pendientes",
+    errorAccounts: "Cuentas con Error",
+    inactiveAccounts: "Cuentas Inactivas"
   },
   user: {
     signOut: "Cerrar sesión",
@@ -121,13 +221,13 @@ export default {
   inbox: {
     title: "Bandeja de Entrada",
     unified: "Bandeja Unificada",
-    compose: "Redactar Mensaje",
-    search: "Buscar conversaciones...",
-    noMessages: "No se encontraron mensajes",
+    compose: "Redactar",
+    search: "Buscar mensajes...",
+    noMessages: "No hay mensajes",
     conversations: "Conversaciones",
-    newMessage: "Nuevo Mensaje",
+    newMessage: "Nuevo mensaje",
     newMessageTitle: "Nueva Conversación",
-    newMessageDescription: "Iniciar una nueva conversación con un contacto",
+    newMessageDescription: "Inicia una nueva conversación con un contacto",
     searchPlaceholder: "Buscar conversaciones...",
     noConversations: "No hay conversaciones",
     noSearchResults: "Ninguna conversación coincide con tu búsqueda",
@@ -142,21 +242,22 @@ export default {
     you: "Tú",
     activeNow: "Activo ahora",
     typeMessage: "Escribe un mensaje...",
-    sendingVia: "Enviando por",
+    sendingVia: "Enviando vía",
     call: "Llamar",
-    viewContact: "Ver Contacto",
-    messageSent: "Mensaje Enviado",
-    messageSentDescription: "Tu mensaje ha sido enviado con éxito",
+    viewContact: "Ver contacto",
+    messageSent: "Mensaje enviado",
+    messageSentDescription: "Tu mensaje ha sido enviado exitosamente",
+    attachment: "Archivo adjunto",
     channels: {
       whatsapp: "WhatsApp",
-      email: "Correo Electrónico",
+      email: "Correo",
       instagram: "Instagram"
     },
     filters: {
       all: "Todos",
       unread: "No leídos",
       whatsapp: "WhatsApp",
-      email: "Correo Electrónico",
+      email: "Correo",
       instagram: "Instagram"
     },
     dates: {
@@ -177,7 +278,7 @@ export default {
       budget: "Presupuesto",
       area: "Área de Interés",
       propertyType: "Tipo de Propiedad",
-      noNotes: "Aún no hay notas añadidas",
+      noNotes: "No hay notas aún",
       addNotePlaceholder: "Añadir una nota sobre este contacto...",
       addNote: "Añadir Nota",
       complete: "Completado",
@@ -190,7 +291,7 @@ export default {
       today: "Hoy",
       websiteLead: "Lead del Sitio Web",
       activeLead: "Lead Activo",
-      oakDistrict: "Distrito Roble",
+      oakDistrict: "Distrito Oak",
       singleFamilyHome: "Casa Unifamiliar",
       tabs: {
         info: "Info",
@@ -199,72 +300,87 @@ export default {
       }
     },
     error: {
-      fetchConversations: "Error al obtener conversaciones",
-      fetchConversation: "Error al obtener detalles de la conversación",
+      fetchConversations: "Error al cargar conversaciones",
+      fetchConversation: "Error al cargar detalles de la conversación",
       conversationNotFound: "Conversación no encontrada",
-      sendMessage: "Error al enviar el mensaje",
-      markAsRead: "Error al marcar la conversación como leída"
+      sendMessage: "Error al enviar mensaje",
+      markAsRead: "Error al marcar la conversación como leída",
+      noActiveAccount: "No hay una cuenta activa para enviar mensajes"
     },
     success: {
-      messageSent: "Mensaje enviado con éxito"
-    }
-  },
-  common: {
-    or: "O",
-    add: "Agregar",
-    all: "Todos",
-    cancel: "Oops, olvídalo",
-    showPassword: "Mostrar contraseña",
-    hidePassword: "Ocultar contraseña",
-    save: "Guardar y listo",
-    delete: "Eliminar",
-    next: "Vamos al siguiente",
-    edit: "Vamos a ajustarlo",
-    success: "¡Genial!",
-    remove: "Remover",
-    goodJob: "¡Buen trabajo!",
-    somethingWentWrong: "Oops, algo salió mal",
-    pleaseTryAgain: "Por favor, inténtalo de nuevo",
-    careful: "¡Cuidado!",
-    search: "Encuentra algo interesante",
-    deselectAll: "Deseleccionar todo",
-    pleaseCheckTheForm: "Revisa el formulario y corrige esos pequeños detalles",
-    yes: "Sí",
-    no: "No",
-    never: "Nunca",
-    connected: "Conectado",
-    notConnected: "No conectado",
+      messageSent: "Mensaje enviado exitosamente"
+    },
+    noResults: "No se encontraron resultados",
     loading: "Cargando...",
-    error: "Error",
-    comingSoon: "Próximamente",
+    loadMore: "Cargar más",
+    filterBy: "Filtrar por",
+    sortBy: "Ordenar por",
+    newest: "Más recientes",
+    oldest: "Más antiguos",
+    read: "Leídos",
+    markAsRead: "Marcar como leído",
+    forward: "Reenviar",
+    reply: "Responder",
+    thisWeek: "Esta semana",
+    lastWeek: "Semana pasada",
+    older: "Más antiguo",
+    to: "Para",
+    subject: "Asunto",
+    message: "Mensaje",
+    cancel: "Cancelar",
+    attachFiles: "Adjuntar archivos",
+    messagePlaceholder: "Escribe tu mensaje aquí...",
+    recipientPlaceholder: "Añadir destinatarios...",
+    subjectPlaceholder: "Asunto del mensaje",
+    messageError: "Error al enviar el mensaje",
+    replyPlaceholder: "Escribe tu respuesta...",
+    contacted: "Contactado",
+    notContacted: "No contactado"
   },
   login: {
     title: "Iniciar sesión",
-    signIn: "Iniciar sesión",
+    email: "Correo electrónico",
+    password: "Contraseña",
+    submit: "Ingresar",
     forgotPassword: "¿Olvidaste tu contraseña?",
+    register: "Registrarse",
+    emailPlaceholder: "Correo electrónico",
+    passwordPlaceholder: "********",
+    notRegistered: "¿No tienes una cuenta?",
+    createAccount: "Crear cuenta",
+    rememberMe: "Recordarme",
+    signIn: "Iniciar sesión",
     continueWithGoogle: "Continuar con Google",
     continueWithFacebook: "Continuar con Facebook",
     loginWithGoogle: "Iniciar sesión con Google",
     loginWithFacebook: "Iniciar sesión con Facebook",
     facebookLoginComingSoon: "La funcionalidad de inicio de sesión con Facebook estará disponible pronto",
     socialAuthInitiated: "Autenticación social iniciada",
-    socialAuthError: "Error en la autenticación social. Por favor, inténtalo de nuevo.",
+    socialAuthError: "Error en la autenticación social. Por favor intenta nuevamente.",
     successTitle: "✅ Inicio de sesión exitoso",
     successMessage: "¡Bienvenido de nuevo!",
     errorTitle: "❌ Error al iniciar sesión",
-    errorMessage: "Por favor verifica tus credenciales e intenta de nuevo",
+    errorMessage: "Por favor verifica tus credenciales e intenta nuevamente",
     formLabels: {
       email: "Correo electrónico",
-      password: "Contraseña",
+      password: "Contraseña"
     },
     validationMessages: {
       emailRequired: "¡No olvides tu correo electrónico!",
-      incorrectEmailFormat: "Formato de correo inválido",
       passwordRequired: "¡Necesitamos tu contraseña!",
+      invalidEmail: "Formato de correo electrónico inválido",
+      incorrectEmailFormat: "Formato de correo electrónico incorrecto",
       loginFailed: "Error al iniciar sesión. Por favor verifica tus credenciales.",
-      emailAuthExists: "Esta cuenta usa autenticación por correo",
-      useEmailToLogin: "Por favor, inicia sesión con tu correo y contraseña en lugar de inicio de sesión social"
+      emailAuthExists: "Esta cuenta usa autenticación por correo electrónico",
+      useEmailToLogin: "Por favor inicia sesión con tu correo electrónico y contraseña en lugar de inicio de sesión social"
     },
+    errors: {
+      invalidCredentials: "Credenciales inválidas",
+      accountLocked: "Tu cuenta ha sido bloqueada",
+      accountNotVerified: "Tu cuenta no ha sido verificada",
+      tooManyAttempts: "Demasiados intentos fallidos",
+      serverError: "Error del servidor. Por favor intenta más tarde."
+    }
   },
   registration: {
     title: "Registro",
@@ -280,8 +396,8 @@ export default {
       name: "Nombre",
       email: "Correo electrónico",
       password: "Contraseña",
-      confirmPassword: "Confirma tu contraseña",
-      passwordHint: "La contraseña debe tener al menos 8 caracteres",
+      confirmPassword: "Confirmar contraseña",
+      passwordHint: "La contraseña debe tener al menos 8 caracteres"
     },
     formPlaceholders: {
       name: "Tu nombre completo",
@@ -290,41 +406,57 @@ export default {
       confirmPassword: "••••••••"
     },
     validationMessages: {
-      nameRequired: "¡Necesitamos tu nombre!",
-      emailRequired: "¡No olvides tu correo electrónico!",
-      incorrectEmailFormat: "Formato de correo inválido",
-      passwordMin: "La contraseña debe tener al menos 8 caracteres",
-      passwordRequired: "¡Necesitamos tu contraseña!",
-      passwordMatch: "Las contraseñas deben coincidir",
-      confirmPasswordRequired: "Confirma tu contraseña",
+      nameRequired: "El nombre es requerido",
+      emailRequired: "El correo electrónico es requerido",
+      passwordRequired: "La contraseña es requerida",
+      confirmPasswordRequired: "La confirmación de contraseña es requerida",
+      invalidEmail: "Formato de correo electrónico inválido",
+      passwordLength: "La contraseña debe tener al menos 8 caracteres",
+      passwordMatch: "Las contraseñas no coinciden",
+      passwordRequirements: "La contraseña debe incluir letras mayúsculas, minúsculas, números y caracteres especiales"
     },
     errors: {
-      registrationFailed: "El registro falló",
-      googleAuthExists: "Este correo ya está registrado con Google",
-      useGoogleToLogin: "Por favor, usa el inicio de sesión con Google para esta cuenta",
-      emailAuthExists: "Este correo electrónico ya está registrado",
-      useEmailToLogin: "Por favor, usa tu correo y contraseña para iniciar sesión"
+      emailExists: "El correo electrónico ya está registrado",
+      serverError: "Error del servidor. Por favor intenta más tarde"
+    }
+  },
+  forgotPassword: {
+    title: "Recuperar contraseña",
+    email: "Correo electrónico",
+    submit: "Enviar enlace de recuperación",
+    goBack: "Volver a iniciar sesión",
+    checkEmail: "Revisa tu correo electrónico",
+    emailSent: "Se ha enviado un enlace de recuperación a tu correo electrónico",
+    emailPlaceholder: "Correo electrónico",
+    instructions: "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    validationMessages: {
+      emailRequired: "El correo electrónico es requerido",
+      invalidEmail: "Formato de correo electrónico inválido"
     },
+    errors: {
+      emailNotFound: "No se encontró una cuenta con este correo electrónico",
+      serverError: "Error del servidor. Por favor intenta más tarde."
+    }
   },
   passwordChange: {
-    title: "Cambiar contraseña",
-    request: "Solicitar cambio de contraseña",
+    title: "Cambiar Contraseña",
+    request: "Solicitar Cambio de Contraseña",
     goBackToLogin: "Volver a iniciar sesión",
     successTitle: "✅ Éxito",
     errorTitle: "❌ Error",
     successMessage: "Te hemos enviado un correo electrónico con instrucciones para cambiar tu contraseña.",
-    errorMessage: "Algo salió mal, por favor intenta de nuevo",
+    errorMessage: "Algo salió mal, por favor intenta nuevamente",
     incorrectCurrentPassword: "La contraseña actual es incorrecta",
-    googleAuthError: "No se puede cambiar la contraseña para cuentas que usan exclusivamente la autenticación de Google",
+    googleAuthError: "No se puede cambiar la contraseña de cuentas que usan exclusivamente autenticación de Google",
     passwordTooShort: "La nueva contraseña debe tener al menos 8 caracteres",
-    socialAccountError: "El cambio de contraseña no está disponible para cuentas de redes sociales. Por favor utiliza el inicio de sesión social.",
+    socialAccountError: "El cambio de contraseña no está disponible para cuentas de redes sociales. Por favor, usa el inicio de sesión social.",
     formLabels: {
-      email: "Correo electrónico",
+      email: "Correo electrónico"
     },
     validationMessages: {
       emailRequired: "¡No olvides tu correo electrónico!",
-      incorrectEmailFormat: "Formato de correo inválido",
-    },
+      incorrectEmailFormat: "Formato de correo electrónico inválido"
+    }
   },
   changePassword: {
     title: "Cambiar Contraseña",
@@ -332,7 +464,7 @@ export default {
     successTitle: "✅ Contraseña Cambiada",
     errorTitle: "❌ Error al Cambiar Contraseña",
     successMessage: "¡Contraseña cambiada exitosamente!",
-    errorMessage: "Algo salió mal, por favor intenta de nuevo",
+    errorMessage: "Algo salió mal, por favor intenta nuevamente",
     formLabels: {
       newPassword: "Nueva Contraseña",
       confirmPassword: "Confirma tu nueva contraseña"
@@ -343,17 +475,35 @@ export default {
       passwordMatch: "Las contraseñas deben coincidir",
       confirmPasswordRequired: "Confirma tu contraseña",
       missingToken: "Token faltante",
-      invalidResetCode: "El código de verificación no es válido. Por favor verifica e intenta de nuevo."
+      invalidResetCode: "El código de verificación es inválido. Por favor verifica e intenta nuevamente."
+    }
+  },
+  resetPassword: {
+    title: "Cambiar contraseña",
+    password: "Nueva contraseña",
+    confirmPassword: "Confirmar nueva contraseña",
+    submit: "Cambiar contraseña",
+    goBack: "Volver a iniciar sesión",
+    passwordPlaceholder: "Ingresa tu nueva contraseña",
+    confirmPlaceholder: "Confirma tu nueva contraseña",
+    success: "Tu contraseña ha sido cambiada exitosamente",
+    validationMessages: {
+      passwordRequired: "La contraseña es requerida",
+      confirmPasswordRequired: "La confirmación de contraseña es requerida",
+      passwordLength: "La contraseña debe tener al menos 8 caracteres",
+      passwordMatch: "Las contraseñas no coinciden",
+      missingToken: "Token faltante",
+      invalidResetCode: "El código de verificación es inválido. Por favor verifica e intenta nuevamente."
     }
   },
   activatePassword: {
-    title: "Activar Contraseña",
+    title: "Activar contraseña",
     submit: "Enviar",
     successMessage: "¡Contraseña activada exitosamente!",
-    errorMessage: "Algo salió mal, por favor intenta de nuevo",
-    invalidCode: "El código de verificación no es válido. Por favor verifica e intenta de nuevo.",
+    errorMessage: "Algo salió mal, por favor intenta nuevamente",
+    invalidCode: "El código de verificación es inválido. Por favor verifica e intenta nuevamente.",
     formLabels: {
-      activationCode: "Código de Activación"
+      activationCode: "Código de activación"
     },
     validationMessages: {
       codeLength: "El código de activación debe tener 6 dígitos",
@@ -454,5 +604,45 @@ export default {
     photoUploadComingSoon: "La carga de fotos estará disponible próximamente",
     loadError: "Error al cargar los datos del perfil",
     updateSuccess: "Perfil actualizado exitosamente"
+  },
+  actions: {
+    send: "Enviar",
+    reply: "Responder",
+    save: "Guardar",
+    delete: "Eliminar",
+    cancel: "Cancelar",
+    view: "Ver"
+  },
+  common: {
+    or: "O",
+    add: "Agregar",
+    close: "Cerrar",
+    all: "Todos",
+    notSpecified: "No especificado",
+    cancel: "Ups, no importa",
+    showPassword: "Mostrar contraseña",
+    hidePassword: "Ocultar contraseña",
+    save: "Guardar y listo",
+    delete: "Eliminar",
+    next: "Vamos al siguiente",
+    edit: "Ajustémoslo",
+    success: "¡Excelente!",
+    error: "Error",
+    unauthorized: "No autorizado",
+    comingSoon: "Próximamente",
+    remove: "Eliminar",
+    goodJob: "¡Buen trabajo!",
+    somethingWentWrong: "Ups, algo salió mal",
+    pleaseTryAgain: "Por favor, intenta nuevamente",
+    careful: "¡Cuidado!",
+    search: "Buscar algo interesante",
+    deselectAll: "Deseleccionar todo",
+    pleaseCheckTheForm: "Revisa el formulario y corrige esos pequeños detalles",
+    yes: "Sí",
+    no: "No",
+    never: "Nunca",
+    connected: "Conectado",
+    notConnected: "No conectado",
+    loading: "Cargando..."
   }
 } as const;

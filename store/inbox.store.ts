@@ -1,6 +1,5 @@
 // store/inbox.store.ts
 import { defineStore } from "pinia"
-import { useI18n } from "vue-i18n"
 import { 
   fetchConversations, 
   fetchConversation, 
@@ -8,6 +7,14 @@ import {
   markConversationAsRead,
   type Conversation
 } from "~/services/inbox.service"
+
+// Define error message keys
+const errorMessages = {
+  fetchConversations: 'inbox.error.fetchConversations',
+  fetchConversation: 'inbox.error.fetchConversation',
+  sendMessage: 'inbox.error.sendMessage',
+  markAsRead: 'inbox.error.markAsRead'
+}
 
 export enum InboxFilters {
   ALL = 'all',
@@ -130,8 +137,14 @@ export const useInboxStore = defineStore("inbox", {
       this.loading = loading
     },
 
-    setError(error: string | null) {
-      this.error = error
+    setError(errorKey: string | null) {
+      if (errorKey === null) {
+        this.error = null
+        return
+      }
+      
+      // Get translation at the component level when displaying the error
+      this.error = errorKey
     },
 
     // Conversation management
@@ -148,8 +161,7 @@ export const useInboxStore = defineStore("inbox", {
           this.conversations = result.data
         }
       } catch (error) {
-        const { t } = useI18n()
-        this.setError(t('inbox.error.fetchConversations'))
+        this.setError(errorMessages.fetchConversations)
         console.error('Error in loadConversations:', error)
       } finally {
         this.setLoading(false)
@@ -179,8 +191,7 @@ export const useInboxStore = defineStore("inbox", {
           await this.markAsRead(conversationId)
         }
       } catch (error) {
-        const { t } = useI18n()
-        this.setError(t('inbox.error.fetchConversation'))
+        this.setError(errorMessages.fetchConversation)
         console.error('Error in loadConversation:', error)
       } finally {
         this.setLoading(false)
@@ -226,8 +237,7 @@ export const useInboxStore = defineStore("inbox", {
         }
         return false
       } catch (error) {
-        const { t } = useI18n()
-        this.setError(t('inbox.error.sendMessage'))
+        this.setError(errorMessages.sendMessage)
         console.error('Error in sendNewMessage:', error)
         return false
       } finally {

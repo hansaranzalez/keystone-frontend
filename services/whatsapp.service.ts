@@ -1,7 +1,7 @@
 // WhatsApp Service - Functional Programming Pattern
-import axios from "axios";
 import { useToast } from "#ui/composables/useToast";
 import { useI18n } from "vue-i18n";
+import { useHttp } from "~/composables/useHttp";
 import type { HTTPError } from "~/utils/http";
 
 // Import types from models for internal use
@@ -25,28 +25,125 @@ export type {
 // Re-export the enum
 export { WhatsAppConnectionStatus };
 
-// API base URL and endpoints for WhatsApp
-const baseUrl = "/api/v1.0.0/whatsapp";
-const endpoints = {
-  accounts: `${baseUrl}/accounts`,
-  account: (id: string) => `${baseUrl}/accounts/${id}`,
-  verify: (id: string) => `${baseUrl}/accounts/${id}/verify`,
-  activate: (id: string) => `${baseUrl}/accounts/${id}/activate`,
-  deactivate: (id: string) => `${baseUrl}/accounts/${id}/deactivate`
-};
+// Use centralized endpoints from the plugin, with fallbacks if not available
+let centralizedEndpoints: any = null;
 
-// Helper for HTTP instance
-const getHttp = () => {
-  return axios.create({
-    headers: {
-      "Content-Type": "application/json",
-    },
+// Default fallback endpoints if centralized ones are not available
+
+// Backend snake_case response to frontend camelCase model
+const transformToCamelCase = <T>(data: any): T => {
+  if (!data) return {} as T;
+  
+  if (Array.isArray(data)) {
+    return data.map(item => transformToCamelCase<any>(item)) as unknown as T;
+  }
+  
+  if (typeof data !== 'object' || data === null) {
+    return data as T;
+  }
+  
+  const transformed: Record<string, any> = {};
+  
+  Object.entries(data).forEach(([key, value]) => {
+    // Convert snake_case to camelCase
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    
+    // Special case mappings for property name differences
+    let mappedKey = camelKey;
+    if (key === 'connection_status') {
+      mappedKey = 'status'; // Map connection_status to status as expected by the frontend
+    }
+    
+    // Recursively convert nested objects
+    transformed[mappedKey] = typeof value === 'object' && value !== null 
+      ? transformToCamelCase(value)
+      : value;
   });
+  
+  // Add default values for required fields if they're missing
+  if (!transformed.hasOwnProperty('name')) {
+    transformed.name = transformed.phoneNumber || 'WhatsApp Account';
+  }
+  
+  console.log('Transformed object:', transformed);
+  return transformed as T;
 };
 
-// Get toast and i18n
-const getToast = () => useToast();
-const getI18n = () => useI18n();
+// Default fallback endpoints if centralized ones are not available
+const fallbackBaseUrl = "/whatsapp";
+const fallbackEndpoints: Record<string, string | ((...args: any[]) => string)> = {
+  accounts: `${fallbackBaseUrl}`,
+  account: (id: string) => `${fallbackBaseUrl}/${id}`,
+  verifyAccount: (id: string) => `${fallbackBaseUrl}/${id}/verify`,
+  deactivateAccount: (id: string) => `${fallbackBaseUrl}/${id}/deactivate`,
+  reactivateAccount: (id: string) => `${fallbackBaseUrl}/${id}/reactivate`
+};
+
+/**
+ * Set WhatsApp endpoints from centralized source
+ * Called by the WhatsApp plugin during initialization
+ */
+export const setWhatsAppEndpoints = (endpoints: any) => {
+  centralizedEndpoints = endpoints.whatsapp;
+  console.log('WhatsApp service using centralized endpoints');
+};
+
+// Get the appropriate endpoint based on whether we have centralized endpoints or use fallbacks
+const getEndpoint = (key: string, ...args: any[]) => {
+  // If centralized endpoints aren't available, use fallbacks
+  if (!centralizedEndpoints) {
+    console.warn(`WhatsApp service using fallback endpoints - centralized endpoints not available`);
+    const fallback = fallbackEndpoints[key];
+    if (!fallback) {
+      console.error(`No fallback endpoint found for key: ${key}`);
+      return '';
+    }
+    return typeof fallback === 'function' ? fallback(...args) : fallback;
+  }
+  
+  // Use centralized endpoints if available
+  const endpoint = centralizedEndpoints[key];
+  if (!endpoint) {
+    console.error(`Endpoint not found for key: ${key}`);
+    return '';
+  }
+  return typeof endpoint === 'function' ? endpoint(...args) : endpoint;
+};
+
+// Helper for HTTP instance using the useHttp composable
+const getHttp = () => useHttp().http;
+
+// Get toast and i18n - with proper error handling for Composition API
+const getToast = () => {
+  try {
+    return useToast();
+  } catch (error) {
+    // Return null if not in a valid composition context
+    return null;
+  }
+};
+
+const getI18n = () => {
+  try {
+    return useI18n();
+  } catch (error) {
+    // Return a fallback if not in a valid composition context
+    return { t: (key: string) => key };
+  }
+};
+
+// Utility function to safely show toast notifications
+const showToast = (id: string, title: string, description: string, color: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error' | 'neutral') => {
+  const toast = getToast();
+  if (toast) {
+    toast.add({
+      id,
+      title,
+      description,
+      color
+    });
+  }
+};
 
 /**
  * Get all WhatsApp accounts for the current user
@@ -56,22 +153,32 @@ export const fetchWhatsAppAccounts = async (): Promise<WhatsAppAccount[]> => {
   const toast = getToast();
   
   try {
-    const response = await getHttp().get<WhatsAppApiResponse<WhatsAppAccount[]>>(endpoints.accounts);
+    const response = await getHttp().get(getEndpoint('accounts'));
+    console.log('WhatsApp accounts response:', response.data);
     
-    if (!response.data.success) {
+    // Check for success in both formats (success: boolean or status: 'success')
+    const isSuccess = response.data.success === true || response.data.status === 'success';
+    
+    if (!isSuccess) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.fetchError'));
     }
     
-    return response.data.data || [];
+    // Transform the snake_case response to camelCase for our model
+    const transformedData = transformToCamelCase<WhatsAppAccount[]>(response.data.data || []);
+    console.log('Transformed WhatsApp accounts:', transformedData);
+    
+    return transformedData;
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.fetchError');
-    toast.add({
-      id: 'whatsapp-fetch-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    if (toast) {
+      toast.add({
+        id: 'whatsapp-fetch-error',
+        title: t('error'),
+        description: errorMessage,
+        color: 'error'
+      });
+    }
     console.error("Error fetching WhatsApp accounts:", error);
     return [];
   }
@@ -85,25 +192,48 @@ export const fetchWhatsAppAccount = async (id: string): Promise<WhatsAppAccount 
   const toast = getToast();
   
   try {
-    const response = await getHttp().get<WhatsAppApiResponse<WhatsAppAccount>>(endpoints.account(id));
+    const response = await getHttp().get(getEndpoint('account', id));
+    console.log(`WhatsApp account ${id} response:`, response.data);
     
-    if (!response.data.success) {
+    // Check for success in both formats (success: boolean or status: 'success')
+    const isSuccess = response.data.success === true || response.data.status === 'success';
+    
+    if (!isSuccess) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.fetchAccountError'));
     }
     
-    return response.data.data || null;
+    // Transform the snake_case response to camelCase for our model
+    const transformedData = transformToCamelCase<WhatsAppAccount>(response.data.data || null);
+    console.log('Transformed WhatsApp account:', transformedData);
+    
+    return transformedData;
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.fetchAccountError');
-    toast.add({
-      id: 'whatsapp-fetch-account-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-fetch-account-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error fetching WhatsApp account ${id}:`, error);
     return null;
   }
+};
+
+/**
+ * Transform camelCase keys to snake_case for backend compatibility
+ */
+const transformToSnakeCase = (data: Record<string, any>): Record<string, any> => {
+  const transformed: Record<string, any> = {};
+  
+  Object.keys(data).forEach(key => {
+    // Convert camelCase to snake_case
+    const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+    transformed[snakeKey] = data[key];
+  });
+  
+  return transformed;
 };
 
 /**
@@ -114,21 +244,25 @@ export const createWhatsAppAccount = async (accountData: WhatsAppAccountFormData
   const toast = getToast();
   
   try {
+    // Transform the accountData to snake_case for backend compatibility
+    const transformedData = transformToSnakeCase(accountData);
+    console.log('Sending WhatsApp account data:', transformedData);
+    
     const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(
-      endpoints.accounts,
-      accountData
+      getEndpoint('accounts'),
+      transformedData
     );
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.connectionFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-account-created',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.accountCreated'),
-      color: 'success'
-    });
+    showToast(
+      'whatsapp-account-created',
+      t('success'),
+      t('integrations.whatsapp.alerts.accountCreated'),
+      'success'
+    );
     
     return {
       success: true,
@@ -138,12 +272,12 @@ export const createWhatsAppAccount = async (accountData: WhatsAppAccountFormData
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.connectionFailed');
-    toast.add({
-      id: 'whatsapp-create-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-create-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error("Error creating WhatsApp account:", error);
     return {
       success: false,
@@ -160,21 +294,25 @@ export const updateWhatsAppAccount = async (id: string, accountData: Partial<Wha
   const toast = getToast();
   
   try {
+    // Transform the accountData to snake_case for backend compatibility
+    const transformedData = transformToSnakeCase(accountData);
+    console.log(`Updating WhatsApp account ${id} with data:`, transformedData);
+    
     const response = await getHttp().put<WhatsAppApiResponse<WhatsAppAccount>>(
-      endpoints.account(id),
-      accountData
+      getEndpoint('account', id),
+      transformedData
     );
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.updateFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-account-updated',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.accountUpdated'),
-      color: 'success'
-    });
+    showToast(
+      'whatsapp-account-updated',
+      t('success'),
+      t('integrations.whatsapp.alerts.accountUpdated'),
+      'success'
+    );
     
     return {
       success: true,
@@ -184,12 +322,12 @@ export const updateWhatsAppAccount = async (id: string, accountData: Partial<Wha
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.updateFailed');
-    toast.add({
-      id: 'whatsapp-update-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-update-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error updating WhatsApp account ${id}:`, error);
     return {
       success: false,
@@ -206,18 +344,18 @@ export const verifyWhatsAppConnection = async (id: string): Promise<WhatsAppConn
   const toast = getToast();
   
   try {
-    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(endpoints.verify(id));
+    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(getEndpoint('verifyAccount', id));
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.connectionFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-verified',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.connectionVerified'),
-      color: 'success'
-    });
+    showToast(
+      'whatsapp-verified',
+      t('success'),
+      t('integrations.whatsapp.alerts.connectionVerified'),
+      'success'
+    );
     
     return {
       success: true,
@@ -227,12 +365,12 @@ export const verifyWhatsAppConnection = async (id: string): Promise<WhatsAppConn
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.connectionFailed');
-    toast.add({
-      id: 'whatsapp-verify-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-verify-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error verifying WhatsApp account ${id}:`, error);
     return {
       success: false,
@@ -249,18 +387,18 @@ export const activateWhatsAppAccount = async (id: string): Promise<WhatsAppConne
   const toast = getToast();
   
   try {
-    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(endpoints.activate(id));
+    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(getEndpoint('reactivateAccount', id));
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.activationFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-activated',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.accountReactivated'),
-      color: 'success'
-    });
+    showToast(
+      'whatsapp-activated',
+      t('success'),
+      t('integrations.whatsapp.alerts.accountReactivated'),
+      'success'
+    );
     
     return {
       success: true,
@@ -270,12 +408,12 @@ export const activateWhatsAppAccount = async (id: string): Promise<WhatsAppConne
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.activationFailed');
-    toast.add({
-      id: 'whatsapp-activate-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-activate-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error activating WhatsApp account ${id}:`, error);
     return {
       success: false,
@@ -292,18 +430,18 @@ export const deactivateWhatsAppAccount = async (id: string): Promise<WhatsAppCon
   const toast = getToast();
   
   try {
-    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(endpoints.deactivate(id));
+    const response = await getHttp().post<WhatsAppApiResponse<WhatsAppAccount>>(getEndpoint('deactivateAccount', id));
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.deactivationFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-deactivated',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.accountDeactivated'),
-      color: 'warning'
-    });
+    showToast(
+      'whatsapp-deactivated',
+      t('success'),
+      t('integrations.whatsapp.alerts.accountDeactivated'),
+      'warning'
+    );
     
     return {
       success: true,
@@ -313,12 +451,12 @@ export const deactivateWhatsAppAccount = async (id: string): Promise<WhatsAppCon
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.deactivationFailed');
-    toast.add({
-      id: 'whatsapp-deactivate-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-deactivate-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error deactivating WhatsApp account ${id}:`, error);
     return {
       success: false,
@@ -335,18 +473,18 @@ export const deleteWhatsAppAccount = async (id: string): Promise<WhatsAppConnect
   const toast = getToast();
   
   try {
-    const response = await getHttp().delete<WhatsAppApiResponse<null>>(endpoints.account(id));
+    const response = await getHttp().delete<WhatsAppApiResponse<null>>(getEndpoint('account', id));
     
     if (!response.data.success) {
       throw new Error(response.data.message || t('integrations.whatsapp.alerts.deleteFailed'));
     }
     
-    toast.add({
-      id: 'whatsapp-deleted',
-      title: t('success'),
-      description: t('integrations.whatsapp.alerts.accountDeleted'),
-      color: 'info'
-    });
+    showToast(
+      'whatsapp-deleted',
+      t('success'),
+      t('integrations.whatsapp.alerts.accountDeleted'),
+      'info'
+    );
     
     return {
       success: true,
@@ -355,12 +493,12 @@ export const deleteWhatsAppAccount = async (id: string): Promise<WhatsAppConnect
   } catch (error) {
     const errorMessage = (error as HTTPError).response?.data?.message || 
                          t('integrations.whatsapp.alerts.deleteFailed');
-    toast.add({
-      id: 'whatsapp-delete-error',
-      title: t('error'),
-      description: errorMessage,
-      color: 'error'
-    });
+    showToast(
+      'whatsapp-delete-error',
+      t('error'),
+      errorMessage,
+      'error'
+    );
     console.error(`Error deleting WhatsApp account ${id}:`, error);
     return {
       success: false,

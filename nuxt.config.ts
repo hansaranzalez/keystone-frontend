@@ -59,7 +59,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiKey: process.env.NUXT_API_KEY,
     public: {
-      apiUrl: process.env.NUXT_ENV === 'development' ? process.env.NUXT_DEVELOPMENT_API_URL : process.env.NUXT_PRODUCTION_API_URL // Public (accessible on client)
+      apiUrl: process.env.NUXT_ENV === 'development' ? process.env.NUXT_DEVELOPMENT_API_URL : process.env.NUXT_PRODUCTION_API_URL, // Public (accessible on client)
+      googleClientId: process.env.NUXT_GOOGLE_CLIENT_ID,
+      facebookAppId: process.env.NUXT_FACEBOOK_APP_ID,
+      facebookConfigId: process.env.NUXT_FACEBOOK_CONFIG_ID
     }
   }
 })

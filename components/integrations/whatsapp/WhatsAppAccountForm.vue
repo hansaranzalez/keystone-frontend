@@ -1,5 +1,5 @@
 <template>
-  <UForm :state="formData" class="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-3 sm:p-6 shadow-sm w-full max-w-full sm:max-w-2xl mx-auto" @submit="handleSubmit">
+  <UForm :state="formData" class="rounded-lg border border-slate-200 dark:border-slate-800 p-3 sm:p-6 shadow-sm w-full max-w-full sm:max-w-2xl mx-auto bg-white dark:bg-slate-900" @submit="handleSubmit">
     <div class="space-y-4 sm:space-y-6">
       <!-- Account Name -->
       <UFormField
@@ -210,14 +210,14 @@
     </div>
 
     <!-- Form Actions -->
-    <div class="flex flex-col sm:flex-row w-full sm:justify-end gap-3 mt-4 sm:mt-6">
+    <div class="flex flex-col sm:flex-row w-full sm:justify-end gap-3 mt-6 sm:mt-8">
       <UButton
         type="button"
         color="neutral"
         variant="soft"
-        size="xl"
+        size="lg"
         block
-        class="sm:w-auto"
+        class="sm:w-auto min-h-[46px]"
         :disabled="loading"
         @click="$emit('cancel')"
       >
@@ -227,9 +227,9 @@
         type="submit"
         color="primary"
         variant="soft"
-        size="xl"
+        size="lg"
         block
-        class="sm:w-auto"
+        class="sm:w-auto min-h-[46px]"
         :loading="loading"
         :disabled="loading || !isFormValid"
       >
