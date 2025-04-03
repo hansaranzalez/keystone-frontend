@@ -28,49 +28,5 @@ export interface ICurrentUser {
     email: string;
 }
 
-// Facebook SDK type declarations
-export interface FacebookAuthResponse {
-    accessToken: string;
-    expiresIn: number;
-    signedRequest: string;
-    userID: string;
-    code?: string; // The auth code returned when using response_type: 'code'
-}
-
-export interface FacebookLoginStatusResponse {
-    status: 'connected' | 'not_authorized' | 'unknown';
-    authResponse: FacebookAuthResponse | null;
-}
-
-export interface FacebookLoginOptions {
-    config_id?: string;
-    response_type?: 'code' | 'token';
-    scope?: string;
-    return_scopes?: boolean;
-    auth_type?: string;
-}
-
-// Extend the global Window interface to include Facebook SDK
-declare global {
-    interface Window {
-        FB: {
-            init(options: {
-                appId: string;
-                cookie?: boolean;
-                xfbml?: boolean;
-                version: string;
-            }): void;
-            login(
-                callback: (response: FacebookLoginStatusResponse) => void,
-                options?: FacebookLoginOptions
-            ): void;
-            getLoginStatus(
-                callback: (response: FacebookLoginStatusResponse) => void
-            ): void;
-            logout(callback: (response: any) => void): void;
-            AppEvents: any;
-            api: any;
-        };
-        fbAsyncInit?(): void;
-    }
-}
+// Note: Facebook SDK type declarations have been removed and are now defined in the facebook-business-sdk.client.ts file
+// This avoids duplicate declarations and potential conflicts

@@ -1,4 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
+import path from 'path' // Import Node.js path module
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
@@ -47,6 +48,15 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
+  // Define client-side plugins to load
+  plugins: [
+    '~/plugins/facebook-business-sdk.client', // Keep only the business SDK for WhatsApp integration
+    '~/plugins/pinia.client',
+    '~/plugins/services.client',
+    '~/plugins/endpoints.client',
+    '~/plugins/http.client',
+  ],
+  
   modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxt/image', '@nuxt/ui', '@nuxt/icon', '@nuxtjs/i18n', '@vueuse/nuxt', 'nuxt-svgo'],
   i18n: {
     vueI18n: '~/i18n/index.ts',
@@ -55,7 +65,12 @@ export default defineNuxtConfig({
   svgo: {
     autoImportPath: './assets/svg/',
   },
-  plugins: ["~/plugins/pinia.client.ts", "~/plugins/services.client.ts"],
+  devServer: {
+    https: {
+      key: path.resolve(__dirname, 'certs/localhost-key.pem'),
+      cert: path.resolve(__dirname, 'certs/localhost-cert.pem')
+    },
+  },
   runtimeConfig: {
     apiKey: process.env.NUXT_API_KEY,
     public: {

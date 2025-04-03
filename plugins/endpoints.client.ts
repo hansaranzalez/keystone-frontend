@@ -8,6 +8,7 @@ export default defineNuxtPlugin(() => {
         googleGetUserDetailsFromToken: (token: string) => `${apiBaseUrl}/auth/google/get-user-details-from-token/${token}`,
         googleCallback: (code: string) => `${apiBaseUrl}/auth/google/callback?code=${code}`,
         facebookLogin: `${apiBaseUrl}/auth/facebook/init-login-flow`,
+        facebookExchangeToken: `${apiBaseUrl}/auth/facebook/exchange-token`, // For exchanging short-lived token for long-lived token
         facebookGetUserDetailsFromToken: (token: string) => `${apiBaseUrl}/auth/facebook/get-user-details-from-token/${token}`,
         facebookCallback: (code: string) => `${apiBaseUrl}/auth/facebook/callback?code=${code}`,
         register: `${apiBaseUrl}/auth/register`,

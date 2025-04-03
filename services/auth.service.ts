@@ -406,92 +406,22 @@ export const initGoogleLoginFlow = async (t?: TranslationFn): Promise<void> => {
   }
 };
 
-export const initFacebookLoginFlow = (t?: TranslationFn): void => {
-  const toast = useToast();
-  const { t: i18nT } = useI18n();
-  const translator = t || i18nT;
-  const endpoints = useNuxtApp().$endpoints;
-  const router = useRouter();
-  const config = useRuntimeConfig();
-  
-  // Facebook SDK configuration - these should be added to .env file
-  const FB_APP_ID = config.public.facebookAppId || ''; // Add this to your .env
-  const FB_CONFIG_ID = config.public.facebookConfigId || ''; // Add this to your .env
-  
-  // Function to load Facebook SDK
-  const loadFacebookSDK = () => {
-    return new Promise<void>((resolve, reject) => {
-      // Check if FB SDK is already loaded
-      if (window.FB) {
-        resolve();
-        return;
-      }
-      
-      // Add Facebook SDK script
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId: FB_APP_ID,
-          cookie: true,
-          xfbml: true,
-          version: 'v18.0' // Use the latest version
-        });
-        resolve();
-      };
-      
-      // Load the SDK asynchronously
-      (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s) as HTMLScriptElement;
-        js.id = id;
-        js.src = "https://connect.facebook.net/en_US/sdk.js";
-        js.onload = () => resolve();
-        js.onerror = () => reject(new Error('Failed to load Facebook SDK'));
-        fjs.parentNode?.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-    });
-  };
-  
-  // Start the Facebook login flow
-  const startFacebookLogin = () => {
-    FB.login(function(response) {
-      if (response.status === 'connected') {
-        // User successfully authorized the app
-        if (response.authResponse && response.authResponse.code) {
-          // We have an auth code, send it to the backend
-          handleFacebookCode(response.authResponse.code);
-        } else {
-          // Something went wrong with code retrieval
-          console.error('Facebook login successful but no code received:', response);
-          toast.add({
-            color: 'error',
-            title: translator('login.errorTitle'),
-            description: translator('login.facebookLoginError')
-          });
-        }
-      } else if (response.status === 'not_authorized') {
-        // User did not authorize the app
-        toast.add({
-          color: 'warning',
-          title: translator('login.warningTitle'),
-          description: translator('login.facebookNotAuthorized')
-        });
-      } else {
-        // User cancelled login or did not fully authorize
-        console.log('Facebook login cancelled or failed:', response);
-      }
-    }, { 
-      config_id: FB_CONFIG_ID, 
-      response_type: 'code'
-    });
-  };
+// Use this type to define the parameters needed from composables
+interface FacebookLoginDeps {
+  toast: ReturnType<typeof useToast>;
+  translator: TranslationFn;
+  endpoints: any;
+  router: ReturnType<typeof useRouter>;
+  facebookSdk: any;
+  facebookConfigId?: string;
+}
+
+export const initFacebookLoginFlow = async (deps: FacebookLoginDeps): Promise<void> => {
+  const { toast, translator, endpoints, router, facebookSdk, facebookConfigId } = deps;
   
   // Handle the auth code from Facebook
   const handleFacebookCode = async (code: string) => {
     try {
-      // TODO: Add Facebook callback endpoint in backend and frontend
-      // Once backend endpoint is implemented, uncomment this code:
-      /*
       const http = getHttp();
       const response = await http.get(endpoints.facebookCallback(code));
       
@@ -504,15 +434,14 @@ export const initFacebookLoginFlow = (t?: TranslationFn): void => {
           description: translator('login.loginSuccess')
         });
         router.push('/dashboard');
+      } else {
+        // Handle missing token
+        toast.add({
+          color: 'error',
+          title: translator('login.errorTitle'),
+          description: translator('login.errorMessage')
+        });
       }
-      */
-      
-      // Temporary implementation - show success message
-      toast.add({
-        color: 'success',
-        title: translator('login.successTitle'),
-        description: `Facebook login code received: ${code.substring(0, 10)}... (Backend integration pending)`
-      });
       
     } catch (error: any) {
       logout();
@@ -536,27 +465,95 @@ export const initFacebookLoginFlow = (t?: TranslationFn): void => {
     }
   };
   
-  // Main function execution
   try {
-    loadFacebookSDK()
-      .then(() => {
-        startFacebookLogin();
-      })
-      .catch((error) => {
-        console.error('Error loading Facebook SDK:', error);
+    // Ensure Facebook SDK is initialized
+    if (!facebookSdk) {
+      toast.add({
+        color: 'error',
+        title: translator('login.errorTitle'),
+        description: translator('login.facebookSdkUnavailable')
+      });
+      return;
+    }
+    
+    // Start Facebook login process
+    const response = await facebookSdk.login({
+      config_id: facebookConfigId,
+      scope: 'email,public_profile',
+      redirect_uri: 'https://localhost:3001/auth/facebook/callback',
+    });
+    
+    // Log the response to understand the structure
+    console.log('Facebook login response:', response);
+    
+    if (response.authResponse) {
+      // Facebook might return an access token instead of a code
+      // We'll handle both cases
+      if (response.authResponse.accessToken) {
+        // We have a token directly from Facebook
+        // Send it to our backend for validation
+        try {
+          const http = getHttp();
+          const backendResponse = await http.post(endpoints.facebookLogin, {
+            accessToken: response.authResponse.accessToken,
+            userID: response.authResponse.userID
+          });
+          
+          if (backendResponse.data && backendResponse.data.accessToken) {
+            setToken(backendResponse.data.accessToken);
+            decodeTokenAndSetUser();
+            toast.add({
+              color: 'success',
+              title: translator('login.successTitle'),
+              description: translator('login.loginSuccess')
+            });
+            router.push('/dashboard');
+          } else {
+            throw new Error('Invalid response from server');
+          }
+        } catch (error) {
+          console.error('Error processing Facebook token:', error);
+          toast.add({
+            color: 'error',
+            title: translator('login.errorTitle'),
+            description: translator('login.facebookLoginError')
+          });
+        }
+      } else if (response.authResponse.code) {
+        // We have an auth code, send it to the backend
+        await handleFacebookCode(response.authResponse.code);
+      } else {
+        console.error('Facebook login successful but no token or code received:', response);
         toast.add({
           color: 'error',
           title: translator('login.errorTitle'),
-          description: translator('login.facebookSdkLoadError')
+          description: translator('login.facebookLoginError')
         });
+      }
+    } else {
+      console.error('Facebook login response has no authResponse:', response);
+      toast.add({
+        color: 'error',
+        title: translator('login.errorTitle'),
+        description: translator('login.facebookLoginError')
       });
-  } catch (error) {
-    console.error('Error in Facebook login flow:', error);
-    toast.add({
-      color: 'error',
-      title: getI18nMessageFromKey('login.errorTitle', t),
-      description: getI18nMessageFromKey('login.errorMessage', t)
-    });
+    }
+  } catch (error: any) {
+    if (error.message === 'Facebook login failed') {
+      // User cancelled or did not authorize
+      toast.add({
+        color: 'warning',
+        title: translator('login.warningTitle'),
+        description: translator('login.facebookNotAuthorized')
+      });
+    } else {
+      console.error('Error during Facebook login:', error);
+      toast.add({
+        color: 'error',
+        title: translator('login.errorTitle'),
+        description: translator('login.facebookLoginError')
+      });
+    }
   }
 };
 
