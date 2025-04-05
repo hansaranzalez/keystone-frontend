@@ -295,15 +295,15 @@ export const verifyActivationCode = async (code: string, t?: TranslationFn): Pro
       code,
     });
     
-    if (response.status !== HttpStatus.SUCCESS) throw new Error(t('activatePassword.errorMessage'));
+    //if (response.status !== HttpStatus.SUCCESS) throw new Error(t('activatePassword.errorMessage'));
     
     return response.data;
   } catch (error) {
-    useToast().add({
-      color: 'error',
-      title: t('common.error'),
-      description: t('activatePassword.errorMessage')
-    });
+    // useToast().add({
+    //   color: 'error',
+    //   title: t('common.error'),
+    //   description: t('activatePassword.errorMessage')
+    // });
     throw error;
   }
 };
