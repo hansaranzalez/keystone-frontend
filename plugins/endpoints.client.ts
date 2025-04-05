@@ -10,7 +10,8 @@ export default defineNuxtPlugin(() => {
         facebookLogin: `${apiBaseUrl}/auth/facebook/init-login-flow`,
         facebookExchangeToken: `${apiBaseUrl}/auth/facebook/exchange-token`, // For exchanging short-lived token for long-lived token
         facebookGetUserDetailsFromToken: (token: string) => `${apiBaseUrl}/auth/facebook/get-user-details-from-token/${token}`,
-        facebookCallback: (code: string) => `${apiBaseUrl}/auth/facebook/callback?code=${code}`,
+        facebookCallback: (code: string, state: string) => `${apiBaseUrl}/auth/facebook/callback?code=${code}&state=${state}`,
+        facebookPrepareState: `${apiBaseUrl}/auth/facebook/prepare`,
         register: `${apiBaseUrl}/auth/register`,
         requestPasswordChange: `${apiBaseUrl}/auth/request-password-change`,
         changePassword: `${apiBaseUrl}/auth/change-password`,

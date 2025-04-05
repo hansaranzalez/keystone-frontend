@@ -6,6 +6,7 @@ import { AuthUser } from '~/models/entities/AuthUser';
 import { AuthForms, useAuthStore } from '~/store/authStore';
 import { useUiStore } from '~/store/ui.store';
 import { HttpStatus } from '~/types/auth.type';
+import { v4 as uuidv4 } from 'uuid';
 
 // Helper functions to get core dependencies
 const getStore = () => {
@@ -416,144 +417,106 @@ interface FacebookLoginDeps {
   facebookConfigId?: string;
 }
 
-export const initFacebookLoginFlow = async (deps: FacebookLoginDeps): Promise<void> => {
+export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): Promise<void> => {
   const { toast, translator, endpoints, router, facebookSdk, facebookConfigId } = deps;
-  
-  // Handle the auth code from Facebook
-  const handleFacebookCode = async (code: string) => {
-    try {
-      const http = getHttp();
-      const response = await http.get(endpoints.facebookCallback(code));
-      
-      if (response.data && response.data.accessToken) {
-        setToken(response.data.accessToken);
-        decodeTokenAndSetUser();
-        toast.add({
-          color: 'success',
-          title: translator('login.successTitle'),
-          description: translator('login.loginSuccess')
-        });
-        router.push('/dashboard');
-      } else {
-        // Handle missing token
-        toast.add({
-          color: 'error',
-          title: translator('login.errorTitle'),
-          description: translator('login.errorMessage')
-        });
-      }
-      
-    } catch (error: any) {
-      logout();
-      
-      // Check for email auth provider error
-      if (error.response?.data?.message === 'User with this email exists with email authentication. Please login with your email and password.' && 
-          error.response?.data?.auth_provider === 'email') {
-        toast.add({
-          color: 'error',
-          title: translator('login.errorTitle'),
-          description: `${translator('login.validationMessages.emailAuthExists')}. ${translator('login.validationMessages.useEmailToLogin')}`
-        });
-      } else {
-        // General error case
-        toast.add({
-          color: 'error',
-          title: translator('login.errorTitle'),
-          description: translator('login.errorMessage')
-        });
-      }
-    }
-  };
-  
+  const {http} = useHttp(); // Assuming this composable gives access to your configured axios/fetch instance
+
+  console.log('================ FACEBOOK WHATSAPP INTEGRATION STARTED ================');
+
   try {
-    // Ensure Facebook SDK is initialized
-    if (!facebookSdk) {
-      toast.add({
-        color: 'error',
-        title: translator('login.errorTitle'),
-        description: translator('login.facebookSdkUnavailable')
-      });
+    // --- Prerequisites ---
+    if (!facebookSdk) { /* ... handle SDK unavailable ... */ return; }
+    // Add HTTPS check if needed again here
+
+    // --- State Parameter Logic ---
+    // 1. Generate Unique State
+    const state = uuidv4();
+    console.log(`Generated state: ${state}`);
+
+    // 2. Prepare State on Backend (Associate state with logged-in CRM User)
+    try {
+      console.log(`Preparing Facebook OAuth state on backend...`);
+      // Assumes your http client automatically sends CRM auth (cookie/token)
+      await http.post(endpoints.facebookPrepareState, { state });
+      console.log("State prepared successfully on backend.");
+    } catch (prepareError: any) {
+      console.error('Error preparing Facebook OAuth state on backend:', prepareError.response?.data || prepareError.message);
+      toast.add({ color: 'error', title: translator('common.error'), description: translator('integrations.facebook.prepareError') });
       return;
     }
-    
-    // Start Facebook login process
+
+    // --- Facebook Login Call ---
+    // 3. Initialize SDK (may happen globally, but ensure it's ready)
+    await facebookSdk.initialize(); // Ensure this is safe to call multiple times or check status
+    if (!window.FB || typeof window.FB.login !== 'function') {
+      throw new Error('Facebook SDK failed to initialize.');
+    }
+
+    // 4. Call FB.login with correct params
+    console.log('Starting Facebook Business Login for integration...');
     const response = await facebookSdk.login({
-      config_id: facebookConfigId,
-      scope: 'email,public_profile',
-      redirect_uri: 'https://localhost:3001/auth/facebook/callback',
+        config_id: facebookConfigId,
+        response_type: 'code', // Explicitly request code
+        scope: 'whatsapp_business_messaging,whatsapp_business_management,business_management,email,public_profile', // FULL scope
+        state: state // Pass the generated state
+        // redirect_uri: '...' // Usually NOT needed with JS SDK; handled by app config
     });
-    
-    // Log the response to understand the structure
+
     console.log('Facebook login response:', response);
-    
-    if (response.authResponse) {
-      // Facebook might return an access token instead of a code
-      // We'll handle both cases
-      if (response.authResponse.accessToken) {
-        // We have a token directly from Facebook
-        // Send it to our backend for validation
+
+    // --- Handle Response (Code Flow Only) ---
+    if (response.authResponse?.code) {
+        const code = response.authResponse.code;
+        console.log('Received authorization code. Sending to backend callback...');
+
         try {
-          const http = getHttp();
-          const backendResponse = await http.post(endpoints.facebookLogin, {
-            accessToken: response.authResponse.accessToken,
-            userID: response.authResponse.userID
-          });
-          
-          if (backendResponse.data && backendResponse.data.accessToken) {
-            setToken(backendResponse.data.accessToken);
-            decodeTokenAndSetUser();
+            // 5. Send Code and State to Backend Callback
+            // Construct URL like /auth/facebook/callback?code=...&state=...
+            const callbackUrl = endpoints.facebookCallback(code, state);
+            const backendResponse = await http.get(callbackUrl); // Use GET for the callback
+
+            // 6. Handle Backend Response (Simple Success/Failure)
+            if (backendResponse.data?.success) {
+                toast.add({
+                    color: 'success',
+                    title: translator('common.success'),
+                    description: translator('integrations.facebook.linkSuccess') // e.g., "WhatsApp Business account linked successfully."
+                });
+                // Optional: Refresh page data or redirect within integrations section
+                // router.push('/integrations?refresh=true'); // Example
+            } else {
+                 // Backend indicated failure
+                throw new Error(backendResponse.data?.message || translator('integrations.facebook.linkError'));
+            }
+        } catch (callbackError: any) {
+            console.error('Error during backend callback processing:', callbackError.response?.data || callbackError.message);
             toast.add({
-              color: 'success',
-              title: translator('login.successTitle'),
-              description: translator('login.loginSuccess')
+                color: 'error',
+                title: translator('common.error'),
+                description: callbackError.response?.data?.message || translator('integrations.facebook.linkError') // Show specific error from backend if available
             });
-            router.push('/dashboard');
-          } else {
-            throw new Error('Invalid response from server');
-          }
-        } catch (error) {
-          console.error('Error processing Facebook token:', error);
-          toast.add({
-            color: 'error',
-            title: translator('login.errorTitle'),
-            description: translator('login.facebookLoginError')
-          });
         }
-      } else if (response.authResponse.code) {
-        // We have an auth code, send it to the backend
-        await handleFacebookCode(response.authResponse.code);
-      } else {
-        console.error('Facebook login successful but no token or code received:', response);
+
+    } else {
+        // Handle cases where login wasn't successful or didn't return a code
+        // (e.g., user cancelled, no authResponse)
+        console.error('Facebook login did not return an authorization code:', response);
+        // Don't log user out, just inform them the connection failed
         toast.add({
-          color: 'error',
-          title: translator('login.errorTitle'),
-          description: translator('login.facebookLoginError')
+          color: 'warning', // Or 'error' depending on cause
+          title: translator('login.warningTitle'), // Use appropriate title
+          description: translator('integrations.facebook.authorizationFailed') // e.g., "Authorization failed or was cancelled."
         });
-      }
-    } else {
-      console.error('Facebook login response has no authResponse:', response);
-      toast.add({
-        color: 'error',
-        title: translator('login.errorTitle'),
-        description: translator('login.facebookLoginError')
-      });
     }
+
   } catch (error: any) {
-    if (error.message === 'Facebook login failed') {
-      // User cancelled or did not authorize
-      toast.add({
-        color: 'warning',
-        title: translator('login.warningTitle'),
-        description: translator('login.facebookNotAuthorized')
-      });
-    } else {
-      console.error('Error during Facebook login:', error);
-      toast.add({
-        color: 'error',
-        title: translator('login.errorTitle'),
-        description: translator('login.facebookLoginError')
-      });
-    }
+     // Catch errors from SDK init, FB.login, etc.
+    console.error('Error during Facebook integration initiation:', error);
+    toast.add({
+      color: 'error',
+      title: translator('common.error'),
+      description: error.message || translator('integrations.facebook.initiationError')
+    });
   }
 };
 

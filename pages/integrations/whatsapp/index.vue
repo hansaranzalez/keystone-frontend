@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { v4 as uuidv4 } from 'uuid';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -202,7 +203,7 @@ async function directFacebookLogin() {
         console.log('Direct FB.login response:', loginResponse);
         resolve(loginResponse);
       }, {
-        scope: 'whatsapp_business_messaging,whatsapp_business_management,email',
+        scope: 'whatsapp_business_messaging,whatsapp_business_management,business_management,email',
         config_id: config.public.facebookConfigId
       });
     });
@@ -236,180 +237,135 @@ async function directFacebookLogin() {
 
 /**
  * Initializes Facebook Business login flow for WhatsApp integration
- * Handles SDK initialization, authentication, token exchange, and WhatsApp business account retrieval
+ * Handles SDK initialization, state preparation, login call, and sending code+state to backend.
  */
-async function initFacebookLogin(): Promise<void> {
-  console.log('================ FACEBOOK LOGIN FLOW STARTED ================');
-  
+ async function initFacebookLogin(): Promise<void> {
+  console.log('================ FACEBOOK INTEGRATION FLOW STARTED ================');
+
   // Get dependencies from composables
   const toast = useToast();
-  const endpoints = useNuxtApp().$endpoints;
+  // Assuming translator function exists for localization
+  // const translator = (key: string) => key; // Replace with actual translator
+  const endpoints = useNuxtApp().$endpoints; // Assuming endpoints includes facebookPrepareState and facebookCallback
   const config = useRuntimeConfig();
-  const { http } = useHttp();
+  const getHttp = () => useHttp().http;
   const fbBusinessSdk = useNuxtApp().$fbBusinessSdk;
-  
+
   // Config values
-  const FB_APP_ID = config.public.facebookAppId;
-  const FB_CONFIG_ID = config.public.facebookConfigId;
-  
-  // Token exchange settings
-  const TOKEN_EXCHANGE_NEEDED = true; // Flag to indicate if we need to exchange for permanent token
-  
-  // Feature detection - Check if the endpoints we need are available
-  const hasTokenExchangeEndpoint = !!endpoints.facebookExchangeToken;
-  
-  // HTTPS check - Facebook Login API requires HTTPS
-  // Special allowance for localhost development
-  if (window.location.protocol !== 'https:' && 
-      !window.location.hostname.includes('localhost') && 
+  const FB_APP_ID = config.public.facebookAppId; // Ensure this is set
+  const FB_CONFIG_ID = config.public.facebookConfigId; // Ensure this is set
+
+  // --- Helper Function (Example - Adapt to your UI needs) ---
+  // You might have existing helpers for this
+  const showSuccessToast = (message: string) => toast.add({ color: 'success', title: 'Success', description: message });
+  const showErrorToast = (message: string, title: string = 'Error') => toast.add({ color: 'error', title: title, description: message });
+  // -------------------------------------------------------------
+
+
+  // HTTPS check - Facebook Login API requires HTTPS (allow localhost)
+  if (window.location.protocol !== 'https:' &&
+      !window.location.hostname.includes('localhost') &&
       !window.location.hostname.includes('127.0.0.1')) {
     console.error('Facebook Business SDK requires HTTPS for non-localhost environments');
-    showErrorToast(toast, 'Facebook login requires a secure connection (HTTPS). Please use a secure connection and try again.');
+    showErrorToast('Facebook integration requires a secure connection (HTTPS).');
     return;
   }
-  
-  console.log('Running on localhost, bypassing HTTPS requirement for development');
-  
+  console.log('Running on localhost or HTTPS, proceeding...');
+
   // Check if SDK is available
   if (!fbBusinessSdk) {
     console.error('Facebook Business SDK plugin is not available');
-    showErrorToast(toast, 'Facebook Business SDK is not available. Please try again later.');
+    showErrorToast('Facebook integration component is not available. Please try again later.');
     return;
   }
-  
+  // Ensure required config IDs are present
+  if (!FB_APP_ID || !FB_CONFIG_ID) {
+      console.error('Missing Facebook App ID or Config ID in configuration.');
+      showErrorToast('Facebook integration is not configured correctly.');
+      return;
+  }
+  // Ensure necessary endpoints are defined
+  if (!endpoints?.facebookPrepareState || !endpoints?.facebookCallback) {
+       console.error('Missing Facebook endpoint configuration.');
+       showErrorToast('Facebook integration endpoint configuration is missing.');
+       return;
+  }
+
+
   try {
-    // Initialize the SDK
+    // --- State Parameter Logic ---
+    // 1. Generate Unique State
+    const state = uuidv4();
+    console.log(`Generated state: ${state}`);
+
+    // 2. Prepare State on Backend (Associate state with logged-in CRM User)
+    try {
+      console.log(`Preparing Facebook OAuth state on backend...`);
+      // Assumes your http client automatically sends CRM auth (cookie/token)
+      await getHttp().post(endpoints.facebookPrepareState, { state });
+      console.log("State prepared successfully on backend.");
+    } catch (prepareError: any) {
+      console.error('Error preparing Facebook OAuth state on backend:', prepareError.response?.data || prepareError.message);
+      showErrorToast('Failed to initiate Facebook connection. Please try again.');
+      return;
+    }
+
+    // --- Facebook Login Call ---
+    // 3. Initialize SDK
     console.log('Initializing Facebook Business SDK...');
-    await fbBusinessSdk.initialize();
-    
-    // Verify SDK initialization
+    await fbBusinessSdk.initialize(); // Ensure this handles potential re-initialization safely
     if (!window.FB || typeof window.FB.login !== 'function') {
       throw new Error('Facebook SDK initialization failed - FB.login not available');
     }
-    
-    // Perform Facebook Business login with WhatsApp permissions
-    console.log('Starting Facebook login with WhatsApp permissions...');
-    const loginResponse: { status: string; authResponse?: { accessToken: string; userID: string; [key: string]: any } } = await fbBusinessSdk.login({
-      scope: 'whatsapp_business_messaging,whatsapp_business_management,email',
-      config_id: FB_CONFIG_ID
+
+    // 4. Perform Facebook Business login with corrected scope and state
+    console.log('Starting Facebook Business Login with permissions and state...');
+    const loginResponse: { status: string; authResponse?: { code?: string; userID?: string; [key: string]: any } } = await fbBusinessSdk.login({
+      config_id: FB_CONFIG_ID,
+      scope: 'whatsapp_business_messaging,whatsapp_business_management,business_management,email,public_profile', // Ensure correct scope
+      state: state // Pass the generated state value here
+      // No redirect_uri needed usually
     });
-    
+
     console.log('Facebook Business login response:', loginResponse);
-    
-    // Process successful login
-    if (loginResponse.status === 'connected' && loginResponse.authResponse) {
-      // Validate auth response
-      if (!loginResponse.authResponse.accessToken) {
-        // Facebook's authResponse might contain code instead of accessToken when using auth code flow
-        if (loginResponse.authResponse.code) {
-          console.log('Received authorization code instead of access token, sending to backend');
-          
-          // Send authorization code to backend for token exchange
-          console.log('Sending authorization code to Facebook callback endpoint');
-          // Using GET request as the callback endpoint is configured as GET in the backend
-          const backendResponse = await http.get(`${config.public.apiUrl}/auth/facebook/callback`, {
-            params: {
-              // Using 'code' param as expected by the backend Facebook callback endpoint
-              code: loginResponse.authResponse.code,
-              userID: loginResponse.authResponse.userID || null
-              // Don't attempt to get business accounts directly - backend will handle this
-            }
-          });
-          
-          handleBackendResponse(backendResponse, toast);
-          return;
-        } else {
-          throw new Error('Authentication response is missing both access token and auth code');
-        }
-      }
-      
+
+    // --- Handle Response (Focus on Code Flow) ---
+    // 5. Process successful login IF code is received
+    if (loginResponse.status === 'connected' && loginResponse.authResponse?.code) {
+      const code = loginResponse.authResponse.code;
+      console.log('Received authorization code, sending to backend callback with state...');
+
       try {
-        // Get WhatsApp Business accounts with the received access token
-        const whatsappAccounts = await fbBusinessSdk.getWhatsAppBusinessAccounts();
-        console.log('WhatsApp Business accounts retrieved:', whatsappAccounts);
-        
-        // If token exchange is needed, get system user access token with long-lived permission
-        let longLivedToken = loginResponse.authResponse.accessToken;
-        let tokenMetadata = null;
-        
-        if (TOKEN_EXCHANGE_NEEDED && hasTokenExchangeEndpoint) {
-          try {
-            console.log('Exchanging short-lived token for long-lived token...');
-            // First, exchange for a long-lived user access token
-            const tokenExchangeResponse = await http.post(endpoints.facebookExchangeToken, {
-              accessToken: loginResponse.authResponse.accessToken,
-              userID: loginResponse.authResponse.userID || null
-            });
-            
-            if (tokenExchangeResponse.data?.longLivedToken) {
-              console.log('Successfully exchanged for long-lived token');
-              longLivedToken = tokenExchangeResponse.data.longLivedToken;
-              tokenMetadata = tokenExchangeResponse.data.metadata || null;
-            } else {
-              console.warn('Token exchange response missing long-lived token, using short-lived token instead');
-            }
-          } catch (tokenExchangeError) {
-            console.error('Error exchanging token:', tokenExchangeError);
-            console.warn('Proceeding with short-lived token');
-          }
+        // 6. Send Code and State to Backend Callback
+        // Construct URL like /auth/facebook/callback?code=...&state=...
+        const callbackUrl = endpoints.facebookCallback(code, state); // Use endpoint builder
+        const backendResponse = await getHttp().get(callbackUrl); // Use GET
+
+        // 7. Handle Backend Response (Simple Success/Failure for linking)
+        if (backendResponse.data?.success) {
+            showSuccessToast(backendResponse.data.message || "WhatsApp Business account linked successfully.");
+            // Potentially refresh integration status on the page here
+        } else {
+            // Backend indicated failure
+            throw new Error(backendResponse.data?.message || "Failed to link WhatsApp account on the server.");
         }
-        
-        // Send authentication data to backend with the appropriate token
-        console.log('Sending FB authentication data to backend via authenticate endpoint');
-        const backendResponse = await http.post(`${config.public.apiUrl}/auth/facebook/authenticate`, {
-          accessToken: longLivedToken,
-          userID: loginResponse.authResponse.userID || null,
-          businessAccounts: whatsappAccounts?.data || [],
-          tokenMetadata: tokenMetadata,
-          whatsAppPhoneNumbers: extractPhoneNumbers(whatsappAccounts)
-        });
-        
-        handleBackendResponse(backendResponse, toast);
-      } catch (accountsError) {
-        console.error('Error fetching WhatsApp Business accounts:', accountsError);
-        
-        // If we can't get accounts directly, attempt token exchange and let backend handle it
-        let longLivedToken = loginResponse.authResponse.accessToken;
-        let tokenMetadata = null;
-        
-        if (TOKEN_EXCHANGE_NEEDED && hasTokenExchangeEndpoint) {
-          try {
-            console.log('Attempting token exchange before fallback...');
-            const tokenExchangeResponse = await http.post(`${config.public.apiUrl}/auth/facebook/exchange-token`, {
-              accessToken: loginResponse.authResponse.accessToken,
-              userID: loginResponse.authResponse.userID || null
-            });
-            
-            if (tokenExchangeResponse.data?.longLivedToken) {
-              longLivedToken = tokenExchangeResponse.data.longLivedToken;
-              tokenMetadata = tokenExchangeResponse.data.metadata || null;
-            }
-          } catch (tokenExchangeError) {
-            console.error('Error in fallback token exchange:', tokenExchangeError);
-          }
-        }
-        
-        // Send to backend with whatever token we have
-        console.log('Sending FB authentication data to backend via authenticate endpoint (fallback)');
-        const backendResponse = await http.post(`${config.public.apiUrl}/auth/facebook/authenticate`, {
-          accessToken: longLivedToken,
-          userID: loginResponse.authResponse.userID || null,
-          businessAccounts: [],
-          tokenMetadata: tokenMetadata
-        });
-        
-        handleBackendResponse(backendResponse, toast);
+      } catch (callbackError: any) {
+        console.error('Error during backend callback processing:', callbackError.response?.data || callbackError.message);
+        // Show specific error from backend if available, otherwise generic
+        showErrorToast(callbackError.response?.data?.message || "An error occurred while finalizing the WhatsApp connection.");
       }
-    } else {
-      throw new Error('Facebook login unsuccessful or missing auth data: ' + loginResponse.status);
     }
-  } catch (error) {
+    // ** REMOVED: Logic handling direct access token, as code flow is expected/preferred **
+    // ** REMOVED: Logic trying to fetch whatsappAccounts on frontend **
+    else {
+        // Handle cases where login status is not 'connected' or code is missing
+        console.error('Facebook login unsuccessful or missing authorization code:', null);
+        showErrorToast("Facebook authorization failed or was cancelled.");
+    }
+  } catch (error: any) {
+     // Catch errors from SDK init, FB.login, etc.
     console.error('Facebook Business integration error:', error);
-    const toast = useToast();
-    showErrorToast(
-      toast, 
-      t('login.facebookLoginError') || 'Error connecting to WhatsApp Business. Please try again later.'
-    );
+    showErrorToast(error.message || 'An unexpected error occurred during Facebook integration.');
   }
 }
 
