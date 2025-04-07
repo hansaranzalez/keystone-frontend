@@ -7,10 +7,10 @@
         <UButton
           color="primary"
           icon="i-lucide-plus"
-          size="sm"
+          size="xl"
+          class="rounded-full"
           @click="$emit('new-message')"
         >
-          {{ $t('inbox.newMessage') }}
         </UButton>
       </div>
       
@@ -21,6 +21,7 @@
           :placeholder="$t('inbox.searchPlaceholder')"
           icon="i-lucide-search"
           class="w-full"
+          size="xl"
         />
       </UInputGroup>
     </div>

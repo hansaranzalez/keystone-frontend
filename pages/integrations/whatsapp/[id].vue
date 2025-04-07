@@ -193,11 +193,8 @@
         </UCard>
         
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <!-- <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-            <UButton @click="openEditMode" icon="i-heroicons-pencil" color="primary" variant="soft" size="sm" class="grow sm:grow-0">
-              {{ $t('edit') }}
-            </UButton>
             <UButton 
               v-if="isConnected || needsVerification" 
               @click="confirmDeactivate" 
@@ -232,48 +229,7 @@
           >
             {{ $t('delete') }}
           </UButton>
-        </div>
-        
-        <!-- Edit mode - Using UModal instead of custom modal -->
-        <UModal v-model="isEditing" size="xl">
-          <UCard>
-            <template #header>
-              <div class="flex justify-between items-center w-full">
-                <h2 class="text-lg font-medium text-slate-900 dark:text-white">{{ $t('integrations.whatsapp.editAccount') }}</h2>
-                <UButton
-                  icon="i-heroicons-x-mark"
-                  color="neutral"
-                  variant="ghost"
-                  size="xs"
-                  @click="isEditing = false"
-                />
-              </div>
-            </template>
-            
-            <WhatsAppAccountForm 
-              :account="account"
-              :loading="whatsAppStore.loading"
-              @submit="updateAccount"
-              @cancel="isEditing = false"
-            />
-          </UCard>
-        </UModal>
-        
-        <!-- Confirmation Modal -->
-        <UModal v-model="showModal">
-          <div class="p-4">
-            <h3 class="text-lg font-medium mb-2">{{ modalTitle }}</h3>
-            <p class="text-gray-600 mb-4">{{ modalMessage }}</p>
-            <div class="flex justify-end gap-2">
-              <UButton color="neutral" variant="ghost" @click="showModal = false">
-                {{ $t('cancel') }}
-              </UButton>
-              <UButton :color="modalActionColor" @click="confirmAction">
-                {{ modalActionText }}
-              </UButton>
-            </div>
-          </div>
-        </UModal>
+        </div> -->
       </div>
     </div>
   </div>
@@ -286,6 +242,7 @@ import { useI18n } from 'vue-i18n';
 import { useWhatsAppStore } from '~/store/whatsapp.store';
 import { WhatsAppConnectionStatus } from '~/services/whatsapp.service';
 import type { WhatsAppAccount, WhatsAppAccountFormData } from '~/services/whatsapp.service';
+import wpAccountModal from '~/components/ui/modal.vue';
 
 // Initialize router and route
 const route = useRoute();
@@ -313,6 +270,18 @@ const modalMessage = ref('');
 const modalActionText = ref('');
 const modalActionColor = ref<'primary' | 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'secondary'>('primary');
 const pendingAction = ref<() => Promise<void>>(() => Promise.resolve());
+
+  const overlay = useOverlay();
+
+  const modal = overlay.create(wpAccountModal, {
+  props: {
+    modalTitle,
+    modalMessage,
+    modalActionText,
+    modalActionColor,
+    confirmAction,
+  }
+});
 
 // Status computations
 const isConnected = computed(() => 
@@ -411,31 +380,31 @@ async function verifyConnection() {
 }
 
 // Confirmation handlers
-function confirmActivate() {
+async function confirmActivate() {
   modalTitle.value = t('integrations.whatsapp.activateAccount');
   modalMessage.value = t('integrations.whatsapp.activateAccountConfirmation', { name: account.value?.name || '' });
   modalActionText.value = t('integrations.whatsapp.activate');
   modalActionColor.value = 'primary';
   pendingAction.value = activateAccount;
-  showModal.value = true;
+  await modal.open();
 }
 
-function confirmDeactivate() {
+async function confirmDeactivate() {
   modalTitle.value = t('integrations.whatsapp.deactivateAccount');
   modalMessage.value = t('integrations.whatsapp.deactivateAccountConfirmation', { name: account.value?.name || '' });
   modalActionText.value = t('integrations.whatsapp.deactivate');
   modalActionColor.value = 'warning';
   pendingAction.value = deactivateAccount;
-  showModal.value = true;
+  await modal.open();
 }
 
-function confirmDelete() {
+async function confirmDelete() {
   modalTitle.value = t('integrations.whatsapp.deleteAccount');
   modalMessage.value = t('integrations.whatsapp.deleteAccountConfirmation', { name: account.value?.name || '' });
   modalActionText.value = t('integrations.whatsapp.delete');
   modalActionColor.value = 'error';
   pendingAction.value = deleteAccount;
-  showModal.value = true;
+  await modal.open();
 }
 
 // Action handlers

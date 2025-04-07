@@ -33,7 +33,7 @@ export default {
     api: "Versión API"
   },
   integrations: {
-    title: "Integraciones",
+    title: "Canales de Comunicación",
     description: "Conecta tus canales para centralizar comunicaciones",
     available: "Integraciones Disponibles",
     connected: "Cuentas Conectadas",
@@ -43,6 +43,7 @@ export default {
     backToIntegrations: "Volver a Integraciones",
     actions: "Acciones",
     whatsapp: {
+      connectWhatsAppBusiness: "Conectar WhatsApp Business",
       title: "WhatsApp Business",
       business: "Cuenta de Negocio",
       description: "Conecta tu cuenta de WhatsApp Business para enviar y recibir mensajes",
@@ -143,7 +144,9 @@ export default {
         updateFailed: "Error al actualizar la cuenta de WhatsApp",
         activationFailed: "Error al activar la cuenta de WhatsApp",
         deactivationFailed: "Error al desactivar la cuenta de WhatsApp",
-        deleteFailed: "Error al eliminar la cuenta de WhatsApp"
+        deleteFailed: "Error al eliminar la cuenta de WhatsApp",
+        noConnections: "No hay cuentas de WhatsApp conectadas",
+        noConnectionsMessage: "Por favor conecta una cuenta de WhatsApp para comenzar a enviar y recibir mensajes",
       },
       errors: {
         nameRequired: "El nombre de la cuenta es requerido",

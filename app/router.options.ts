@@ -3,9 +3,9 @@ import type { RouterConfig } from "@nuxt/schema";
 export default {
     routes: (_routes) => [
         {
-            name: "home",
+            name: "inbox",
             path: "/",
-            component: () => import("~/pages/home.vue"),
+            component: () => import("~/pages/inbox/index.vue"),
         },
         {
             name: "logout",
@@ -28,11 +28,7 @@ export default {
             path: "/reset-password",
             component: () => import("~/pages/reset-password.vue"),
         },
-        {
-            name: "inbox",
-            path: "/inbox",
-            component: () => import("~/pages/inbox/index.vue"),
-        },
+       
         {
             name: "integrations",
             path: "/integrations",
@@ -47,16 +43,6 @@ export default {
             name: "whatsapp-account-detail",
             path: "/integrations/whatsapp/:id",
             component: () => import("~/pages/integrations/whatsapp/[id].vue"),
-        },
-        {
-            name: "whatsapp-account-new",
-            path: "/integrations/whatsapp/new",
-            component: () => import("~/pages/integrations/whatsapp/new.vue"),
-        },
-        {
-            name: "whatsapp-inbox",
-            path: "/integrations/whatsapp/inbox",
-            component: () => import("~/pages/integrations/whatsapp/inbox.vue"),
         },
     ],
     scrollBehavior(to, from, savedPosition) {

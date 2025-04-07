@@ -5,9 +5,9 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- WhatsApp Integration Card -->
       <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-white dark:bg-slate-800">
-        <div class="bg-green-50 dark:bg-green-900/20 p-4 flex items-center">
-          <div class="bg-green-500 dark:bg-green-600 text-white p-3 rounded-full mr-4">
-            <IconWhatsapp class="w-6 h-6" />
+        <div class="bg-green-50 dark:bg-green-900/20 p-4 flex items-center space-x-3">
+          <div class="bg-green-500 dark:bg-green-600 text-white p-0 flex items-center justify-center rounded-full">
+            <UIcon name="i-mdi-whatsapp" class="w-6 h-6" />
           </div>
           <h2 class="text-xl font-semibold text-slate-900 dark:text-white">WhatsApp</h2>
         </div>
@@ -15,13 +15,9 @@
         <div class="p-4">
           <p class="text-slate-700 dark:text-slate-300 mb-4">{{ $t('integrations.whatsapp.description') }}</p>
           
-          <div class="flex gap-2 mt-4">
+          <div class="flex gap-2 mt-4 items-center justify-end">
             <UButton to="/integrations/whatsapp" color="primary">
               {{ $t('integrations.manage') }}
-            </UButton>
-            
-            <UButton to="/integrations/whatsapp/new" color="neutral" variant="outline">
-              {{ $t('integrations.add') }}
             </UButton>
           </div>
         </div>

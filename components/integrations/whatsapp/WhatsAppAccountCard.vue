@@ -34,21 +34,12 @@
           <UButton class="hidden sm:flex" size="sm" color="neutral" variant="ghost" icon="i-heroicons-eye" @click="$emit('view', account)">
             {{ $t('view') }}
           </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="warning" variant="ghost" icon="i-heroicons-power-off" @click="$emit('deactivate', account)">
-            {{ $t('integrations.whatsapp.deactivate') }}
-          </UButton>
         </template>
         
         <!-- Pending account actions for tablets/desktop -->
         <template v-else-if="account.status === 'PENDING' && account.isActive && !isMobileView">
           <UButton class="hidden sm:flex" size="sm" color="neutral" variant="ghost" icon="i-heroicons-eye" @click="$emit('view', account)">
             {{ $t('view') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="primary" variant="soft" icon="i-heroicons-check-circle" @click="$emit('verify', account)">
-            {{ $t('integrations.whatsapp.verify') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="warning" variant="ghost" icon="i-heroicons-power-off" @click="$emit('deactivate', account)">
-            {{ $t('integrations.whatsapp.deactivate') }}
           </UButton>
         </template>
         
@@ -57,12 +48,6 @@
           <UButton class="hidden sm:flex" size="sm" color="neutral" variant="ghost" icon="i-heroicons-eye" @click="$emit('view', account)">
             {{ $t('view') }}
           </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="primary" variant="soft" icon="i-heroicons-check-circle" @click="$emit('verify', account)">
-            {{ $t('integrations.whatsapp.verify') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="warning" variant="ghost" icon="i-heroicons-power-off" @click="$emit('deactivate', account)">
-            {{ $t('integrations.whatsapp.deactivate') }}
-          </UButton>
         </template>
         
         <!-- Disconnected account actions for tablets/desktop -->
@@ -70,24 +55,12 @@
           <UButton class="hidden sm:flex" size="sm" color="neutral" variant="ghost" icon="i-heroicons-eye" @click="$emit('view', account)">
             {{ $t('view') }}
           </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="primary" variant="soft" icon="i-heroicons-check-circle" @click="$emit('verify', account)">
-            {{ $t('integrations.whatsapp.verify') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="warning" variant="ghost" icon="quill-off" @click="$emit('deactivate', account)">
-            {{ $t('integrations.whatsapp.deactivate') }}
-          </UButton>
         </template>
         
         <!-- Inactive account actions for tablets/desktop -->
         <template v-else-if="!account.isActive && !isMobileView">
           <UButton class="hidden sm:flex" size="sm" color="neutral" variant="ghost" icon="i-heroicons-eye" @click="$emit('view', account)">
             {{ $t('view') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="primary" variant="soft" icon="i-heroicons-arrow-up-circle" @click="$emit('activate', account)">
-            {{ $t('integrations.whatsapp.activate') }}
-          </UButton>
-          <UButton class="hidden sm:flex" size="sm" color="error" variant="ghost" icon="i-heroicons-trash" @click="$emit('delete', account)">
-            {{ $t('delete') }}
           </UButton>
         </template>
       </div>

@@ -28,7 +28,8 @@ export default {
     api: "API Version"
   },
   integrations: {
-    title: "Integrations",
+    connectWhatsAppBusiness: "Connect WhatsApp Business",
+    title: "Channels",
     description: "Connect your channels to centralize communications",
     available: "Available Integrations",
     connected: "Connected Accounts",
@@ -137,7 +138,9 @@ export default {
         updateFailed: "Failed to update WhatsApp account",
         activationFailed: "Failed to activate WhatsApp account",
         deactivationFailed: "Failed to deactivate WhatsApp account",
-        deleteFailed: "Failed to delete WhatsApp account"
+        deleteFailed: "Failed to delete WhatsApp account",
+        noConnections: "No WhatsApp connections available",
+        noConnectionsMessage: "Please connect a WhatsApp account to view conversations",
       },
       errors: {
         nameRequired: "Account name is required",

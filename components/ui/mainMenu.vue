@@ -2,6 +2,7 @@
     <USlideover
       :open="modelValue"
       side="left"
+      class="lg:w-80"
       @update:open="$emit('update:modelValue', $event)"
     >
       <template #content>
@@ -182,43 +183,14 @@ import { useVersionService } from '~/services/version.service';
     {
       items: [
         {
-          label: t('appName'),
-          icon: 'i-lucide-home',
-          to: '/',
-          active: isRouteActive('/')
-        },
-        {
           label: t('inbox.title'),
           icon: 'i-lucide-inbox',
-          to: '/inbox',
+          to: '/',
           active: isRouteActive('/inbox'),
           count: useInboxStore().unreadCount || undefined
         },
-        {
-          label: t('integrations.title'),
-          icon: 'i-lucide-plug',
-          to: '/integrations',
-          active: isRouteActive('/integrations')
-        },
-        {
-          label: t('user.profile'),
-          icon: 'i-lucide-user',
-          to: '/account',
-          active: isRouteActive('/account')
-        }
       ]
     },
-    {
-      label: t('user.account'),
-      items: [
-        {
-          label: t('user.signOut'),
-          icon: 'i-lucide-log-out',
-          to: '/logout',
-          active: isRouteActive('/logout')
-        }
-      ]
-    }
   ]);
   
   // Handle menu item click
@@ -226,10 +198,7 @@ import { useVersionService } from '~/services/version.service';
     if (item.action) {
       item.action();
     }
-    
-    // Close menu on mobile after navigation
-    if (window && window.innerWidth < 768) {
-      emit('update:modelValue', false);
-    }
+    emit('update:modelValue', false);
+ 
   };
   </script>

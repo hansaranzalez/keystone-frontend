@@ -1,53 +1,45 @@
 <template>
-  <div class="flex flex-col h-full overflow-hidden">
+  <div class="h-full">
     <!-- Responsive layout container -->
-    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden pb-safe">
+    <div class="flex-1 flex h-full">
 
       <!-- Mobile view: Show conversation list when no conversation is selected -->
       <!-- Desktop view: Always show conversation list -->
-      <div 
-        v-if="!isMobileView || !selectedConversationId" 
-        class="w-full lg:w-1/3 lg:border-r border-slate-200 dark:border-slate-700 h-full flex flex-col overflow-hidden"
-      >
-        <ConversationList 
-          :conversations="conversations"
-          :selectedId="selectedConversationId || undefined"
-          :loading="loading"
-          @select="handleSelectConversation"
-          @new-message="handleNewMessage"
-        />
+      <div v-if="!isMobileView || !selectedConversationId"
+        class="w-full lg:w-1/3 lg:border-r border-slate-200 dark:border-slate-700 h-full flex flex-col overflow-hidden">
+        <ConversationList :conversations="conversations" :selectedId="selectedConversationId || undefined"
+          :loading="loading" @select="handleSelectConversation" @new-message="handleNewMessage" />
       </div>
-      
+
       <!-- Desktop & Mobile: Right column area -->
-      <div class="w-full lg:w-2/3 h-full flex flex-col overflow-hidden">
+      <div class="w-full h-full hidden lg:block">
         <!-- Case 1: Show conversation detail when a conversation is selected and loaded -->
-        <ConversationDetail 
-          v-if="selectedConversation"
-          :conversation="selectedConversation"
-          :key="selectedConversationId || undefined"
-          @back="handleBackToList"
-          @send-message="handleSendMessage"
-        />
-        
+        <ConversationDetail v-if="selectedConversation" :conversation="selectedConversation"
+          :key="selectedConversationId || undefined" @back="handleBackToList" @send-message="handleSendMessage" />
+
         <!-- Case 2: Show loading state while fetching conversation -->
-        <div 
-          v-else-if="selectedConversationId" 
-          class="flex items-center justify-center h-full bg-slate-50 dark:bg-slate-800"
-        >
+        <div v-else-if="selectedConversationId"
+          class="flex items-center justify-center h-full bg-slate-50 dark:bg-slate-800">
           <UIcon name="i-lucide-loader-2" class="text-gray-400 animate-spin h-8 w-8" />
         </div>
-        
+
         <!-- Case 3: Empty state when no conversation is selected (desktop only) -->
-        <div 
-          v-else-if="!isMobileView"
-          class="h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 overflow-hidden"
-        >
-          <div class="text-center p-8">
-            <UIcon name="i-lucide-mail" class="h-16 w-16 mx-auto text-slate-300 dark:text-slate-600 mb-4" />
-            <h3 class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">{{ $t('inbox.noConversationSelected') }}</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('inbox.selectConversation') }}</p>
+        <div v-else-if="!isMobileView"
+          class="h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800">
+          <div class="flex items-center justify-center">
+            <div class="text-center space-y-3">
+              <UIcon name="i-lucide-mail" class="h-16 w-16 mx-auto text-slate-300 dark:text-slate-600 mb-4" />
+              <h3 class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">{{
+                $t('inbox.noConversationSelected') }}</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('inbox.selectConversation') }}</p>
+            </div>
+
           </div>
         </div>
+      </div>
+
+      <div class="h-full hidden lg:block">
+        <InboxLocalMenu />
       </div>
     </div>
   </div>
@@ -81,7 +73,7 @@ onMounted(async () => {
     // Only load if not already loaded
     await inboxStore.loadConversations()
   }
-  
+
   if (error.value) {
     console.error('Error loading conversations:', error.value)
   }
@@ -113,7 +105,7 @@ const handleBackToList = () => {
 const handleSendMessage = async (conversationId: string, content: string, channel: 'whatsapp' | 'email' | 'instagram') => {
   // Use the store action to send the message
   const result = await inboxStore.sendNewMessage(conversationId, content, channel)
-  
+
   if (result === false) {
     console.error('Failed to send message')
   }

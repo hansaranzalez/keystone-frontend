@@ -159,7 +159,7 @@ async function directFacebookLogin() {
   console.log('Direct Facebook login button clicked');
   const toast = useToast();
   const config = useRuntimeConfig();
-  
+
   try {
     if (!window.FB) {
       // Load Facebook SDK directly if not already loaded
@@ -170,7 +170,7 @@ async function directFacebookLogin() {
         script.crossOrigin = 'anonymous';
         script.id = 'facebook-jssdk-direct';
         script.src = 'https://connect.facebook.net/en_US/sdk.js';
-        
+
         script.onload = () => {
           console.log('Facebook SDK loaded directly');
           if (window.FB) {
@@ -185,18 +185,18 @@ async function directFacebookLogin() {
             reject(new Error('Facebook SDK script loaded but FB not defined'));
           }
         };
-        
+
         script.onerror = (e) => {
           console.error('Error loading Facebook SDK directly:', e);
           reject(new Error('Failed to load Facebook SDK'));
         };
-        
+
         document.head.appendChild(script);
       });
     }
-    
+
     console.log('Directly calling FB.login');
-    
+
     // Call FB.login directly with a user-triggered action
     const response: any = await new Promise((resolve, reject) => {
       window.FB!.login((loginResponse: { authResponse?: { accessToken: string; userID: string; expiresIn?: number; }; status: string; }) => {
@@ -207,16 +207,16 @@ async function directFacebookLogin() {
         config_id: config.public.facebookConfigId
       });
     });
-    
+
     console.log('Direct login response received:', response);
-    
+
     if (response && response.status === 'connected') {
       toast.add({
         color: 'success',
         title: t('common.success'),
         description: t('login.facebookLoginSuccess') || 'Successfully connected with Facebook.'
       });
-      
+
       // Continue with business accounts retrieval here...
     } else {
       toast.add({
@@ -239,7 +239,7 @@ async function directFacebookLogin() {
  * Initializes Facebook Business login flow for WhatsApp integration
  * Handles SDK initialization, state preparation, login call, and sending code+state to backend.
  */
- async function initFacebookLogin(): Promise<void> {
+async function initFacebookLogin(): Promise<void> {
   console.log('================ FACEBOOK INTEGRATION FLOW STARTED ================');
 
   // Get dependencies from composables
@@ -264,8 +264,8 @@ async function directFacebookLogin() {
 
   // HTTPS check - Facebook Login API requires HTTPS (allow localhost)
   if (window.location.protocol !== 'https:' &&
-      !window.location.hostname.includes('localhost') &&
-      !window.location.hostname.includes('127.0.0.1')) {
+    !window.location.hostname.includes('localhost') &&
+    !window.location.hostname.includes('127.0.0.1')) {
     console.error('Facebook Business SDK requires HTTPS for non-localhost environments');
     showErrorToast('Facebook integration requires a secure connection (HTTPS).');
     return;
@@ -280,15 +280,15 @@ async function directFacebookLogin() {
   }
   // Ensure required config IDs are present
   if (!FB_APP_ID || !FB_CONFIG_ID) {
-      console.error('Missing Facebook App ID or Config ID in configuration.');
-      showErrorToast('Facebook integration is not configured correctly.');
-      return;
+    console.error('Missing Facebook App ID or Config ID in configuration.');
+    showErrorToast('Facebook integration is not configured correctly.');
+    return;
   }
   // Ensure necessary endpoints are defined
   if (!endpoints?.facebookPrepareState || !endpoints?.facebookCallback) {
-       console.error('Missing Facebook endpoint configuration.');
-       showErrorToast('Facebook integration endpoint configuration is missing.');
-       return;
+    console.error('Missing Facebook endpoint configuration.');
+    showErrorToast('Facebook integration endpoint configuration is missing.');
+    return;
   }
 
 
@@ -320,7 +320,7 @@ async function directFacebookLogin() {
 
     // 4. Perform Facebook Business login with corrected scope and state
     console.log('Starting Facebook Business Login with permissions and state...');
-    const loginResponse: { status: string; authResponse?: { code?: string; userID?: string; [key: string]: any } } = await fbBusinessSdk.login({
+    const loginResponse: { status: string; authResponse?: { code?: string; userID?: string;[key: string]: any } } = await fbBusinessSdk.login({
       config_id: FB_CONFIG_ID,
       scope: 'whatsapp_business_messaging,whatsapp_business_management,business_management,email,public_profile', // Ensure correct scope
       state: state // Pass the generated state value here
@@ -343,11 +343,11 @@ async function directFacebookLogin() {
 
         // 7. Handle Backend Response (Simple Success/Failure for linking)
         if (backendResponse.data?.success) {
-            showSuccessToast(backendResponse.data.message || "WhatsApp Business account linked successfully.");
-            // Potentially refresh integration status on the page here
+          showSuccessToast(backendResponse.data.message || "WhatsApp Business account linked successfully.");
+          // Potentially refresh integration status on the page here
         } else {
-            // Backend indicated failure
-            throw new Error(backendResponse.data?.message || "Failed to link WhatsApp account on the server.");
+          // Backend indicated failure
+          throw new Error(backendResponse.data?.message || "Failed to link WhatsApp account on the server.");
         }
       } catch (callbackError: any) {
         console.error('Error during backend callback processing:', callbackError.response?.data || callbackError.message);
@@ -358,12 +358,12 @@ async function directFacebookLogin() {
     // ** REMOVED: Logic handling direct access token, as code flow is expected/preferred **
     // ** REMOVED: Logic trying to fetch whatsappAccounts on frontend **
     else {
-        // Handle cases where login status is not 'connected' or code is missing
-        console.error('Facebook login unsuccessful or missing authorization code:', null);
-        showErrorToast("Facebook authorization failed or was cancelled.");
+      // Handle cases where login status is not 'connected' or code is missing
+      console.error('Facebook login unsuccessful or missing authorization code:', null);
+      showErrorToast("Facebook authorization failed or was cancelled.");
     }
   } catch (error: any) {
-     // Catch errors from SDK init, FB.login, etc.
+    // Catch errors from SDK init, FB.login, etc.
     console.error('Facebook Business integration error:', error);
     showErrorToast(error.message || 'An unexpected error occurred during Facebook integration.');
   }
@@ -377,11 +377,11 @@ function handleBackendResponse(backendResponse: any, toast: any) {
   if (backendResponse.data?.accessToken) {
     // Update authentication state
     setToken(backendResponse.data.accessToken);
-    
+
     // Check if there's additional account information
     const accountInfo = backendResponse.data.whatsAppAccount || {};
     const hasAccountDetails = Object.keys(accountInfo).length > 0;
-    
+
     toast.add({
       color: 'success',
       title: t('login.successTitle'),
@@ -389,7 +389,7 @@ function handleBackendResponse(backendResponse: any, toast: any) {
         ? `${t('login.whatsappBusinessConnected') || 'WhatsApp Business account'} ${accountInfo.phoneNumber ? `(${accountInfo.phoneNumber})` : ''} successfully connected.`
         : t('login.whatsappBusinessConnected') || 'WhatsApp Business account successfully connected.'
     });
-    
+
     // Reload page to show connected accounts
     window.location.reload();
   } else {
@@ -421,9 +421,9 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
   if (!whatsappAccounts || !whatsappAccounts.data || !Array.isArray(whatsappAccounts.data)) {
     return [];
   }
-  
+
   const phoneNumbers: string[] = [];
-  
+
   try {
     // Extract phone numbers from the accounts data
     // Structure depends on the Facebook API response format
@@ -431,7 +431,7 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
       if (account.phone_number || account.phoneNumber) {
         phoneNumbers.push(account.phone_number || account.phoneNumber);
       }
-      
+
       // Check nested data structures where phone numbers might be stored
       if (account.whatsapp_business_account && account.whatsapp_business_account.phone_numbers) {
         account.whatsapp_business_account.phone_numbers.forEach((phoneObj: any) => {
@@ -444,7 +444,7 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
   } catch (error) {
     console.error('Error extracting phone numbers:', error);
   }
-  
+
   return phoneNumbers;
 }
 </script>
@@ -453,27 +453,14 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
   <div class="container mx-auto px-4 py-4 sm:py-8">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <NuxtLink to="/integrations" class="inline-flex items-center text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light mb-2">
+        <NuxtLink to="/integrations"
+          class="inline-flex items-center text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light mb-2">
           <IconArrowLeft class="w-4 h-4 mr-1" />
           {{ $t('integrations.backToIntegrations') }}
         </NuxtLink>
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $t('integrations.whatsapp.accounts') }}</h1>
       </div>
-      <div class="flex space-x-3">
-        <UButton to="/integrations/whatsapp/new" color="primary" class="flex items-center">
-          <IconPlus class="w-4 h-4 mr-1" />
-          {{ $t('integrations.whatsapp.addAccount') }}
-        </UButton>
-        <UButton @click="initFacebookLogin" color="primary" variant="soft" class="flex items-center bg-[#4267B2] text-white hover:bg-[#385898]">
-          <UIcon name="i-mdi-facebook" class="w-4 h-4 mr-1" />
-          {{ $t('auth.loginWithFacebook') || 'Login with Facebook' }}
-        </UButton>
-        <!-- Add a direct login button as fallback -->
-        <UButton @click="directFacebookLogin" color="info" variant="soft" class="flex items-center ml-2">
-          <UIcon name="i-mdi-facebook" class="w-4 h-4 mr-1" />
-          Direct Facebook Login
-        </UButton>
-      </div>
+
     </div>
 
     <!-- Loading state -->
@@ -485,45 +472,40 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
     <div v-else-if="whatsAppStore.error" class="py-8 flex justify-center">
       <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-lg">
         {{ whatsAppStore.error && whatsAppStore.error.includes('.') ? $t(whatsAppStore.error) : whatsAppStore.error }}
-        <UButton 
-          @click="refreshAccounts" 
-          variant="link" 
-          color="primary" 
-          class="ml-2"
-        >
+        <UButton @click="refreshAccounts" variant="link" color="primary" class="ml-2">
           {{ $t('retry') }}
         </UButton>
       </div>
     </div>
 
     <!-- Empty state -->
-    <div v-else-if="whatsAppStore.accounts.length === 0" class="py-10 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-      <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-full mb-4">
-        <IconWhatsapp class="w-8 h-8 text-slate-400 dark:text-slate-500" />
+    <div v-else-if="whatsAppStore.accounts.length === 0"
+      class="py-10 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+      <div
+        class="bg-green-100 dark:bg-green-700  rounded-full p-0 w-20 h-20 items-center text-center justify-center flex">
+        <UIcon name="i-mdi-whatsapp" class="w-20 text-green-500 h-20"/>
       </div>
-      <h3 class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-2">{{ $t('integrations.whatsapp.noAccounts') }}</h3>
+      <h3 class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-2">{{ $t('integrations.whatsapp.noAccounts')
+        }}</h3>
       <p class="text-slate-600 dark:text-slate-400 mb-4 text-center max-w-md">
         {{ $t('integrations.whatsapp.addAccountDescription') }}
       </p>
-      <UButton to="/integrations/whatsapp/new" color="primary">
-        {{ $t('integrations.whatsapp.addAccount') }}
-      </UButton>
+      <div class="flex space-x-3">
+        <UButton icon="i-mdi-facebook" size="xl" @click="initFacebookLogin" color="secondary" variant="soft">
+          {{ $t('integrations.whatsapp.connectWhatsAppBusiness') || 'Login with Facebook' }}
+        </UButton>
+      </div>
     </div>
 
     <!-- Account list -->
     <div v-else class="space-y-4">
       <!-- Active accounts -->
       <div v-if="whatsAppStore.activeAccounts.length > 0">
-        <h2 class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-3">{{ $t('integrations.whatsapp.activeAccounts') }}</h2>
+        <h2 class="text-lg font-medium text-slate-800 dark:text-slate-200 mb-3">{{
+          $t('integrations.whatsapp.activeAccounts') }}</h2>
         <div class="space-y-3">
-          <WhatsAppAccountCard 
-            v-for="account in whatsAppStore.activeAccounts" 
-            :key="account.id" 
-            :account="account"
-            @view="viewAccount"
-            @deactivate="confirmDeactivate"
-            @verify="confirmVerify"
-          />
+          <WhatsAppAccountCard v-for="account in whatsAppStore.activeAccounts" :key="account.id" :account="account"
+            @view="viewAccount" @deactivate="confirmDeactivate" @verify="confirmVerify" />
         </div>
       </div>
 
@@ -531,14 +513,8 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
       <div v-if="whatsAppStore.pendingAccounts.length > 0">
         <h2 class="text-lg font-medium mb-3">{{ $t('integrations.whatsapp.pendingAccounts') }}</h2>
         <div class="space-y-3">
-          <WhatsAppAccountCard 
-            v-for="account in whatsAppStore.pendingAccounts" 
-            :key="account.id" 
-            :account="account"
-            @view="viewAccount"
-            @deactivate="confirmDeactivate"
-            @verify="confirmVerify"
-          />
+          <WhatsAppAccountCard v-for="account in whatsAppStore.pendingAccounts" :key="account.id" :account="account"
+            @view="viewAccount" @deactivate="confirmDeactivate" @verify="confirmVerify" />
         </div>
       </div>
 
@@ -546,14 +522,8 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
       <div v-if="whatsAppStore.errorAccounts.length > 0">
         <h2 class="text-lg font-medium mb-3">{{ $t('integrations.whatsapp.errorAccounts') }}</h2>
         <div class="space-y-3">
-          <WhatsAppAccountCard 
-            v-for="account in whatsAppStore.errorAccounts" 
-            :key="account.id" 
-            :account="account"
-            @view="viewAccount"
-            @deactivate="confirmDeactivate"
-            @verify="confirmVerify"
-          />
+          <WhatsAppAccountCard v-for="account in whatsAppStore.errorAccounts" :key="account.id" :account="account"
+            @view="viewAccount" @deactivate="confirmDeactivate" @verify="confirmVerify" />
         </div>
       </div>
 
@@ -561,14 +531,8 @@ function extractPhoneNumbers(whatsappAccounts: any): string[] {
       <div v-if="whatsAppStore.inactiveAccounts.length > 0">
         <h2 class="text-lg font-medium mb-3">{{ $t('integrations.whatsapp.inactiveAccounts') }}</h2>
         <div class="space-y-3">
-          <WhatsAppAccountCard 
-            v-for="account in whatsAppStore.inactiveAccounts" 
-            :key="account.id" 
-            :account="account"
-            @view="viewAccount"
-            @activate="confirmActivate"
-            @delete="confirmDelete"
-          />
+          <WhatsAppAccountCard v-for="account in whatsAppStore.inactiveAccounts" :key="account.id" :account="account"
+            @view="viewAccount" @activate="confirmActivate" @delete="confirmDelete" />
         </div>
       </div>
     </div>
