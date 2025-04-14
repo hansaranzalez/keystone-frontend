@@ -52,8 +52,8 @@ const currentLocale = computed(() => locale.value);
  */
 const getLanguageLabel = (code) => {
   const labels = {
-    'en': t('languages.english'),
-    'es': t('languages.spanish')
+    'en': t('system.languages.english'),
+    'es': t('system.languages.spanish')
   };
   return labels[code] || code;
 };

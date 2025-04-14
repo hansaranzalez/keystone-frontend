@@ -4,14 +4,14 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
     <div class="w-full max-w-md block sm:hidden">
       <!-- Title -->
       <h2 class="text-xl font-medium text-center mb-6 text-white">
-        {{ $t('passwordChange.title') }}
+        {{ $t('auth.passwordChange.title') }}
       </h2>
 
       <!-- Password Change Request Form for Mobile -->
@@ -23,7 +23,7 @@
       >
         <!-- Email Field -->
         <UFormField
-          :label="$t('passwordChange.formLabels.email')"
+          :label="$t('auth.passwordChange.formLabels.email')"
           name="email"
         >
           <UInput
@@ -52,7 +52,7 @@
           class="mt-6"
           :loading="loading"
         >
-          {{ $t('passwordChange.request') }}
+          {{ $t('auth.passwordChange.request') }}
         </UButton>
 
         <!-- Success Message -->
@@ -74,7 +74,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.LOGIN)"
         >
-          {{ $t('passwordChange.goBackToLogin') }}
+          {{ $t('auth.passwordChange.goBackToLogin') }}
         </UButton>
       </div>
     </div>
@@ -92,7 +92,7 @@
       <UCardBody>
         <!-- Title -->
         <h2 class="text-xl font-medium text-center mb-6 text-white">
-          {{ $t('passwordChange.title') }}
+          {{ $t('auth.passwordChange.title') }}
         </h2>
 
         <!-- Password Change Request Form -->
@@ -104,7 +104,7 @@
         >
           <!-- Email Field -->
           <UFormField
-            :label="$t('passwordChange.formLabels.email')"
+            :label="$t('auth.passwordChange.formLabels.email')"
             name="email"
           >
             <UInput
@@ -133,7 +133,7 @@
             class="mt-6"
             :loading="loading"
           >
-            {{ $t('passwordChange.request') }}
+            {{ $t('auth.passwordChange.request') }}
           </UButton>
           
           <!-- Success Message -->
@@ -155,7 +155,7 @@
           variant="link" 
           color="secondary"
         >
-          {{ $t('passwordChange.goBackToLogin') }}
+          {{ $t('auth.passwordChange.goBackToLogin') }}
         </UButton>
       </UCardFooter>
     </UCard>
@@ -175,8 +175,8 @@ const { setSelectedForm, setCatchedEmail } = useAuthStore();
 // Validation schema
 const schema = object({
     email: string()
-        .email(t('passwordChange.validationMessages.incorrectEmailFormat'))
-        .required(t('passwordChange.validationMessages.emailRequired')),
+        .email(t('auth.passwordChange.validationMessages.incorrectEmailFormat'))
+        .required(t('auth.passwordChange.validationMessages.emailRequired')),
 });
 
 type Schema = InferType<typeof schema>;
@@ -202,12 +202,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     try {
         await useAuthService().requestPasswordChange(state.email);
-        successMessage.value = t('passwordChange.successMessage');
+        successMessage.value = t('auth.passwordChange.successMessage');
         setCatchedEmail(state.email);
         setSelectedForm(AuthForms.ACTIVATE_PASSWORD_RESET)
     } catch (error: any) {
         console.log(error);
-        errorMessage.value = error.response.data.message || t('passwordChange.errorMessage');
+        errorMessage.value = error.response.data.message || t('auth.passwordChange.errorMessage');
     } finally {
         loading.value = false;
     }

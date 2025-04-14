@@ -4,14 +4,14 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
     <div class="w-full max-w-md block sm:hidden">
       <!-- Title -->
       <h2 class="text-xl font-medium text-center mb-6 text-white">
-        {{ $t("activatePassword.title") }}
+        {{ $t("auth.activatePassword.title") }}
       </h2>
 
       <!-- Activation Form for Mobile -->
@@ -22,7 +22,7 @@
         @submit="onSubmit"
       >
         <UFormField
-          :label="$t('activatePassword.formLabels.activationCode')"
+          :label="$t('auth.activatePassword.formLabels.activationCode')"
           name="activationCode"
         >
           <UInput
@@ -51,7 +51,7 @@
           class="mt-6"
           :loading="loading"
         >
-          {{ $t('activatePassword.verifyCode') }}
+          {{ $t('auth.activatePassword.verifyCode') }}
         </UButton>
 
         <!-- Success Message -->
@@ -73,7 +73,7 @@
           size="sm"
           @click="navigateToLogin"
         >
-          {{ $t('activatePassword.goBackToLogin') }}
+          {{ $t('auth.activatePassword.goBackToLogin') }}
         </UButton>
       </div>
     </div>
@@ -91,7 +91,7 @@
       <UCardBody>
         <!-- Title -->
         <h2 class="text-xl font-medium text-center mb-6 text-white">
-          {{ $t("activatePassword.title") }}
+          {{ $t("auth.activatePassword.title") }}
         </h2>
 
         <!-- Activation Form -->
@@ -102,7 +102,7 @@
           @submit="onSubmit"
         >
           <UFormField
-            :label="$t('activatePassword.formLabels.activationCode')"
+            :label="$t('auth.activatePassword.formLabels.activationCode')"
             name="activationCode"
           >
             <UInput
@@ -141,7 +141,7 @@
             class="mt-6"
             :loading="loading"
           >
-            {{ $t("activatePassword.submit") }}
+            {{ $t("auth.activatePassword.submit") }}
           </UButton>
           
           <!-- Cancel Button -->
@@ -154,7 +154,7 @@
             :disabled="loading"
             @click="navigateToLogin"
           >
-            {{ $t("cancel") }}
+            {{ $t("system.cancel") }}
           </UButton>
         </UForm>
       </UCardBody>
@@ -177,8 +177,8 @@ const { catchedEmailGetter } = storeToRefs(useAuthStore());
 // Validation schema
 const schema = object({
   activationCode: string()
-    .length(6, t("activatePassword.validationMessages.codeLength"))
-    .required(t("activatePassword.validationMessages.codeRequired")),
+    .length(6, t("auth.activatePassword.validationMessages.codeLength"))
+    .required(t("auth.activatePassword.validationMessages.codeRequired")),
 });
 
 type Schema = InferType<typeof schema>;
@@ -221,12 +221,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       state.activationCode,
       t
     );
-    successMessage.value = t("activatePassword.successMessage");
+    successMessage.value = t("auth.activatePassword.successMessage");
     useAuthStore().setSelectedForm(AuthForms.RESET_PASSWORD);
   } catch (error: any) {
     console.log(error);
     errorMessage.value =
-      error.response?.data?.message || t("activatePassword.errorMessage");
+      error.response?.data?.message || t("auth.activatePassword.errorMessage");
   } finally {
     loading.value = false;
   }

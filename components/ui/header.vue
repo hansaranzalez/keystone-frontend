@@ -17,12 +17,12 @@
             
             <!-- Logo - centered on mobile, next to hamburger on desktop -->
             <div class="md:ml-2 md:static md:left-auto md:transform-none absolute left-1/2 transform -translate-x-1/2 md:hidden">
-              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('appName') }}</span>
+              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('system.appName') }}</span>
             </div>
             
             <!-- Desktop logo -->
             <div class="hidden md:block">
-              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('appName') }}</span>
+              <span class="text-xl font-bold text-primary-600 dark:text-primary-500">{{ $t('system.appName') }}</span>
             </div>
           </div>
   
@@ -110,7 +110,7 @@
                 <div class="p-0">
                   <!-- Header -->
                   <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                    <h3 class="text-sm font-medium">{{ $t('notifications.title') }}</h3>
+                    <h3 class="text-sm font-medium">{{ $t('system.notifications.title') }}</h3>
                     <UButton 
                       v-if="unreadNotificationsCount > 0" 
                       variant="ghost" 
@@ -118,7 +118,7 @@
                       size="xs"
                       @click="markAllAsRead"
                     >
-                      {{ $t('notifications.markAllAsRead') }}
+                      {{ $t('system.notifications.markAllAsRead') }}
                     </UButton>
                   </div>
                   
@@ -135,13 +135,13 @@
                     </div>
                     
                     <div v-if="notificationItems.length === 0" class="px-4 py-6 text-center text-slate-500 dark:text-slate-400 text-sm">
-                      {{ $t('notifications.empty') }}
+                      {{ $t('system.notifications.empty') }}
                     </div>
                   </div>
                   
                   <!-- Footer -->
                   <div class="text-center p-3 border-t border-slate-200 dark:border-slate-700">
-                    <UButton variant="ghost" size="sm" color="primary" to="/notifications">{{ $t('notifications.viewAll') }}</UButton>
+                    <UButton variant="ghost" size="sm" color="primary" to="/notifications">{{ $t('system.notifications.viewAll') }}</UButton>
                   </div>
                 </div>
               </template>
@@ -176,6 +176,11 @@ import { useAuthStore } from '~/store/authStore';
       avatar: profileImageUrl, // URL to user avatar, will use initials fallback if empty
       email: user.value?.email || ''
     };
+  });
+
+  onMounted(() => {
+    // Check if user is authenticated
+   console.log('BOOOM TRANS',t('system.tt'))
   });
 
 defineEmits(['toggle-menu']);

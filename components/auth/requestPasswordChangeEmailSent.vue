@@ -4,7 +4,7 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
@@ -16,10 +16,10 @@
 
       <!-- Success Message -->
       <h2 class="text-xl font-medium text-white">
-        {{ $t('passwordResetRequestSuccess.title') }}
+        {{ $t('auth.passwordResetRequestSuccess.title') }}
       </h2>
       <p class="text-gray-400">
-        {{ $t('passwordResetRequestSuccess.message') }}
+        {{ $t('auth.passwordResetRequestSuccess.message') }}
       </p>
 
       <!-- Back to Login Button -->
@@ -31,7 +31,7 @@
         class="mt-6"
         @click="setSelectedForm(AuthForms.LOGIN)"
       >
-        {{ $t('passwordResetRequestSuccess.backToLogin') }}
+        {{ $t('auth.passwordResetRequestSuccess.backToLogin') }}
       </UButton>
     </div>
 
@@ -53,10 +53,10 @@
 
         <!-- Success Message -->
         <h2 class="text-xl font-medium text-white">
-          {{ $t('passwordResetRequestSuccess.title') }}
+          {{ $t('auth.passwordResetRequestSuccess.title') }}
         </h2>
         <p class="text-gray-400">
-          {{ $t('passwordResetRequestSuccess.message') }}
+          {{ $t('auth.passwordResetRequestSuccess.message') }}
         </p>
 
         <!-- Back to Login Button -->
@@ -68,7 +68,7 @@
           class="mt-6"
           @click="setSelectedForm(AuthForms.LOGIN)"
         >
-          {{ $t('passwordResetRequestSuccess.backToLogin') }}
+          {{ $t('auth.passwordResetRequestSuccess.backToLogin') }}
         </UButton>
       </UCardBody>
     </UCard>

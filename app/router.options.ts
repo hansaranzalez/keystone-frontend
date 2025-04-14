@@ -44,6 +44,11 @@ export default {
             path: "/integrations/whatsapp/:id",
             component: () => import("~/pages/integrations/whatsapp/[id].vue"),
         },
+        {
+            name: "property-form",
+            path: "/property/new",
+            component: () => import("~/pages/property/form.vue"),
+        },
     ],
     scrollBehavior(to, from, savedPosition) {
         // Scroll to top on navigation

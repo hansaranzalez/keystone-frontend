@@ -4,14 +4,14 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
     <div class="w-full max-w-md block sm:hidden">
       <!-- Title -->
       <h2 class="text-xl font-medium text-center mb-6 text-white">
-        {{ $t('changePassword.title') }}
+        {{ $t('auth.changePassword.title') }}
       </h2>
 
       <!-- Change Password Form for Mobile -->
@@ -23,7 +23,7 @@
       >
         <!-- New Password Field -->
         <UFormField
-          :label="$t('changePassword.formLabels.newPassword')"
+          :label="$t('auth.changePassword.formLabels.newPassword')"
           name="newPassword"
         >
           <UInput
@@ -54,14 +54,14 @@
           </UInput>
           <template #hint>
             <span class="text-xs text-gray-500">
-              {{ $t('changePassword.formLabels.passwordHint') }}
+              {{ $t('auth.changePassword.formLabels.passwordHint') }}
             </span>
           </template>
         </UFormField>
 
         <!-- Confirm Password Field -->
         <UFormField
-          :label="$t('changePassword.formLabels.confirmPassword')"
+          :label="$t('auth.changePassword.formLabels.confirmPassword')"
           name="confirmPassword"
         >
           <UInput
@@ -102,7 +102,7 @@
           class="mt-6"
           :loading="loading"
         >
-          {{ $t('changePassword.submit') }}
+          {{ $t('auth.changePassword.submit') }}
         </UButton>
 
         <!-- Success Message -->
@@ -124,7 +124,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.LOGIN)"
         >
-          {{ $t('changePassword.goBackToLogin') }}
+          {{ $t('auth.changePassword.goBackToLogin') }}
         </UButton>
       </div>
     </div>
@@ -142,7 +142,7 @@
       <UCardBody>
         <!-- Title -->
         <h2 class="text-xl font-medium text-center mb-6 text-white">
-          {{ $t('changePassword.title') }}
+          {{ $t('auth.changePassword.title') }}
         </h2>
 
         <!-- Change Password Form -->
@@ -154,7 +154,7 @@
         >
           <!-- New Password Field -->
           <UFormField
-            :label="$t('changePassword.formLabels.newPassword')"
+            :label="$t('auth.changePassword.formLabels.newPassword')"
             name="newPassword"
           >
             <UInput
@@ -187,7 +187,7 @@
 
           <!-- Confirm Password Field -->
           <UFormField
-            :label="$t('changePassword.formLabels.confirmPassword')"
+            :label="$t('auth.changePassword.formLabels.confirmPassword')"
             name="confirmPassword"
           >
             <UInput
@@ -228,7 +228,7 @@
             class="mt-6"
             :loading="loading"
           >
-            {{ $t('changePassword.submit') }}
+            {{ $t('auth.changePassword.submit') }}
           </UButton>
           
           <!-- Success Message -->
@@ -262,11 +262,11 @@ const showConfirmPassword = ref(false);
 // Validation schema
 const schema = object({
   newPassword: string()
-    .min(8, t('changePassword.validationMessages.passwordMin'))
-    .required(t('changePassword.validationMessages.passwordRequired')),
+    .min(8, t('auth.changePassword.validationMessages.passwordMin'))
+    .required(t('auth.changePassword.validationMessages.passwordRequired')),
   confirmPassword: string()
-    .oneOf([yupRef('newPassword')], t('changePassword.validationMessages.passwordMatch'))
-    .required(t('changePassword.validationMessages.confirmPasswordRequired')),
+    .oneOf([yupRef('newPassword')], t('auth.changePassword.validationMessages.passwordMatch'))
+    .required(t('auth.changePassword.validationMessages.confirmPasswordRequired')),
 });
 
 type Schema = InferType<typeof schema>;
@@ -302,10 +302,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     if (!state.newPassword || !state.confirmPassword) return;
 
     await useAuthService().changePassword(state.newPassword);
-    successMessage.value = t('changePassword.successMessage');
+    successMessage.value = t('auth.changePassword.successMessage');
   } catch (error: any) {
     console.log(error);
-    errorMessage.value = error.response?.data?.message || t('changePassword.errorMessage');
+    errorMessage.value = error.response?.data?.message || t('auth.changePassword.errorMessage');
   } finally {
     loading.value = false;
   }

@@ -4,14 +4,14 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
     <div class="w-full max-w-md block sm:hidden">
       <!-- Title -->
       <h2 class="text-xl font-medium text-center mb-6 text-white">
-        {{ $t("registration.title") }}
+        {{ $t("auth.registration.title") }}
       </h2>
 
       <!-- Google Registration Button -->
@@ -30,7 +30,7 @@
         <template #leading>
           <UIcon name="i-mdi-google" class="size-5" />
         </template>
-        {{ $t("login.continueWithGoogle") }}
+        {{ $t("auth.login.continueWithGoogle") }}
       </UButton>
 
       <!-- Facebook Registration Button -->
@@ -49,12 +49,12 @@
         <template #leading>
           <UIcon name="i-mdi-facebook" class="size-5" />
         </template>
-        {{ $t("login.continueWithFacebook") }}
+        {{ $t("auth.login.continueWithFacebook") }}
       </UButton>
 
       <!-- Simple OR Divider -->
       <div class="text-center text-gray-500 mb-6">
-        {{ $t("common.or").toUpperCase() }}
+        {{ $t("system.common.or").toUpperCase() }}
       </div>
 
       <!-- Registration Form for Mobile -->
@@ -66,7 +66,7 @@
       >
         <!-- Name Field -->
         <UFormField
-          :label="$t('registration.formLabels.name')"
+          :label="$t('auth.registration.formLabels.name')"
           name="name"
         >
           <UInput
@@ -74,7 +74,7 @@
             type="text"
             size="xl"
             autocomplete="name"
-            :placeholder="$t('registration.formPlaceholders.name')"
+            :placeholder="$t('auth.registration.formPlaceholders.name')"
           >
             <template #leading>
               <UIcon
@@ -87,7 +87,7 @@
 
         <!-- Email Field -->
         <UFormField
-          :label="$t('registration.formLabels.email')"
+          :label="$t('auth.registration.formLabels.email')"
           name="email"
         >
           <UInput
@@ -95,7 +95,7 @@
             type="email"
             size="xl"
             autocomplete="email"
-            :placeholder="$t('registration.formPlaceholders.email')"
+            :placeholder="$t('auth.registration.formPlaceholders.email')"
           >
             <template #leading>
               <UIcon
@@ -108,14 +108,14 @@
 
         <!-- Password Field -->
         <UFormField
-          :label="$t('registration.formLabels.password')"
+          :label="$t('auth.registration.formLabels.password')"
           name="password"
         >
           <UInput
             v-model="state.password"
             size="xl"
             autocomplete="new-password"
-            :placeholder="$t('registration.formPlaceholders.password')"
+            :placeholder="$t('auth.registration.formPlaceholders.password')"
             :type="showPassword ? 'text' : 'password'"
           >
             <template #leading>
@@ -139,21 +139,21 @@
           </UInput>
           <template #hint>
             <span class="text-xs text-gray-500">
-              {{ $t('registration.formLabels.passwordHint') }}
+              {{ $t('auth.registration.formLabels.passwordHint') }}
             </span>
           </template>
         </UFormField>
 
         <!-- Confirm Password Field -->
         <UFormField
-          :label="$t('registration.formLabels.confirmPassword')"
+          :label="$t('auth.registration.formLabels.confirmPassword')"
           name="confirmPassword"
         >
           <UInput
             v-model="state.confirmPassword"
             size="xl"
             autocomplete="new-password"
-            :placeholder="$t('registration.formPlaceholders.confirmPassword')"
+            :placeholder="$t('auth.registration.formPlaceholders.confirmPassword')"
             :type="showConfirmPassword ? 'text' : 'password'"
           >
             <template #leading>
@@ -187,7 +187,7 @@
           class="mt-6"
           :loading="loading"
         >
-          {{ $t('registration.signUp') }}
+          {{ $t('auth.registration.signUp') }}
         </UButton>
 
         <!-- Error Message -->
@@ -204,7 +204,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.LOGIN)"
         >
-          {{ $t("registration.haveAccount") }}
+          {{ $t("auth.registration.haveAccount") }}
         </UButton>
       </div>
     </div>
@@ -222,7 +222,7 @@
       <UCardBody>
         <!-- Title -->
         <h2 class="text-xl font-medium text-center mb-6 text-white">
-          {{ $t("registration.title") }}
+          {{ $t("auth.registration.title") }}
         </h2>
 
         <!-- Google Registration Button -->
@@ -241,7 +241,7 @@
           <template #leading>
             <UIcon name="i-mdi-google" class="size-5" />
           </template>
-          {{ $t("login.continueWithGoogle") }}
+          {{ $t("auth.login.continueWithGoogle") }}
         </UButton>
 
         <!-- Facebook Registration Button -->
@@ -260,12 +260,12 @@
           <template #leading>
             <UIcon name="i-mdi-facebook" class="size-5" />
           </template>
-          {{ $t("login.continueWithFacebook") }}
+          {{ $t("auth.login.continueWithFacebook") }}
         </UButton>
 
         <!-- Simple OR Divider -->
         <div class="text-center text-gray-500 mb-6">
-          {{ $t("common.or").toUpperCase() }}
+          {{ $t("system.common.or").toUpperCase() }}
         </div>
 
         <!-- Registration Form -->
@@ -277,7 +277,7 @@
         >
           <!-- Name Field -->
           <UFormField
-            :label="$t('registration.formLabels.name')"
+            :label="$t('auth.registration.formLabels.name')"
             name="name"
           >
             <UInput
@@ -285,7 +285,7 @@
               type="text"
               size="xl"
               autocomplete="name"
-              :placeholder="$t('registration.formPlaceholders.name')"
+              :placeholder="$t('auth.registration.formPlaceholders.name')"
             >
               <template #leading>
                 <UIcon
@@ -298,7 +298,7 @@
 
           <!-- Email Field -->
           <UFormField
-            :label="$t('registration.formLabels.email')"
+            :label="$t('auth.registration.formLabels.email')"
             name="email"
           >
             <UInput
@@ -319,7 +319,7 @@
 
           <!-- Password Field -->
           <UFormField
-            :label="$t('registration.formLabels.password')"
+            :label="$t('auth.registration.formLabels.password')"
             name="password"
           >
             <UInput
@@ -352,7 +352,7 @@
 
           <!-- Confirm Password Field -->
           <UFormField
-            :label="$t('registration.formLabels.confirmPassword')"
+            :label="$t('auth.registration.formLabels.confirmPassword')"
             name="confirmPassword"
           >
             <UInput
@@ -393,7 +393,7 @@
             class="mt-6"
             :loading="loading"
           >
-            {{ $t('registration.signUp') }}
+            {{ $t('auth.registration.signUp') }}
           </UButton>
 
           <!-- Error Message -->
@@ -411,7 +411,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.LOGIN)"
         >
-          {{ $t("registration.haveAccount") }}
+          {{ $t("auth.registration.haveAccount") }}
         </UButton>
       </div>
     </UCard>
@@ -434,16 +434,16 @@ const showConfirmPassword = ref(false);
 
 // Validation schema
 const schema = object({
-  name: string().required(t('registration.validationMessages.nameRequired')),
+  name: string().required(t('auth.registration.validationMessages.nameRequired')),
   email: string()
-    .email(t('registration.validationMessages.incorrectEmailFormat'))
-    .required(t('registration.validationMessages.emailRequired')),
+    .email(t('auth.registration.validationMessages.incorrectEmailFormat'))
+    .required(t('auth.registration.validationMessages.emailRequired')),
   password: string()
-    .min(8, t('registration.validationMessages.passwordMin'))
-    .required(t('registration.validationMessages.passwordRequired')),
+    .min(8, t('auth.registration.validationMessages.passwordMin'))
+    .required(t('auth.registration.validationMessages.passwordRequired')),
   confirmPassword: string()
-    .oneOf([yupRef('password')], t('registration.validationMessages.passwordMatch'))
-    .required(t('registration.validationMessages.confirmPasswordRequired')),
+    .oneOf([yupRef('password')], t('auth.registration.validationMessages.passwordMatch'))
+    .required(t('auth.registration.validationMessages.confirmPasswordRequired')),
 });
 
 type Schema = InferType<typeof schema>;

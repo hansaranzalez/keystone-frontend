@@ -149,15 +149,15 @@ export const register = async (name: string, email: string, password: string, t?
     });
     
     if (response.status !== HttpStatus.SUCCESS && response.status !== HttpStatus.CREATED) {
-      throw new Error(getI18nMessageFromKey('registration.errors.registrationFailed', t));
+      throw new Error(getI18nMessageFromKey('auth.registration.errors.registrationFailed', t));
     }
     
     setToken(response.data.accessToken);
     decodeTokenAndSetUser();
     useToast().add({
       color: 'success',
-      title: getI18nMessageFromKey('registration.successTitle', t),
-      description: getI18nMessageFromKey('registration.registrationSuccess', t)
+      title: getI18nMessageFromKey('auth.registration.successTitle', t),
+      description: getI18nMessageFromKey('auth.registration.registrationSuccess', t)
     });
     // Navigate to the dashboard instead of showing login form since user is already logged in
     navigateTo('/');
@@ -170,23 +170,23 @@ export const register = async (name: string, email: string, password: string, t?
       // Google auth error
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('registration.errorTitle', t),
-        description: `${getI18nMessageFromKey('registration.errors.googleAuthExists', t)}. ${getI18nMessageFromKey('registration.errors.useGoogleToLogin', t)}`
+        title: getI18nMessageFromKey('auth.registration.errorTitle', t),
+        description: `${getI18nMessageFromKey('auth.registration.errors.googleAuthExists', t)}. ${getI18nMessageFromKey('auth.registration.errors.useGoogleToLogin', t)}`
       });
     } else if (error.response?.data?.message === 'User with this email already exists with email' && 
               error.response?.data?.auth_provider === 'email') {
       // Email auth error
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('registration.errorTitle', t),
-        description: `${getI18nMessageFromKey('registration.errors.emailAuthExists', t)}. ${getI18nMessageFromKey('registration.errors.useEmailToLogin', t)}`
+        title: getI18nMessageFromKey('auth.registration.errorTitle', t),
+        description: `${getI18nMessageFromKey('auth.registration.errors.emailAuthExists', t)}. ${getI18nMessageFromKey('auth.registration.errors.useEmailToLogin', t)}`
       });
     } else {
       // General registration error
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('registration.errorTitle', t),
-        description: getI18nMessageFromKey('registration.errors.registrationFailed', t)
+        title: getI18nMessageFromKey('auth.registration.errorTitle', t),
+        description: getI18nMessageFromKey('auth.registration.errors.registrationFailed', t)
       });
     }
     
@@ -205,7 +205,7 @@ export const requestPasswordChange = async (email: string, t?: TranslationFn): P
     // Handle the standard response pattern: backend always returns success regardless if email exists
     // This is a security feature to prevent user enumeration attacks
     if (response.status !== HttpStatus.SUCCESS) {
-      throw new Error(getI18nMessageFromKey('passwordChange.errorMessage', t));
+      throw new Error(getI18nMessageFromKey('auth.passwordChange.errorMessage', t));
     }
     
     // Save the email for subsequent code verification step
@@ -214,8 +214,8 @@ export const requestPasswordChange = async (email: string, t?: TranslationFn): P
     // Show success message using backend's message if available
     useToast().add({
       color: 'success',
-      title: getI18nMessageFromKey('passwordChange.successTitle', t),
-      description: response.data?.message || getI18nMessageFromKey('passwordChange.successMessage', t)
+      title: getI18nMessageFromKey('auth.passwordChange.successTitle', t),
+      description: response.data?.message || getI18nMessageFromKey('auth.passwordChange.successMessage', t)
     });
     
     // Navigate to the email sent confirmation screen
@@ -227,15 +227,15 @@ export const requestPasswordChange = async (email: string, t?: TranslationFn): P
         error.response?.data?.auth_provider === 'google') {
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('passwordChange.errorTitle', t),
-        description: getI18nMessageFromKey('passwordChange.socialAccountError', t) || 
+        title: getI18nMessageFromKey('auth.passwordChange.errorTitle', t),
+        description: getI18nMessageFromKey('auth.passwordChange.socialAccountError', t) || 
                     'Password change is not available for social media accounts. Please use social login.'
       });
     } else {
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('passwordChange.errorTitle', t),
-        description: error.response?.data?.message || getI18nMessageFromKey('passwordChange.errorMessage', t)
+        title: getI18nMessageFromKey('auth.passwordChange.errorTitle', t),
+        description: error.response?.data?.message || getI18nMessageFromKey('auth.passwordChange.errorMessage', t)
       });
     }
     throw error;
@@ -249,11 +249,11 @@ export const changePassword = async (newPassword: string, t?: TranslationFn): Pr
     const email = store.catchedEmailGetter;
     
     if (!code) {
-      throw new Error(getI18nMessageFromKey('changePassword.validationMessages.missingToken', t));
+      throw new Error(getI18nMessageFromKey('auth.changePassword.validationMessages.missingToken', t));
     }
     
     if (!email) {
-      throw new Error(getI18nMessageFromKey('changePassword.errorMessage', t) || 'Email is missing');
+      throw new Error(getI18nMessageFromKey('auth.changePassword.errorMessage', t) || 'Email is missing');
     }
     
     const response = await getHttp().post(getEndpoints().changePassword, {
@@ -263,14 +263,14 @@ export const changePassword = async (newPassword: string, t?: TranslationFn): Pr
     });
     
     if (response.status !== HttpStatus.SUCCESS) {
-      throw new Error(getI18nMessageFromKey('changePassword.errorMessage', t));
+      throw new Error(getI18nMessageFromKey('auth.changePassword.errorMessage', t));
     }
     
     // Show success message
     useToast().add({
       color: 'success',
-      title: getI18nMessageFromKey('changePassword.successTitle', t),
-      description: getI18nMessageFromKey('changePassword.successMessage', t)
+      title: getI18nMessageFromKey('auth.changePassword.successTitle', t),
+      description: getI18nMessageFromKey('auth.changePassword.successMessage', t)
     });
     
     // Navigate to password change success screen
@@ -282,8 +282,8 @@ export const changePassword = async (newPassword: string, t?: TranslationFn): Pr
   } catch (error: any) {
     useToast().add({
       color: 'error',
-      title: getI18nMessageFromKey('changePassword.errorTitle', t),
-      description: error.message || getI18nMessageFromKey('changePassword.errorMessage', t)
+      title: getI18nMessageFromKey('auth.changePassword.errorTitle', t),
+      description: error.message || getI18nMessageFromKey('auth.changePassword.errorMessage', t)
     });
     throw error;
   }
@@ -313,7 +313,7 @@ export const updateUserPassword = async (currentPassword: string, newPassword: s
     const store = getStore();
     const token = store.token;
     
-    if (!token) throw new Error(getI18nMessageFromKey('common.unauthorized', t));
+    if (!token) throw new Error(getI18nMessageFromKey('system.common.unauthorized', t));
 
     const response = await getHttp().post(getEndpoints().updatePassword, {
       currentPassword,
@@ -321,13 +321,13 @@ export const updateUserPassword = async (currentPassword: string, newPassword: s
     });
     
     if (response.status !== HttpStatus.SUCCESS) {
-      throw new Error(response.data?.message || getI18nMessageFromKey('passwordChange.errorMessage', t));
+      throw new Error(response.data?.message || getI18nMessageFromKey('auth.passwordChange.errorMessage', t));
     }
     
     return { success: true };
   } catch (error: any) {
     // Handle specific error responses from the backend
-    let errorMessage = getI18nMessageFromKey('passwordChange.errorMessage', t);
+    let errorMessage = getI18nMessageFromKey('auth.passwordChange.errorMessage', t);
     
     // Extract error message from response if available
     if (error.response && error.response.data && error.response.data.message) {
@@ -338,16 +338,16 @@ export const updateUserPassword = async (currentPassword: string, newPassword: s
     
     // Look for specific error messages and translate them if needed
     if (errorMessage.includes('incorrect')) {
-      errorMessage = getI18nMessageFromKey('passwordChange.incorrectCurrentPassword', t) || 'Current password is incorrect';
+      errorMessage = getI18nMessageFromKey('auth.passwordChange.incorrectCurrentPassword', t) || 'Current password is incorrect';
     } else if (errorMessage.includes('Google authentication')) {
-      errorMessage = getI18nMessageFromKey('passwordChange.googleAuthError', t) || 'Cannot change password for accounts that use Google authentication exclusively';
+      errorMessage = getI18nMessageFromKey('auth.passwordChange.googleAuthError', t) || 'Cannot change password for accounts that use Google authentication exclusively';
     } else if (errorMessage.includes('at least 8 characters')) {
-      errorMessage = getI18nMessageFromKey('passwordChange.passwordTooShort', t) || 'New password must be at least 8 characters long';
+      errorMessage = getI18nMessageFromKey('auth.passwordChange.passwordTooShort', t) || 'New password must be at least 8 characters long';
     }
     
     useToast().add({
       color: 'error',
-      title: getI18nMessageFromKey('common.error', t),
+      title: getI18nMessageFromKey('system.common.error', t),
       description: errorMessage
     });
     
@@ -361,7 +361,7 @@ export const verifyPasswordResetCode = async (code: string, t?: TranslationFn): 
     const email = getStore().catchedEmail;
     
     if (!email) {
-      throw new Error(getI18nMessageFromKey('changePassword.errorMessage', t) || 'Email is missing');
+      throw new Error(getI18nMessageFromKey('auth.changePassword.errorMessage', t) || 'Email is missing');
     }
     
     const response = await getHttp().post(getEndpoints().verifyPasswordResetCode, {
@@ -369,7 +369,7 @@ export const verifyPasswordResetCode = async (code: string, t?: TranslationFn): 
       code,
     });
     
-    if (response.status !== HttpStatus.SUCCESS) throw new Error(getI18nMessageFromKey('changePassword.errorMessage', t));
+    if (response.status !== HttpStatus.SUCCESS) throw new Error(getI18nMessageFromKey('auth.changePassword.errorMessage', t));
     
     getStore().setChangePasswordCode(response.data.code);
     return response.data;
@@ -379,14 +379,14 @@ export const verifyPasswordResetCode = async (code: string, t?: TranslationFn): 
     if (errorMessage === "The verification code is invalid") {
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('common.error', t),
-        description: getI18nMessageFromKey('changePassword.validationMessages.invalidResetCode', t) || "The verification code is invalid. Please check and try again."
+        title: getI18nMessageFromKey('system.common.error', t),
+        description: getI18nMessageFromKey('auth.changePassword.validationMessages.invalidResetCode', t) || "The verification code is invalid. Please check and try again."
       });
     } else {
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('common.error', t),
-        description: errorMessage || getI18nMessageFromKey('changePassword.validationMessages.invalidResetCode', t)
+        title: getI18nMessageFromKey('system.common.error', t),
+        description: errorMessage || getI18nMessageFromKey('auth.changePassword.validationMessages.invalidResetCode', t)
       });
     }
     throw error;
@@ -400,8 +400,8 @@ export const initGoogleLoginFlow = async (t?: TranslationFn): Promise<void> => {
     logout();
     useToast().add({
       color: 'error',
-      title: getI18nMessageFromKey('login.errorTitle', t),
-      description: getI18nMessageFromKey('login.errorMessage', t)
+      title: getI18nMessageFromKey('auth.login.errorTitle', t),
+      description: getI18nMessageFromKey('auth.login.errorMessage', t)
     });
     throw error;
   }
@@ -441,7 +441,7 @@ export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): 
       console.log("State prepared successfully on backend.");
     } catch (prepareError: any) {
       console.error('Error preparing Facebook OAuth state on backend:', prepareError.response?.data || prepareError.message);
-      toast.add({ color: 'error', title: translator('common.error'), description: translator('integrations.facebook.prepareError') });
+      toast.add({ color: 'error', title: translator('system.common.error'), description: translator('integrations.facebook.prepareError') });
       return;
     }
 
@@ -479,7 +479,7 @@ export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): 
             if (backendResponse.data?.success) {
                 toast.add({
                     color: 'success',
-                    title: translator('common.success'),
+                    title: translator('system.common.success'),
                     description: translator('integrations.facebook.linkSuccess') // e.g., "WhatsApp Business account linked successfully."
                 });
                 // Optional: Refresh page data or redirect within integrations section
@@ -492,7 +492,7 @@ export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): 
             console.error('Error during backend callback processing:', callbackError.response?.data || callbackError.message);
             toast.add({
                 color: 'error',
-                title: translator('common.error'),
+                title: translator('system.common.error'),
                 description: callbackError.response?.data?.message || translator('integrations.facebook.linkError') // Show specific error from backend if available
             });
         }
@@ -504,7 +504,7 @@ export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): 
         // Don't log user out, just inform them the connection failed
         toast.add({
           color: 'warning', // Or 'error' depending on cause
-          title: translator('login.warningTitle'), // Use appropriate title
+          title: translator('auth.login.warningTitle'), // Use appropriate title
           description: translator('integrations.facebook.authorizationFailed') // e.g., "Authorization failed or was cancelled."
         });
     }
@@ -514,7 +514,7 @@ export const initFacebookWhatsAppIntegration = async (deps: FacebookLoginDeps): 
     console.error('Error during Facebook integration initiation:', error);
     toast.add({
       color: 'error',
-      title: translator('common.error'),
+      title: translator('system.common.error'),
       description: error.message || translator('integrations.facebook.initiationError')
     });
   }
@@ -525,15 +525,15 @@ export const receiveGoogleCallback = async (code: string, t?: TranslationFn): Pr
     useUiStore().setSplashVisible(true);
     // get id token
     const response = await getHttp().get(getEndpoints().googleCallback(code));
-    if (response.status !== HttpStatus.SUCCESS) throw new Error(getI18nMessageFromKey('login.validationMessages.loginFailed', t));
+    if (response.status !== HttpStatus.SUCCESS) throw new Error(getI18nMessageFromKey('auth.login.validationMessages.loginFailed', t));
     setToken(response.data.accessToken);
     getStore().setRefreshToken(response.data.refreshToken);
     decodeTokenAndSetUser();
     getStore().setSelectedForm(AuthForms.LOGIN);
     useToast().add({
       color: 'success',
-      title: getI18nMessageFromKey('login.successTitle', t),
-      description: getI18nMessageFromKey('login.successMessage', t)
+      title: getI18nMessageFromKey('auth.login.successTitle', t),
+      description: getI18nMessageFromKey('auth.login.successMessage', t)
     });
     navigateTo('/');
   } catch (error: any) {
@@ -544,15 +544,15 @@ export const receiveGoogleCallback = async (code: string, t?: TranslationFn): Pr
         error.response?.data?.auth_provider === 'email') {
       useToast().add({
         color: 'error',
-        title: getI18nMessageFromKey('login.errorTitle', t),
-        description: `${getI18nMessageFromKey('login.validationMessages.emailAuthExists', t)}. ${getI18nMessageFromKey('login.validationMessages.useEmailToLogin', t)}`
+        title: getI18nMessageFromKey('auth.login.errorTitle', t),
+        description: `${getI18nMessageFromKey('auth.login.validationMessages.emailAuthExists', t)}. ${getI18nMessageFromKey('auth.login.validationMessages.useEmailToLogin', t)}`
       });
     } else {
       // General error case
       useToast().add({
         color: 'error',
-        title: error.response?.data?.message || getI18nMessageFromKey('login.errorTitle', t),
-        description: getI18nMessageFromKey('login.errorMessage', t)
+        title: error.response?.data?.message || getI18nMessageFromKey('auth.login.errorTitle', t),
+        description: getI18nMessageFromKey('auth.login.errorMessage', t)
       });
     }
     throw error;
@@ -577,8 +577,8 @@ export const receiveFacebookCallback = async (token: string, t?: TranslationFn):
       // Show success message
       toast.add({
         color: 'success',
-        title: translator('login.successTitle'),
-        description: translator('login.loginSuccess')
+        title: translator('auth.login.successTitle'),
+        description: translator('auth.login.loginSuccess')
       });
       
       // Navigate to dashboard
@@ -612,8 +612,8 @@ export const receiveFacebookCallback = async (token: string, t?: TranslationFn):
       // Show success message
       toast.add({
         color: 'success',
-        title: translator('login.successTitle'),
-        description: translator('login.loginSuccess')
+        title: translator('auth.login.successTitle'),
+        description: translator('auth.login.loginSuccess')
       });
       
       // Navigate to dashboard
@@ -635,8 +635,8 @@ export const receiveFacebookCallback = async (token: string, t?: TranslationFn):
     
     toast.add({
       color: 'error',
-      title: translator('login.errorTitle'),
-      description: translator('login.facebookCallbackError')
+      title: translator('auth.login.errorTitle'),
+      description: translator('auth.login.facebookCallbackError')
     });
     
     // Navigate back to login

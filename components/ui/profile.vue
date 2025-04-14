@@ -23,10 +23,10 @@ const tFn = (key: string, named?: Record<string, any>): string => {
 
 // Validation schema for profile update
 const profileSchema = object({
-  name: string().required(t("profile.validationMessages.nameRequired")),
+  name: string().required(t("user.profile.validationMessages.nameRequired")),
   email: string()
-    .email(t("profile.validationMessages.incorrectEmailFormat"))
-    .required(t("profile.validationMessages.emailRequired")),
+    .email(t("user.profile.validationMessages.incorrectEmailFormat"))
+    .required(t("user.profile.validationMessages.emailRequired")),
   // Include additional fields from state for type compatibility
   profile_image: object().nullable(),
   profile_image_url: string().nullable(),
@@ -39,17 +39,17 @@ const profileSchema = object({
 
 // Validation schema for password change
 const passwordSchema = object({
-  currentPassword: string().required(t("profile.validationMessages.currentPasswordRequired")),
+  currentPassword: string().required(t("user.profile.validationMessages.currentPasswordRequired")),
   newPassword: string()
-    .required(t("profile.validationMessages.newPasswordRequired"))
-    .min(8, t("profile.validationMessages.passwordMin"))
-    .matches(/[A-Z]/, t("profile.validationMessages.passwordUppercase"))
-    .matches(/[a-z]/, t("profile.validationMessages.passwordLowercase"))
-    .matches(/[0-9]/, t("profile.validationMessages.passwordNumber"))
-    .matches(/[^A-Za-z0-9]/, t("profile.validationMessages.passwordSpecial")),
+    .required(t("user.profile.validationMessages.newPasswordRequired"))
+    .min(8, t("user.profile.validationMessages.passwordMin"))
+    .matches(/[A-Z]/, t("user.profile.validationMessages.passwordUppercase"))
+    .matches(/[a-z]/, t("user.profile.validationMessages.passwordLowercase"))
+    .matches(/[0-9]/, t("user.profile.validationMessages.passwordNumber"))
+    .matches(/[^A-Za-z0-9]/, t("user.profile.validationMessages.passwordSpecial")),
   confirmNewPassword: string()
-    .required(t("profile.validationMessages.confirmPasswordRequired"))
-    .oneOf([yupRef("newPassword")], t("profile.validationMessages.passwordMatch")),
+    .required(t("user.profile.validationMessages.confirmPasswordRequired"))
+    .oneOf([yupRef("newPassword")], t("user.profile.validationMessages.passwordMatch")),
 });
 
 // Define the type for the password schema
@@ -64,10 +64,10 @@ const passwordStrength = ref(0);
 
 // These validation functions are no longer needed with UForm
 const strengthLabels = [
-  { value: 0, label: t('profile.password.strengthLabels.weak'), color: 'danger' },
-  { value: 1, label: t('profile.password.strengthLabels.fair'), color: 'warning' },
-  { value: 2, label: t('profile.password.strengthLabels.good'), color: 'info' },
-  { value: 3, label: t('profile.password.strengthLabels.strong'), color: 'success' }
+  { value: 0, label: t('user.profile.password.strengthLabels.weak'), color: 'danger' },
+  { value: 1, label: t('user.profile.password.strengthLabels.fair'), color: 'warning' },
+  { value: 2, label: t('user.profile.password.strengthLabels.good'), color: 'info' },
+  { value: 3, label: t('user.profile.password.strengthLabels.strong'), color: 'success' }
 ];
 
 const getCurrentStrengthLabel = computed(() => {
@@ -131,15 +131,15 @@ const isSubmitting = ref(false);
 const isChangingPassword = ref(false);
 // Password guidance text
 const passwordGuidance = {
-  intro: 'profile.password.guidanceIntro',
-  length: 'profile.password.guidanceLength',
-  mix: 'profile.password.guidanceMix',
-  unique: 'profile.password.guidanceUnique'
+  intro: 'user.profile.password.guidanceIntro',
+  length: 'user.profile.password.guidanceLength',
+  mix: 'user.profile.password.guidanceMix',
+  unique: 'user.profile.password.guidanceUnique'
 };
 
 // Format date helper
 const formatDate = (date: Date | null) => {
-  if (!date) return t("common.never");
+  if (!date) return t("system.common.never");
   return new Date(date).toLocaleDateString();
 };
 
@@ -153,18 +153,18 @@ const handleImageUpload = () => {
   // Future implementation for image upload logic
   toast.add({
     color: 'info',
-    title: t('common.comingSoon'),
-    description: t('profile.photoUploadComingSoon')
+    title: t('system.common.comingSoon'),
+    description: t('user.profile.photoUploadComingSoon')
   });
 };
 
 // Accordion item for password change
 const accordionItems = [
   {
-    label: t("profile.password.changePassword"),
+    label: t("user.profile.password.changePassword"),
     slot: "password",
     icon: "i-lucide-key",
-    description: t("profile.password.lastChanged") + ": " + formatDate(new Date()),
+    description: t("user.profile.password.lastChanged") + ": " + formatDate(new Date()),
   },
 ];
 
@@ -190,16 +190,16 @@ async function onProfileUpdate() {
     // For now just mock a success message
     toast.add({
       color: 'success',
-      title: t('common.success'),
-      description: t('profile.updateSuccess')
+      title: t('system.common.success'),
+      description: t('user.profile.updateSuccess')
     });
     
   } catch (error: any) {
     console.error(error);
-    errorMessage.value = error.message || t("profile.updateFailed");
+    errorMessage.value = error.message || t("user.profile.updateFailed");
     toast.add({
       color: 'error',
-      title: t('common.error'),
+      title: t('system.common.error'),
       description: errorMessage.value
     });
   } finally {
@@ -226,8 +226,8 @@ async function onPasswordChange(event: FormSubmitEvent<PasswordSchema>) {
     
     toast.add({
       color: 'success',
-      title: t('common.success'),
-      description: t('profile.notifications.passwordChangeSuccess'),
+      title: t('system.common.success'),
+      description: t('user.profile.notifications.passwordChangeSuccess'),
     });
     
     // Clear form fields
@@ -243,7 +243,7 @@ async function onPasswordChange(event: FormSubmitEvent<PasswordSchema>) {
     console.error(error);
     // Store error message for potential UI display, but don't show another toast
     // since the auth service already handles displaying the error toast
-    errorMessage.value = error.message || t('common.somethingWentWrong');
+    errorMessage.value = error.message || t('system.common.somethingWentWrong');
   } finally {
     isChangingPassword.value = false;
   }
@@ -263,8 +263,8 @@ onMounted(async () => {
     if (result.status !== 200) {
       toast.add({
         color: 'error',
-        title: t('common.error'),
-        description: t('profile.loadError')
+        title: t('system.common.error'),
+        description: t('user.profile.loadError')
       });
       return;
     }
@@ -284,8 +284,8 @@ onMounted(async () => {
     console.error("Failed to load user data:", error);
     toast.add({
       color: 'error',
-      title: t('common.error'),
-      description: t('profile.loadError')
+      title: t('system.common.error'),
+      description: t('user.profile.loadError')
     });
   } finally {
     loading.value = false;
@@ -358,11 +358,11 @@ onMounted(async () => {
 <template>
   <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
     <h1 class="text-2xl md:text-3xl font-medium text-center mb-8">
-      {{ $t("profile.title") }}
+      {{ $t("user.profile.title") }}
     </h1>
 
     <div class="relative">
-      <UiSplash :isVisible="loading" :loadingText="$t('common.loading')" />
+      <UiSplash :isVisible="loading" :loadingText="$t('system.common.loading')" />
       
       <!-- Profile Content -->
       <div class="space-y-8">
@@ -382,7 +382,7 @@ onMounted(async () => {
                 icon="i-lucide-camera"
                 class="rounded-full p-2 shadow-lg"
                 @click="handleImageUpload"
-                :aria-label="$t('profile.updatePhoto')"
+                :aria-label="$t('user.profile.updatePhoto')"
               />
             </div>
           </div>
@@ -392,7 +392,7 @@ onMounted(async () => {
             color="primary"
             variant="ghost"
             icon="i-lucide-camera"
-            :label="$t('profile.updatePhoto')"
+            :label="$t('user.profile.updatePhoto')"
             @click="handleImageUpload"
           />
         </div>
@@ -403,32 +403,32 @@ onMounted(async () => {
             <!-- Basic Information -->
             <UCard class="w-full shadow-sm">
               <UCardTitle class="text-lg font-medium border-b border-slate-200 dark:border-slate-700 pb-3">
-                {{ $t('profile.basicInfo') }}
+                {{ $t('user.profile.basicInfo') }}
               </UCardTitle>
               <UCardBody class="pt-4">
                 <form @submit.prevent="onProfileUpdate">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <UFormGroup
-                      :label="$t('profile.formLabels.name')"
+                      :label="$t('user.profile.formLabels.name')"
                       name="name"
                     >
                       <UInput
                         v-model="state.name"
                         type="text"
-                        :placeholder="$t('profile.placeholders.name')"
+                        :placeholder="$t('user.profile.placeholders.name')"
                         size="xl"
                         class="focus:ring-2 focus:ring-primary-500/20"
                       />
                     </UFormGroup>
 
                     <UFormGroup
-                      :label="$t('profile.formLabels.email')"
+                      :label="$t('user.profile.formLabels.email')"
                       name="email"
                     >
                       <UInput
                         v-model="state.email"
                         type="email"
-                        :placeholder="$t('profile.placeholders.email')"
+                        :placeholder="$t('user.profile.placeholders.email')"
                         :disabled="state.google_auth || state.facebook_auth"
                         size="xl"
                         class="focus:ring-2 focus:ring-primary-500/20"
@@ -445,7 +445,7 @@ onMounted(async () => {
                       size="xl"
                       icon="i-lucide-save"
                     >
-                      {{ $t("profile.saveChanges") }}
+                      {{ $t("user.profile.saveChanges") }}
                     </UButton>
                   </div>
                 </form>
@@ -455,7 +455,7 @@ onMounted(async () => {
             <!-- Password Change Section -->
             <UCard class="w-full shadow-sm">
               <UCardTitle class="text-lg font-medium border-b border-slate-200 dark:border-slate-700 pb-3">
-                {{ $t('profile.security') }}
+                {{ $t('user.profile.security') }}
               </UCardTitle>
               <UCardBody class="pt-4">
                 <UForm
@@ -466,17 +466,17 @@ onMounted(async () => {
                 >
                   <div class="mb-4">
                     <p class="text-slate-600 dark:text-slate-400 text-sm mb-2">
-                      {{ $t('profile.password.guidanceIntro') }}
+                      {{ $t('user.profile.password.guidanceIntro') }}
                     </p>
                     <ul class="list-disc list-inside text-xs text-slate-500 dark:text-slate-400 space-y-1 ml-2">
-                      <li>{{ $t('profile.password.guidanceLength') }}</li>
-                      <li>{{ $t('profile.password.guidanceMix') }}</li>
-                      <li>{{ $t('profile.password.guidanceUnique') }}</li>
+                      <li>{{ $t('user.profile.password.guidanceLength') }}</li>
+                      <li>{{ $t('user.profile.password.guidanceMix') }}</li>
+                      <li>{{ $t('user.profile.password.guidanceUnique') }}</li>
                     </ul>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <UFormField
-                      :label="$t('profile.password.current')"
+                      :label="$t('user.profile.password.current')"
                       name="currentPassword"
                       required
                       class="md:col-span-2"
@@ -484,7 +484,7 @@ onMounted(async () => {
                       <UInput
                         v-model="state.currentPassword"
                         type="password"
-                        :placeholder="$t('profile.password.currentPlaceholder')"
+                        :placeholder="$t('user.profile.password.currentPlaceholder')"
                         autocomplete="current-password"
                         size="xl"
                         class="focus:ring-2 focus:ring-primary-500/20"
@@ -492,15 +492,15 @@ onMounted(async () => {
                     </UFormField>
                     
                     <UFormField
-                      :label="$t('profile.password.new')"
+                      :label="$t('user.profile.password.new')"
                       name="newPassword"
                       required
-                      :help="$t('profile.password.newHelp')"
+                      :help="$t('user.profile.password.newHelp')"
                     >
                       <UInput
                         v-model="state.newPassword"
                         type="password"
-                        :placeholder="$t('profile.password.newPlaceholder')"
+                        :placeholder="$t('user.profile.password.newPlaceholder')"
                         autocomplete="new-password"
                         aria-describedby="password-requirements"
                         size="xl"
@@ -512,7 +512,7 @@ onMounted(async () => {
                       <div class="mt-2">
                         <div class="flex justify-between items-center mb-1">
                           <span class="text-xs text-slate-500 dark:text-slate-400">
-                            {{ $t('profile.password.strength') }}:
+                            {{ $t('user.profile.password.strength') }}:
                           </span>
                           <span class="text-xs" :class="`text-${getCurrentStrengthLabel.color}-500`">
                             {{ $t(getCurrentStrengthLabel.label) }}
@@ -530,15 +530,15 @@ onMounted(async () => {
                     </UFormField>
                     
                     <UFormField
-                      :label="$t('profile.password.confirm')"
+                      :label="$t('user.profile.password.confirm')"
                       name="confirmNewPassword"
                       required
-                      :help="$t('profile.password.confirmHelp')"
+                      :help="$t('user.profile.password.confirmHelp')"
                     >
                       <UInput
                         v-model="state.confirmNewPassword"
                         type="password"
-                        :placeholder="$t('profile.password.newPlaceholder')"
+                        :placeholder="$t('user.profile.password.newPlaceholder')"
                         autocomplete="new-password"
                         aria-describedby="password-requirements"
                         size="xl"
@@ -556,7 +556,7 @@ onMounted(async () => {
                       size="xl"
                       icon="i-lucide-key"
                     >
-                      {{ $t("profile.password.update") }}
+                      {{ $t("user.profile.password.update") }}
                     </UButton>
                   </div>
                 </UForm>
@@ -569,17 +569,17 @@ onMounted(async () => {
             <!-- Authentication Status -->
             <UCard class="w-full shadow-sm">
               <UCardTitle class="text-lg font-medium border-b border-slate-200 dark:border-slate-700 pb-3">
-                {{ $t("profile.authentication.title") }}
+                {{ $t("user.profile.authentication.title") }}
               </UCardTitle>
               <UCardBody class="pt-4">
                 <ul class="space-y-4">
                   <li class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div class="flex items-center gap-2">
                       <UIcon name="i-lucide-mail-check" class="text-slate-500 dark:text-slate-400" />
-                      <span>{{ $t("profile.authentication.emailVerified") }}</span>
+                      <span>{{ $t("user.profile.authentication.emailVerified") }}</span>
                     </div>
                     <UBadge :color="state.is_verified ? 'success' : 'warning'" size="xl">
-                      {{ state.is_verified ? $t("common.yes") : $t("common.no") }}
+                      {{ state.is_verified ? $t("system.common.yes") : $t("common.no") }}
                     </UBadge>
                   </li>
                   <li class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
@@ -588,7 +588,7 @@ onMounted(async () => {
                       <span>Google</span>
                     </div>
                     <UBadge :color="state.google_auth ? 'success' : 'neutral'" size="xl">
-                      {{ state.google_auth ? $t("common.connected") : $t("common.notConnected") }}
+                      {{ state.google_auth ? $t("system.common.connected") : $t("common.notConnected") }}
                     </UBadge>
                   </li>
                   <li class="flex items-center justify-between p-2 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
@@ -597,7 +597,7 @@ onMounted(async () => {
                       <span>Facebook</span>
                     </div>
                     <UBadge :color="state.facebook_auth ? 'success' : 'neutral'" size="xl">
-                      {{ state.facebook_auth ? $t("common.connected") : $t("common.notConnected") }}
+                      {{ state.facebook_auth ? $t("system.common.connected") : $t("system.common.notConnected") }}
                     </UBadge>
                   </li>
                 </ul>
@@ -607,7 +607,7 @@ onMounted(async () => {
             <!-- Account Status -->
             <UCard class="w-full shadow-sm">
               <UCardTitle class="text-lg font-medium border-b border-slate-200 dark:border-slate-700 pb-3">
-                {{ $t("profile.accountStatus.title") }}
+                {{ $t("user.profile.accountStatus.title") }}
               </UCardTitle>
               <UCardBody class="pt-4">
                 <div class="rounded-lg bg-slate-50 dark:bg-slate-800/50 p-4 mb-3">
@@ -618,21 +618,21 @@ onMounted(async () => {
                         :class="state.is_active === 'ACTIVE' ? 'text-green-500' : 'text-red-500'" 
                         size="xl" 
                       />
-                      <span>{{ $t("profile.accountStatus.status") }}</span>
+                      <span>{{ $t("user.profile.accountStatus.status") }}</span>
                     </div>
                     <UBadge 
                       :color="state.is_active === 'ACTIVE' ? 'success' : 'error'" 
                       size="xl"
                       class="font-medium whitespace-nowrap px-3 py-1"
                     >
-                      {{ state.is_active === 'ACTIVE' ? $t("profile.accountStatus.active") : $t("profile.accountStatus.inactive") }}
+                      {{ state.is_active === 'ACTIVE' ? $t("user.profile.accountStatus.active") : $t("user.profile.accountStatus.inactive") }}
                     </UBadge>
                   </div>
                 </div>
                 <div class="flex items-center gap-2 mt-4">
                   <UIcon name="i-lucide-clock" class="text-slate-500 dark:text-slate-400" />
                   <span class="text-sm text-slate-600 dark:text-slate-300">
-                    {{ $t("profile.accountStatus.lastLogin") }}:
+                    {{ $t("user.profile.accountStatus.lastLogin") }}:
                     <span class="font-medium">{{ formatDate(state.last_login) }}</span>
                   </span>
                 </div>

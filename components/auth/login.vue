@@ -4,14 +4,14 @@
   >
     <!-- Logo/Branding Area -->
     <div class="mb-8 text-center">
-      <h1 class="text-2xl font-medium text-blue-500">ZOLARA</h1>
+      <h1 class="text-2xl font-medium text-blue-500">{{ $t('system.appName') }}</h1>
     </div>
 
     <!-- Mobile version - no card (visible on small screens only) -->
     <div class="w-full max-w-md block sm:hidden">
       <!-- Title -->
       <h2 class="text-xl font-medium text-center mb-6 text-white">
-        {{ $t("login.title") }}
+        {{ $t("auth.login.title") }}
       </h2>
 
       <!-- Google Login Button -->
@@ -30,7 +30,7 @@
         <template #leading>
           <UIcon name="i-mdi-google" class="size-5" />
         </template>
-        {{ $t("login.continueWithGoogle") }}
+        {{ $t("auth.login.continueWithGoogle") }}
       </UButton>
 
       <!-- Facebook Login Button -->
@@ -49,12 +49,12 @@
         <template #leading>
           <UIcon name="i-mdi-facebook" class="size-5" />
         </template>
-        {{ $t("login.continueWithFacebook") }}
+        {{ $t("auth.login.continueWithFacebook") }}
       </UButton>
 
       <!-- Simple OR Divider -->
       <div class="text-center text-gray-500 mb-6">
-        {{ $t("common.or").toUpperCase() }}
+        {{ $t("system.common.or").toUpperCase() }}
       </div>
 
       <!-- Login Form for Mobile -->
@@ -66,7 +66,7 @@
       >
         <!-- Email Field -->
         <UFormField
-          :label="$t('login.formLabels.email')"
+          :label="$t('auth.login.formLabels.email')"
           name="email"
         >
           <UInput
@@ -87,7 +87,7 @@
 
         <!-- Password Field -->
         <UFormField
-          :label="$t('login.formLabels.password')"
+          :label="$t('auth.login.formLabels.password')"
           name="password"
         >
           <UInput
@@ -126,7 +126,7 @@
             size="sm"
             @click="setSelectedForm(AuthForms.REQUEST_PASSWORD_RESET)"
           >
-            {{ $t("login.forgotPassword") }}
+            {{ $t("auth.login.forgotPassword") }}
           </UButton>
         </div>
 
@@ -140,7 +140,7 @@
           class="mt-6"
           :loading="loading"
         >
-          {{ $t('login.signIn') }}
+          {{ $t('auth.login.signIn') }}
         </UButton>
 
         <!-- Error Message -->
@@ -157,7 +157,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.REGISTRATION)"
         >
-          {{ $t("registration.createAccount") }}
+          {{ $t("auth.registration.createAccount") }}
         </UButton>
       </div>
     </div>
@@ -175,7 +175,7 @@
       <UCardBody>
         <!-- Title -->
         <h2 class="text-xl font-medium text-center mb-6 text-white">
-          {{ $t("login.title") }}
+          {{ $t("auth.login.title") }}
         </h2>
 
         <!-- Google Login Button -->
@@ -194,7 +194,7 @@
           <template #leading>
             <UIcon name="i-mdi-google" class="size-5" />
           </template>
-          {{ $t("login.continueWithGoogle") }}
+          {{ $t("auth.login.continueWithGoogle") }}
         </UButton>
 
         <!-- Facebook Login Button -->
@@ -213,12 +213,12 @@
           <template #leading>
             <UIcon name="i-mdi-facebook" class="size-5" />
           </template>
-          {{ $t("login.continueWithFacebook") }}
+          {{ $t("auth.login.continueWithFacebook") }}
         </UButton>
 
         <!-- Simple OR Divider -->
         <div class="text-center text-gray-500 mb-6">
-          {{ $t("common.or").toUpperCase() }}
+          {{ $t("system.common.or").toUpperCase() }}
         </div>
 
         <!-- Login Form -->
@@ -230,7 +230,7 @@
         >
           <!-- Email Field -->
           <UFormField
-            :label="$t('login.formLabels.email')"
+            :label="$t('auth.login.formLabels.email')"
             name="email"
           >
             <UInput
@@ -251,7 +251,7 @@
 
           <!-- Password Field -->
           <UFormField
-            :label="$t('login.formLabels.password')"
+            :label="$t('auth.login.formLabels.password')"
             name="password"
           >
             <UInput
@@ -290,7 +290,7 @@
               size="sm"
               @click="setSelectedForm(AuthForms.REQUEST_PASSWORD_RESET)"
             >
-              {{ $t("login.forgotPassword") }}
+              {{ $t("auth.login.forgotPassword") }}
             </UButton>
           </div>
 
@@ -304,7 +304,7 @@
             class="mt-6"
             :loading="loading"
           >
-            {{ $t('login.signIn') }}
+            {{ $t('auth.login.signIn') }}
           </UButton>
 
           <!-- Error Message -->
@@ -322,7 +322,7 @@
           size="sm"
           @click="setSelectedForm(AuthForms.REGISTRATION)"
         >
-          {{ $t("registration.createAccount") }}
+          {{ $t("auth.registration.createAccount") }}
         </UButton>
       </div>
     </UCard>
@@ -345,9 +345,9 @@ const showPassword = ref(false)
 // Validation schema
 const schema = object({
   email: string()
-    .email(t("login.validationMessages.incorrectEmailFormat"))
-    .required(t("login.validationMessages.emailRequired")),
-  password: string().required(t("login.validationMessages.passwordRequired")),
+    .email(t("auth.login.validationMessages.incorrectEmailFormat"))
+    .required(t("auth.login.validationMessages.emailRequired")),
+  password: string().required(t("auth.login.validationMessages.passwordRequired")),
 });
 
 type Schema = InferType<typeof schema>;
@@ -421,15 +421,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     // Show translated toast notification using i18n
     useToast().add({
       color: 'success',
-      title: t('login.successTitle'),
-      description: t('login.successMessage')
+      title: t('auth.login.successTitle'),
+      description: t('auth.login.successMessage')
     });
     
     // Hide splash screen after login completes
     uiStore.setSplashVisible(false);
   } catch (error: any) {
     console.log(error);
-    errorMessage.value = error.message || t("login.validationMessages.loginFailed");
+    errorMessage.value = error.message || t("auth.login.validationMessages.loginFailed");
     
     // Hide splash screen on error
     const uiStore = useUiStore();
@@ -438,8 +438,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     // Show translated error toast
     useToast().add({
       color: 'error',
-      title: t('login.errorTitle'),
-      description: t('login.errorMessage')
+      title: t('auth.login.errorTitle'),
+      description: t('auth.login.errorMessage')
     });
   } finally {
     loading.value = false;

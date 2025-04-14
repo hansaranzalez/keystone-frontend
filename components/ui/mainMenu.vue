@@ -7,7 +7,7 @@
     >
       <template #content>
         <div class="flex justify-between items-center">
-          <h2 class="text-sm font-medium px-3">{{ $t('nav.menu') }}</h2>
+          <h2 class="text-sm font-medium px-3">{{ $t('system.nav.menu') }}</h2>
           <UButton 
             color="info" 
             variant="ghost" 
@@ -76,8 +76,8 @@
         <div class="p-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
           <div class="flex justify-between items-center">
             <div class="text-xs text-slate-500 dark:text-slate-400">
-              <div>{{ $t('version.app') }} 1.0</div>
-              <div>{{ $t('version.api') }} {{ apiVersion }}</div>
+              <div>{{ $t('system.version.app') }} 1.0</div>
+              <div>{{ $t('system.version.api') }} {{ apiVersion }}</div>
             </div>
             
             <!-- Theme Toggle -->
